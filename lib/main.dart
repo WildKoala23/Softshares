@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Pages/area.dart';
 import 'package:softshares/Pages/MyProfile.dart';
 import 'package:softshares/Pages/calendar.dart';
+import 'package:softshares/Pages/createFrom.dart';
 import 'package:softshares/Pages/editProfile.dart';
 import 'package:softshares/Pages/login.dart';
 import 'package:softshares/Pages/pointsOfInterest.dart';
 import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/Pages/signup.dart';
-import 'package:softshares/Pages/test.dart';
 import './Pages/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, WidgetBuilder> routes = {
-      'Test': (context) => const Test(),
       '/home': (context) => const MyHomePage(),
       '/PointOfInterest': (context) => PointsOfInterest(),
       '/Calendar': (context) => Calendar(),
@@ -45,6 +44,7 @@ class MyApp extends StatelessWidget {
       '/Login': (context) => const MyLoginIn(username: 'Gui'),
       '/SignIn': (context) => const SignIn(),
       '/SignUp': (context) => const SignUp(),
+      '/createFrom': (context) => createForm()
     };
 
     for (var area in areas) {
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           textTheme: GoogleFonts.robotoTextTheme(), fontFamily: 'Roboto'),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/Test',
+      initialRoute: '/createFrom',
       routes: routes,
       home: const MyHomePage(),
     );
