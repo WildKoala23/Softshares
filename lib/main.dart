@@ -7,6 +7,7 @@ import 'package:softshares/Pages/login.dart';
 import 'package:softshares/Pages/pointsOfInterest.dart';
 import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/Pages/signup.dart';
+import 'package:softshares/Pages/test.dart';
 import './Pages/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, WidgetBuilder> routes = {
+      'Test': (context) => const Test(),
       '/home': (context) => const MyHomePage(),
       '/PointOfInterest': (context) => PointsOfInterest(),
       '/Calendar': (context) => Calendar(),
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           textTheme: GoogleFonts.robotoTextTheme(), fontFamily: 'Roboto'),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/Login',
+      initialRoute: '/Test',
       routes: routes,
       home: const MyHomePage(),
     );
