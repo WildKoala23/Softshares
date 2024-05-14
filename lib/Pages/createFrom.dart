@@ -9,16 +9,20 @@ class createForm extends StatefulWidget {
   Color containerColor = const Color(0xFFFEF7FF);
   Color appBarColor = const Color(0xff80ADD7);
   Color appBarFont = const Color(0xFFFFFFFF);
+  Color mainColor = const Color(0xff80ADD7);
 }
 
-List<String> options = [
+const List<String> options = [
   "Radio Button",
   "Checkbox",
   "TextField",
-  "Number input"
+  "Number Input"
 ];
 
 class _MyWidgetState extends State<createForm> {
+  List<Widget> formItens = [];
+  String currentOption = options[0];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,24 +34,32 @@ class _MyWidgetState extends State<createForm> {
         actions: const [Icon(Icons.check)],
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return modalForm();
-              },
-            );
-          },
-          child: Text('Add Items'),
-        ),
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          const SizedBox(),
+          ElevatedButton(
+            style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(widget.mainColor)),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                    return formBottomSheet(setState, context);
+                  });
+                },
+              );
+            },
+            child: const Text('Add Items'),
+          ),
+        ]),
       ),
     );
   }
 
-  Container modalForm() {
-    String currentOption = options[0];
-
+  Container formBottomSheet(StateSetter setState, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
@@ -97,10 +109,69 @@ class _MyWidgetState extends State<createForm> {
                 });
               }),
           ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(widget.mainColor),
+              ),
               onPressed: () {
+                /*Handles the type of input the user wants to add*/
+                switch (currentOption) {
+                  case "Radio Button":
+                    Navigator.pushNamed(context, '/createRadioBtn');
+                    break;
+                  case "Checkbox":
+                    break;
+                  case "TextField":
+                    break;
+                  case "Number Input":
+                    break;
+                }
                 Navigator.pop(context);
+                print("LIST OF ITEMS:");
+                formItens.forEach((item) {
+                  print(item);
+                });
               },
-              child: const Text('Add'))
+              child: Container(
+                width: 150,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Add',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Icon(Icons.add)
+                  ],
+                ),
+              ))
+        ],
+      ),
+    );
+  }
+
+  Scaffold radioBtnConf(BuildContext context) {
+    List<String> optionsRadio = [];
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: widget.appBarColor,
+        foregroundColor: widget.appBarFont,
+        leading: const Icon(Icons.close),
+        title: const Text('Create Radio Button'),
+        actions: const [Icon(Icons.check)],
+      ),
+      body: Column(
+        children: [
+          ElevatedButton(
+            style: ButtonStyle(
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(widget.mainColor)),
+            onPressed: () {
+              print("It is I, Pajama Man");
+              Navigator.pop(context);
+            },
+            child: const Text('Add Radio Button'),
+          ),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:softshares/Pages/area.dart';
 import 'package:softshares/Pages/MyProfile.dart';
 import 'package:softshares/Pages/calendar.dart';
 import 'package:softshares/Pages/createFrom.dart';
+import 'package:softshares/Pages/customRadioBtn.dart';
 import 'package:softshares/Pages/editProfile.dart';
 import 'package:softshares/Pages/login.dart';
 import 'package:softshares/Pages/pointsOfInterest.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
       '/Login': (context) => const MyLoginIn(username: 'Gui'),
       '/SignIn': (context) => const SignIn(),
       '/SignUp': (context) => const SignUp(),
-      '/createFrom': (context) => createForm()
+      '/createFrom': (context) => createForm(),
+      '/createRadioBtn': (context) => customRadioBtnForm(),
     };
 
     for (var area in areas) {
