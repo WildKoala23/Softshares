@@ -8,7 +8,7 @@ class createForm extends StatefulWidget {
 
   Color containerColor = const Color(0xFFFEF7FF);
   Color appBarColor = const Color(0xff80ADD7);
-  Color appBarFont = Color(0xFFFFFFFF);
+  Color appBarFont = const Color(0xFFFFFFFF);
 }
 
 List<String> options = [
