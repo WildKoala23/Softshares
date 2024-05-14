@@ -18,7 +18,7 @@ class _testState extends State<test> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomRadioBtn(label: 'label', options: ['option1', 'option2']),
+              customRadioBtn(label: 'label', options: ['option1', 'option2']),
             ],
           ),
         ),

@@ -29,6 +29,9 @@ class _MyWidgetState extends State<createForm> {
   void initState() {
     super.initState();
     formItens.add(customTextField(label: 'Name'));
+    formItens.add(customTextField(label: 'Last Name'));
+    formItens
+        .add(customRadioBtn(label: 'label', options: ['options1', 'options2']));
   }
 
   @override
@@ -36,18 +39,22 @@ class _MyWidgetState extends State<createForm> {
     return Scaffold(
       appBar: appBar(),
       body: Center(
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          const SizedBox(),
-          //customRadioBtn(label: 'label', options: ['option']),
-          Column(
-            children: [
-              customTextField(label: 'Name'),
-              CustomRadioBtn(label: 'label', options: ['option1'])
-            ],
-          ),
-          addItem(context),
-        ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const SizedBox(),
+            Expanded(
+              // Wrap ListView.builder with Expanded
+              child: ListView.builder(
+                itemCount: formItens.length,
+                itemBuilder: (context, index) {
+                  return formItens[index];
+                },
+              ),
+            ),
+            addItem(context),
+          ],
+        ),
       ),
     );
   }
@@ -75,7 +82,12 @@ class _MyWidgetState extends State<createForm> {
     return AppBar(
       backgroundColor: widget.appBarColor,
       foregroundColor: widget.appBarFont,
-      leading: const Icon(Icons.close),
+      leading: IconButton(
+        icon: Icon(Icons.close),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       title: const Text('Create Form'),
       actions: const [Icon(Icons.check)],
     );
@@ -144,7 +156,7 @@ class _MyWidgetState extends State<createForm> {
                     route = "/createRadioBtnForm";
                     final result = await Navigator.pushNamed(context, route);
                     if (result != null && result is Map<String, dynamic>) {
-                      item = CustomRadioBtn(
+                      item = customRadioBtn(
                           label: result["userLabel"],
                           options: result["options"]);
                     }
@@ -161,9 +173,7 @@ class _MyWidgetState extends State<createForm> {
                 }
                 /*Add new item to the form list*/
                 if (item != null) {
-                  setState(() {
-                    formItens.add(item!);
-                  });
+                  formItens.add(item);
                   print(formItens.length);
                 }
               },

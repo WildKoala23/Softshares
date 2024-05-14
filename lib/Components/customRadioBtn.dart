@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class CustomRadioBtn extends StatefulWidget {
+class customRadioBtn extends StatefulWidget {
   final String label;
   final List<String> options;
 
-  const CustomRadioBtn({Key? key, required this.label, required this.options}) : super(key: key);
+  const customRadioBtn({Key? key, required this.label, required this.options}) : super(key: key);
 
   @override
-  State<CustomRadioBtn> createState() => _CustomRadioBtnState();
+  State<customRadioBtn> createState() => _CustomRadioBtnState();
 }
 
-class _CustomRadioBtnState extends State<CustomRadioBtn> {
+class _CustomRadioBtnState extends State<customRadioBtn> {
   late String selectedOption; // Initialize selectedOption
 
   @override
