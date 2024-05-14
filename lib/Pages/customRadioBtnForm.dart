@@ -24,7 +24,7 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
   /*Options that the user has created*/
   List<String> options = [];
   /*Label to the Radio Button in the form*/
-  String label = '';
+  String userLabel = '';
 
   /*Number of options to spawn*/
   int opt_num = 1;
@@ -61,16 +61,19 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
     }
   }
 
+  void returnValues() {
+    setState(() {
+      userLabel = labelController.text;
+      for (var controller in controllers) {
+        options.add(controller.text);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: widget.appBarColor,
-        foregroundColor: widget.appBarFont,
-        leading: const Icon(Icons.close),
-        title: const Text('Create Radio Button'),
-        actions: const [Icon(Icons.check)],
-      ),
+      appBar: appBar(),
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
         child: Column(
@@ -109,6 +112,26 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
     );
   }
 
+  AppBar appBar() {
+    return AppBar(
+      backgroundColor: widget.appBarColor,
+      foregroundColor: widget.appBarFont,
+      leading: IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: () => {Navigator.pop(context, null)},
+      ),
+      title: const Text('Create Radio Button'),
+      actions: [
+        IconButton(
+            onPressed: () {
+              returnValues();
+              Navigator.pop(context, {"userLabel":userLabel,"options": options});
+            },
+            icon: const Icon(Icons.check))
+      ],
+    );
+  }
+
   Container numOptionContent() {
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
@@ -122,7 +145,6 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
               addControllers();
             });
           } catch (e) {
-            print('Error parsing string to integer: $e');
             opt_num = 1;
           }
         },
@@ -140,7 +162,7 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
       child: TextField(
         controller: labelController,
         onSubmitted: (value) {
-          label = labelController.text;
+          userLabel = labelController.text;
         },
         keyboardType: TextInputType.name,
         decoration: const InputDecoration(
@@ -149,4 +171,5 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
       ),
     );
   }
+
 }

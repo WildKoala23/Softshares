@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/customRadioBtn.dart';
+import 'package:softshares/Components/customTextField.dart';
 
 class createForm extends StatefulWidget {
   createForm({super.key});
@@ -20,7 +22,7 @@ const List<String> options = [
 ];
 
 class _MyWidgetState extends State<createForm> {
-  List<Widget> formItens = [];
+  List<Widget> formItens = [customTextField(label: 'Name')];
   String currentOption = options[0];
 
   @override
@@ -37,6 +39,13 @@ class _MyWidgetState extends State<createForm> {
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           const SizedBox(),
+          Expanded(
+              child: Container(
+                  child: ListView.builder(
+                      itemCount: formItens.length,
+                      itemBuilder: (contex, index) {
+                        return formItens[index];
+                      }))),
           ElevatedButton(
             style: ButtonStyle(
                 foregroundColor:
@@ -113,12 +122,19 @@ class _MyWidgetState extends State<createForm> {
                 foregroundColor:
                     MaterialStateProperty.all<Color>(widget.mainColor),
               ),
-              onPressed: () {
+              onPressed: () async {
                 String route = '';
+                Widget? item;
                 /*Handles the type of input the user wants to add*/
                 switch (currentOption) {
                   case "Radio Button":
-                    route = "/createRadioBtn";
+                    route = "/createRadioBtnForm";
+                    final result = await Navigator.pushNamed(context, route);
+                    if (result != null && result is Map<String, dynamic>) {
+                      item = customRadioBtn(
+                          label: result["userLabel"],
+                          options: result["options"]);
+                    }
                     print(currentOption);
                     break;
                   case "Checkbox":
@@ -131,11 +147,12 @@ class _MyWidgetState extends State<createForm> {
                     print(currentOption);
                     break;
                 }
-                Navigator.pushNamed(context, route);
-                print("LIST OF ITEMS:");
-                formItens.forEach((item) {
-                  print(item);
-                });
+                /*Add new item to the form list*/
+                if (item != null) {
+                  setState(() {
+                    formItens.add(item!);
+                  });
+                }
               },
               child: Container(
                 width: 150,
