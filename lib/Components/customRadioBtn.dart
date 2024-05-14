@@ -12,12 +12,16 @@ class customRadioBtn extends StatefulWidget {
 }
 
 class _CustomRadioBtnState extends State<customRadioBtn> {
-  late String selectedOption; // Initialize selectedOption
+  late String currentOption;
 
   @override
   void initState() {
     super.initState();
-    selectedOption = widget.options.first; // Initialize to the first option
+    currentOption = widget.options[0];
+    /*Remove null char at the end of list */
+    if (widget.options.length > 1) {
+      widget.options.removeLast();
+    }
   }
 
   @override
@@ -40,10 +44,10 @@ class _CustomRadioBtnState extends State<customRadioBtn> {
             return RadioListTile(
               title: Text(option),
               value: option,
-              groupValue: selectedOption,
+              groupValue: currentOption,
               onChanged: (value) {
                 setState(() {
-                  selectedOption = value.toString();
+                  currentOption = value.toString();
                 });
               },
             );

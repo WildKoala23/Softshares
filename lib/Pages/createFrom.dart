@@ -20,18 +20,16 @@ const List<String> options = [
   "TextField",
   "Number Input"
 ];
+List<Widget> formItens = [];
 
 class _MyWidgetState extends State<createForm> {
-  List<Widget> formItens = [];
+
   String currentOption = options[0];
 
-  @override
-  void initState() {
-    super.initState();
-    formItens.add(customTextField(label: 'Name'));
-    formItens.add(customTextField(label: 'Last Name'));
-    formItens
-        .add(customRadioBtn(label: 'label', options: ['options1', 'options2']));
+  void addItemToList(Widget item) {
+    setState(() {
+      formItens.add(item);
+    });
   }
 
   @override
@@ -83,7 +81,7 @@ class _MyWidgetState extends State<createForm> {
       backgroundColor: widget.appBarColor,
       foregroundColor: widget.appBarFont,
       leading: IconButton(
-        icon: Icon(Icons.close),
+        icon: const Icon(Icons.close),
         onPressed: () {
           Navigator.pop(context);
         },
@@ -161,7 +159,7 @@ class _MyWidgetState extends State<createForm> {
                           options: result["options"]);
                     }
                     break;
-                  /*case "Checkbox":
+                  case "Checkbox":
                     print(currentOption);
                     break;
                   case "TextField":
@@ -169,14 +167,13 @@ class _MyWidgetState extends State<createForm> {
                     break;
                   case "Number Input":
                     print(currentOption);
-                    break;*/
+                    break;
                 }
                 /*Add new item to the form list*/
                 if (item != null) {
-                  setState(() {
-                    formItens.add(item!);
-                  });
+                  addItemToList(item);
                 }
+                Navigator.pop(context);
               },
               child: Container(
                 width: 150,

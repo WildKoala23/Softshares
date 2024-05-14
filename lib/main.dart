@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
     for (var area in areas) {
       routes['/$area'] = (context) => Area(title: area);
     }
-
+    
     return MaterialApp(
       title: 'SoftShares',
       theme: ThemeData(
