@@ -4,7 +4,8 @@ class customRadioBtn extends StatefulWidget {
   final String label;
   final List<String> options;
 
-  const customRadioBtn({Key? key, required this.label, required this.options}) : super(key: key);
+  const customRadioBtn({Key? key, required this.label, required this.options})
+      : super(key: key);
 
   @override
   State<customRadioBtn> createState() => _CustomRadioBtnState();
@@ -24,11 +25,14 @@ class _CustomRadioBtnState extends State<customRadioBtn> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+        Padding(
+          padding: const EdgeInsets.only(left: 25.0, top: 20),
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
         ),
         Column(

@@ -173,8 +173,9 @@ class _MyWidgetState extends State<createForm> {
                 }
                 /*Add new item to the form list*/
                 if (item != null) {
-                  formItens.add(item);
-                  print(formItens.length);
+                  setState(() {
+                    formItens.add(item!);
+                  });
                 }
               },
               child: Container(
