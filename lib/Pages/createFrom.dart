@@ -22,49 +22,62 @@ const List<String> options = [
 ];
 
 class _MyWidgetState extends State<createForm> {
-  List<Widget> formItens = [customTextField(label: 'Name')];
+  List<Widget> formItens = [];
   String currentOption = options[0];
+
+  @override
+  void initState() {
+    super.initState();
+    formItens.add(customTextField(label: 'Name'));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: widget.appBarColor,
-        foregroundColor: widget.appBarFont,
-        leading: const Icon(Icons.close),
-        title: const Text('Create Form'),
-        actions: const [Icon(Icons.check)],
-      ),
+      appBar: appBar(),
       body: Center(
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           const SizedBox(),
-          Expanded(
-              child: Container(
-                  child: ListView.builder(
-                      itemCount: formItens.length,
-                      itemBuilder: (contex, index) {
-                        return formItens[index];
-                      }))),
-          ElevatedButton(
-            style: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(widget.mainColor)),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                    return formBottomSheet(setState, context);
-                  });
-                },
-              );
-            },
-            child: const Text('Add Items'),
+          //customRadioBtn(label: 'label', options: ['option']),
+          Column(
+            children: [
+              customTextField(label: 'Name'),
+              CustomRadioBtn(label: 'label', options: ['option1'])
+            ],
           ),
+          addItem(context),
         ]),
       ),
+    );
+  }
+
+  ElevatedButton addItem(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(widget.mainColor)),
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return formBottomSheet(setState, context);
+            });
+          },
+        );
+      },
+      child: const Text('Add Items'),
+    );
+  }
+
+  AppBar appBar() {
+    return AppBar(
+      backgroundColor: widget.appBarColor,
+      foregroundColor: widget.appBarFont,
+      leading: const Icon(Icons.close),
+      title: const Text('Create Form'),
+      actions: const [Icon(Icons.check)],
     );
   }
 
@@ -131,13 +144,12 @@ class _MyWidgetState extends State<createForm> {
                     route = "/createRadioBtnForm";
                     final result = await Navigator.pushNamed(context, route);
                     if (result != null && result is Map<String, dynamic>) {
-                      item = customRadioBtn(
+                      item = CustomRadioBtn(
                           label: result["userLabel"],
                           options: result["options"]);
                     }
-                    print(currentOption);
                     break;
-                  case "Checkbox":
+                  /*case "Checkbox":
                     print(currentOption);
                     break;
                   case "TextField":
@@ -145,13 +157,14 @@ class _MyWidgetState extends State<createForm> {
                     break;
                   case "Number Input":
                     print(currentOption);
-                    break;
+                    break;*/
                 }
                 /*Add new item to the form list*/
                 if (item != null) {
                   setState(() {
                     formItens.add(item!);
                   });
+                  print(formItens.length);
                 }
               },
               child: Container(

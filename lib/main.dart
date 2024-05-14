@@ -9,6 +9,7 @@ import 'package:softshares/Pages/login.dart';
 import 'package:softshares/Pages/pointsOfInterest.dart';
 import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/Pages/signup.dart';
+import 'package:softshares/test.dart';
 import './Pages/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
       '/SignUp': (context) => const SignUp(),
       '/createForm': (context) => createForm(),
       '/createRadioBtnForm': (context) => customRadioBtnForm(),
+      '/test':(context) => test()
     };
 
     for (var area in areas) {

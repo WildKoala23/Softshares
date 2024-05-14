@@ -27,7 +27,7 @@ class MyBottomBar extends StatelessWidget {
               Icons.add,
             ),
             onPressed: () {
-              //Navigator.pushNamed(context, '/AddForm');
+              Navigator.pushNamed(context, '/createForm');
             },
           ),
           label: 'Add',

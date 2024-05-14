@@ -1,34 +1,50 @@
 import 'package:flutter/material.dart';
 
-class customRadioBtn extends StatefulWidget {
+class CustomRadioBtn extends StatefulWidget {
   final String label;
   final List<String> options;
-  const customRadioBtn({super.key, required this.label, required this.options});
+
+  const CustomRadioBtn({Key? key, required this.label, required this.options}) : super(key: key);
 
   @override
-  State<customRadioBtn> createState() => _customRadioBtnState();
+  State<CustomRadioBtn> createState() => _CustomRadioBtnState();
 }
 
-class _customRadioBtnState extends State<customRadioBtn> {
+class _CustomRadioBtnState extends State<CustomRadioBtn> {
+  late String selectedOption; // Initialize selectedOption
+
+  @override
+  void initState() {
+    super.initState();
+    selectedOption = widget.options.first; // Initialize to the first option
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          child: Text(widget.label),
+        Text(
+          widget.label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
-        Expanded(
-            child: ListView.builder(
-                itemCount: widget.options.length,
-                itemBuilder: (context, index) {
-                  return Text('data');
-
-                  /*RadioListTile(
-              value: widget.options[index],
-              groupValue: widget.options[index],
-              onChanged: (value) {})*/
-                  ;
-                }))
+        Column(
+          children: widget.options.map((option) {
+            return RadioListTile(
+              title: Text(option),
+              value: option,
+              groupValue: selectedOption,
+              onChanged: (value) {
+                setState(() {
+                  selectedOption = value.toString();
+                });
+              },
+            );
+          }).toList(),
+        ),
       ],
     );
   }
