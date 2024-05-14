@@ -114,19 +114,24 @@ class _MyWidgetState extends State<createForm> {
                     MaterialStateProperty.all<Color>(widget.mainColor),
               ),
               onPressed: () {
+                String route = '';
                 /*Handles the type of input the user wants to add*/
                 switch (currentOption) {
                   case "Radio Button":
-                    Navigator.pushNamed(context, '/createRadioBtn');
+                    route = "/createRadioBtn";
+                    print(currentOption);
                     break;
                   case "Checkbox":
+                    print(currentOption);
                     break;
                   case "TextField":
+                    print(currentOption);
                     break;
                   case "Number Input":
+                    print(currentOption);
                     break;
                 }
-                Navigator.pop(context);
+                Navigator.pushNamed(context, route);
                 print("LIST OF ITEMS:");
                 formItens.forEach((item) {
                   print(item);
