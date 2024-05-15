@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Pages/area.dart';
 import 'package:softshares/Pages/MyProfile.dart';
 import 'package:softshares/Pages/calendar.dart';
+import 'package:softshares/Pages/createCheckboxForm.dart';
 import 'package:softshares/Pages/createFrom.dart';
 import 'package:softshares/Pages/customFieldTextForm.dart';
 import 'package:softshares/Pages/customRadioBtnForm.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
       '/createForm': (context) => createForm(),
       '/createRadioBtnForm': (context) => customRadioBtnForm(),
       '/createFieldTextForm': (context) => customFieldtextForm(),
+      '/createCheckboxForm': (context) => customCheckboxForm(),
       '/test':(context) => test()
     };
 
@@ -62,7 +64,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           textTheme: GoogleFonts.robotoTextTheme(), fontFamily: 'Roboto'),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/createForm',
+      initialRoute: '/Login',
       routes: routes,
       home: const MyHomePage(),
     );

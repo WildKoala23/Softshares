@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
+import 'package:softshares/Pages/createCheckboxForm.dart';
 
 class createForm extends StatefulWidget {
   createForm({super.key});
@@ -17,13 +19,11 @@ class createForm extends StatefulWidget {
 const List<String> options = [
   "Radio Button",
   "Checkbox",
-  "TextField",
-  "Number Input"
+  "Text/Numeric Input",
 ];
 List<Widget> formItens = [];
 
 class _MyWidgetState extends State<createForm> {
-
   String currentOption = options[0];
 
   void addItemToList(Widget item) {
@@ -131,15 +131,6 @@ class _MyWidgetState extends State<createForm> {
                   currentOption = value.toString();
                 });
               }),
-          RadioListTile(
-              title: Text(options[3], style: const TextStyle(fontSize: 24)),
-              value: options[3],
-              groupValue: currentOption,
-              onChanged: (value) {
-                setState(() {
-                  currentOption = value.toString();
-                });
-              }),
           ElevatedButton(
               style: ButtonStyle(
                 foregroundColor:
@@ -162,19 +153,26 @@ class _MyWidgetState extends State<createForm> {
                     }
                     break;
                   case "Checkbox":
-                    print(currentOption);
+
+                    /*Doing */
+                    final result = await Navigator.pushNamed(
+                        context, "/createCheckboxForm");
+                    if (result != null && result is Map<String, dynamic>) {
+                      item = customCheckbox(
+                          label: result["userLabel"],
+                          options: result["options"]);
+                    }
+
                     break;
-                  case "TextField":
-                  //route = "/createFieldTextForm";
-                    final result = await Navigator.pushNamed(context, "/createFieldTextForm");
+                  case "Text/Numeric Input":
+                    //route = "/createFieldTextForm";
+                    final result = await Navigator.pushNamed(
+                        context, "/createFieldTextForm");
                     if (result != null && result is Map<String, dynamic>) {
                       item = customTextField(
                           label: result["userLabel"],
                           numericInput: result["numeric"]);
                     }
-                    break;
-                  case "Number Input":
-                    print(currentOption);
                     break;
                 }
                 /*Add new item to the form list*/
