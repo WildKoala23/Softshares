@@ -165,12 +165,12 @@ class _MyWidgetState extends State<createForm> {
                     print(currentOption);
                     break;
                   case "TextField":
-                  route = "/createRadioBtnForm";
-                    final result = await Navigator.pushNamed(context, route);
+                  //route = "/createFieldTextForm";
+                    final result = await Navigator.pushNamed(context, "/createFieldTextForm");
                     if (result != null && result is Map<String, dynamic>) {
-                      item = customRadioBtn(
+                      item = customTextField(
                           label: result["userLabel"],
-                          options: result["options"]);
+                          numericInput: result["numeric"]);
                     }
                     break;
                   case "Number Input":
