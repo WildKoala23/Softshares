@@ -22,7 +22,12 @@ class formAppbar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       title: Text(title),
-      actions: const [Icon(Icons.check)],
+      actions: const [
+        Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: Icon(Icons.check),
+        )
+      ],
     );
   }
 
