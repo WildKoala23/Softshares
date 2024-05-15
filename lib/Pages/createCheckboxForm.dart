@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/formAppBar.dart';
 
 class customCheckboxForm extends StatefulWidget {
   customCheckboxForm({super.key});
@@ -62,7 +63,7 @@ class _customCheckboxFormState extends State<customCheckboxForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: formAppbar(title: 'Create Checkbox'),
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
         child: Column(
