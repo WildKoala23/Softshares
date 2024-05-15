@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class customCheckbox extends StatefulWidget {
   final String label;
   final List<String> options;
+
   const customCheckbox({Key? key, required this.label, required this.options})
       : super(key: key);
 
@@ -11,12 +12,13 @@ class customCheckbox extends StatefulWidget {
 }
 
 class _customCheckboxState extends State<customCheckbox> {
-  late bool currentOption;
+  late List<bool> selectedOptions;
 
   @override
   void initState() {
     super.initState();
-    currentOption = false;
+    // Initialize all options as unselected
+    selectedOptions = List<bool>.filled(widget.options.length, false);
     /*Remove null char at the end of list */
     if (widget.options.length > 1) {
       widget.options.removeLast();
@@ -40,11 +42,13 @@ class _customCheckboxState extends State<customCheckbox> {
         ),
         Column(
           children: widget.options.map((option) {
-            return Checkbox(
-              value: false,
+            int index = widget.options.indexOf(option);
+            return CheckboxListTile(
+              title: Text(option),
+              value: selectedOptions[index],
               onChanged: (value) {
                 setState(() {
-                  currentOption = value!;
+                  selectedOptions[index] = value ?? false;
                 });
               },
             );
