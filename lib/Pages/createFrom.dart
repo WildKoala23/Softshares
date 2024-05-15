@@ -35,7 +35,7 @@ class _MyWidgetState extends State<createForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: formAppbar(title: 'Create form',),
+      appBar: formAppbar(title: 'Create Form',),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
