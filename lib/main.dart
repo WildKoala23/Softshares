@@ -3,6 +3,7 @@ import 'package:softshares/Pages/area.dart';
 import 'package:softshares/Pages/MyProfile.dart';
 import 'package:softshares/Pages/calendar.dart';
 import 'package:softshares/Pages/createFrom.dart';
+import 'package:softshares/Pages/customFieldTextForm.dart';
 import 'package:softshares/Pages/customRadioBtnForm.dart';
 import 'package:softshares/Pages/editProfile.dart';
 import 'package:softshares/Pages/login.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
       '/SignUp': (context) => const SignUp(),
       '/createForm': (context) => createForm(),
       '/createRadioBtnForm': (context) => customRadioBtnForm(),
+      '/createFieldTextForm': (context) => customFieldtextForm(),
       '/test':(context) => test()
     };
 

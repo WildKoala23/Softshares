@@ -148,7 +148,9 @@ class _MyWidgetState extends State<createForm> {
               onPressed: () async {
                 String route = '';
                 Widget? item;
+
                 /*Handles the type of input the user wants to add*/
+
                 switch (currentOption) {
                   case "Radio Button":
                     route = "/createRadioBtnForm";
@@ -163,7 +165,13 @@ class _MyWidgetState extends State<createForm> {
                     print(currentOption);
                     break;
                   case "TextField":
-                    print(currentOption);
+                  route = "/createRadioBtnForm";
+                    final result = await Navigator.pushNamed(context, route);
+                    if (result != null && result is Map<String, dynamic>) {
+                      item = customRadioBtn(
+                          label: result["userLabel"],
+                          options: result["options"]);
+                    }
                     break;
                   case "Number Input":
                     print(currentOption);
