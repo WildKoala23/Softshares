@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
+import 'package:softshares/Components/formAppBar.dart';
 
 class createForm extends StatefulWidget {
   createForm({super.key});
@@ -34,7 +35,7 @@ class _MyWidgetState extends State<createForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: formAppbar(title: 'Create form',),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -72,21 +73,6 @@ class _MyWidgetState extends State<createForm> {
         );
       },
       child: const Text('Add Items'),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: widget.appBarColor,
-      foregroundColor: widget.appBarFont,
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      title: const Text('Create Form'),
-      actions: const [Icon(Icons.check)],
     );
   }
 

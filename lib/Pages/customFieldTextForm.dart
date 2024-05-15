@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/formAppBar.dart';
 
 class customFieldtextForm extends StatefulWidget {
   customFieldtextForm({super.key});
@@ -33,7 +34,7 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: formAppbar(title: 'Create Textfield',),
       body: Column(
         children: [
           Container(
@@ -85,22 +86,4 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
     );
   }
 
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: widget.appBarColor,
-      foregroundColor: widget.appBarFont,
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () => {Navigator.pop(context, null)},
-      ),
-      title: const Text('Create Fieldtext'),
-      actions: [
-        IconButton(
-            onPressed: () {
-              Navigator.pop(context, {"userLabel":userLabel,"numeric": isChecked});
-            },
-            icon: const Icon(Icons.check))
-      ],
-    );
-  }
 }

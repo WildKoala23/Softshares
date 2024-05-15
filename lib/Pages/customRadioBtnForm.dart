@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:softshares/Components/formAppBar.dart';
 
 class customRadioBtnForm extends StatefulWidget {
   customRadioBtnForm({super.key});
@@ -73,7 +74,7 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: formAppbar(title: 'Create Radio Button',),
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
         child: Column(
