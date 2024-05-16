@@ -20,12 +20,18 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
+  void callBack(context) {
+    print('Will implement');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: MyAppBar(
         iconR: const Icon(Icons.notifications),
         title: 'Calendar',
+        rightCallback: callBack,
       ),
       body: Column(
         children: [

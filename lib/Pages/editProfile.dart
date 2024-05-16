@@ -60,26 +60,31 @@ class _EditProfileState extends State<EditProfile> {
     dateController.dispose();
     cityController.dispose();
   }
+  /*Callback function to exit screen */
+  void closeCallback(context) {
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: MyAppBar(iconR: const Icon(Icons.close), title: 'Edit Profile'),
+      appBar: MyAppBar(iconR: const Icon(Icons.close), title: 'Edit Profile', rightCallback: closeCallback,),
       drawer: myDrawer(location: 'Viseu'),
       bottomNavigationBar: MyBottomBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            profilePicture(),
+            profilePicture(colorScheme),
             //Name
-            nameContent(),
+            nameContent(colorScheme),
             //Email
-            emailContent(),
+            emailContent(colorScheme),
             //Date
-            dateContent(),
+            dateContent(colorScheme),
             //City
-            cityContent(),
+            cityContent(colorScheme),
             Container(
               height: 30,
               margin: const EdgeInsets.only(left: 20, right: 20),
@@ -89,38 +94,39 @@ class _EditProfileState extends State<EditProfile> {
               ),
             ),
             //Preferences
-            preferencesContent(),
+            preferencesContent(colorScheme),
             const SizedBox(
               height: 70,
             ),
-            saveBtn(context)
+            saveBtn(context, colorScheme)
           ],
         ),
       ),
     );
   }
 
-  Container saveBtn(BuildContext context) {
+  Container saveBtn(BuildContext context, ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 45,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: const Color(0xFF80ADD7),
+            foregroundColor: colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary,
           ),
           onPressed: () => {Navigator.pop(context)},
           child: const Text('Save changes')),
     );
   }
 
-  Container preferencesContent() {
+  Container preferencesContent(ColorScheme colorScheme) {
     return Container(
       height: 200,
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      decoration:
+          BoxDecoration(border: Border.all(color: colorScheme.onSecondary)),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -148,23 +154,23 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Container cityContent() {
+  Container cityContent(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: cityController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
             label: Text(
               'City',
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xff80ADD7)))),
+                borderSide: BorderSide(color: colorScheme.primary))),
       ),
     );
   }
 
-  Container dateContent() {
+  Container dateContent(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
@@ -172,51 +178,51 @@ class _EditProfileState extends State<EditProfile> {
         onTap: () {
           _selectDate();
         },
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
             suffixIcon: Icon(Icons.calendar_today),
             label: Text(
               "Date",
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xff80ADD7)))),
+                borderSide: BorderSide(color: colorScheme.primary))),
       ),
     );
   }
 
-  Container emailContent() {
+  Container emailContent(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: emailController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
             label: Text(
               "Email",
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xff80ADD7)))),
+                borderSide: BorderSide(color: colorScheme.primary))),
       ),
     );
   }
 
-  Container nameContent() {
+  Container nameContent(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: nameController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
             label: Text(
               "Name",
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xff80ADD7)))),
+                borderSide: BorderSide(color: colorScheme.primary))),
       ),
     );
   }
 
-  Container profilePicture() {
+  Container profilePicture(ColorScheme colorScheme) {
     return Container(
       height: 220,
       child: Center(
@@ -234,11 +240,12 @@ class _EditProfileState extends State<EditProfile> {
                   width: 150,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(75),
-                      color: Color(0xff00C2FF)),
+                      color: colorScheme.secondary),
                   child: Center(
                     child: Text(
                       user.lastName[0],
-                      style: TextStyle(fontSize: 54, color: Colors.white),
+                      style:
+                          TextStyle(fontSize: 54, color: colorScheme.onPrimary),
                     ),
                   )),
               Positioned(
@@ -249,14 +256,15 @@ class _EditProfileState extends State<EditProfile> {
                   width: 42,
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(color: Color(0xff00C2FF), width: 3),
+                      border:
+                          Border.all(color: colorScheme.secondary, width: 3),
                       borderRadius: BorderRadius.circular(95)),
                   child: Center(
                     child: IconButton(
                       onPressed: () {},
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.edit,
-                        color: Color(0xff00C2FF),
+                        color: colorScheme.secondary,
                         size: 22,
                       ),
                     ),

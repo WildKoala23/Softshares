@@ -13,9 +13,8 @@ import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/Pages/signup.dart';
 import 'package:softshares/test.dart';
 import './Pages/homepage.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-final lightColorScheme = const ColorScheme(
+const lightColorScheme = ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff80ADD7),
     onPrimary: Colors.white,
@@ -27,7 +26,8 @@ final lightColorScheme = const ColorScheme(
     onBackground: Colors.black,
     surface: Color(0xFFFEF7FF),
     onSurface: Colors.black,
-    onTertiary: Color(0xFF49454F));
+    onTertiary: Color(0xFF49454F),
+    );
 
 void main() {
   List<String> areas = [

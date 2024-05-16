@@ -17,12 +17,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<ForumCard> testList = createTestForumCards();
 
+  void leftCallback(context) {
+    print('Notifications');
+  }
+
+  void rightCallback(context) {
+    print('search');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
         iconL: const Icon(Icons.notifications),
+        leftCallback: leftCallback,
         iconR: const Icon(Icons.search),
+        rightCallback: rightCallback,
         title: 'Homepage',
       ), //homeAppBar(),
       body: Center(

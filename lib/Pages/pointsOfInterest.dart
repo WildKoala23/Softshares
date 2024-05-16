@@ -15,13 +15,23 @@ class PointsOfInterest extends StatefulWidget {
 class _PointsOfInterestState extends State<PointsOfInterest> {
   List<POICard> testPOICards = createTestPOICards();
 
+  void rightCallback(context) {
+    print('search');
+  }
+
+  void leftCallback(context) {
+    print('Filter');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
         iconL: const Icon(Icons.filter_alt_outlined),
+        leftCallback: leftCallback,
         title: 'Points of Interest',
         iconR: const Icon(Icons.search),
+        rightCallback: rightCallback,
       ),
       drawer: myDrawer(location: 'Viseu'),
       body: Center(

@@ -17,13 +17,18 @@ class _MyHomePageState extends State<MyProfile> {
   //Placeholder User for testing
   User user = User('Guilherme', 'Pedrinho', 'Software Engineer', 'Viseu', "email@example.com", 23, 09, 2001);
 
+  void rightCallback(context){
+    print('settings');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
         iconR: const Icon(Icons.settings),
+        rightCallback: rightCallback,
         title: 'Profile',
-      ), //homeAppBar(),
+      ),
       body: Column(
         children: [
           profilePicture(),

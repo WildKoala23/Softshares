@@ -12,22 +12,33 @@ class Area extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<Area> {
+  void leftCallback(context) {
+    print('Filter');
+  }
+
+  void rigthCallBack(context) {
+    print('search');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: MyAppBar(
         iconR: const Icon(Icons.search),
+        leftCallback: leftCallback,
+        rightCallback: rigthCallBack,
         title: widget.title,
         iconL: const Icon(Icons.filter_alt),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           children: [
             DefaultTabController(
                 length: 3,
                 child: TabBar(
-                  labelColor: Colors.black,
-                  indicatorColor: Color(0xff00C2FF),
+                  labelColor: colorScheme.onSecondary,
+                  indicatorColor: colorScheme.secondary,
                   splashFactory: NoSplash.splashFactory,
                   tabs: [
                     Tab(

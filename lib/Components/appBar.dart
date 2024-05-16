@@ -8,8 +8,16 @@ import 'package:flutter/material.dart';
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Icon? iconR, iconL;
   String title;
+  final void Function(BuildContext)? leftCallback;
+  void Function(BuildContext) rightCallback;
 
-  MyAppBar({super.key, required this.iconR, required this.title, this.iconL});
+  MyAppBar(
+      {super.key,
+      required this.iconR,
+      required this.title,
+      this.iconL,
+      this.leftCallback,
+      required this.rightCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +28,19 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title),
       actions: [
         //If Right icon exists, create button
-        if (iconL != null) IconButton(onPressed: () {}, icon: iconL!),
-        IconButton(onPressed: () {}, icon: iconR!)
+        if (iconL != null)
+          IconButton(
+              onPressed: () {
+                if (leftCallback != null) {
+                  leftCallback!(context);
+                }
+              },
+              icon: iconL!),
+        IconButton(
+            onPressed: () {
+              rightCallback!(context);
+            },
+            icon: iconR!)
       ],
     );
   }
