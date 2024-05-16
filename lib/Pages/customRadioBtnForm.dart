@@ -123,7 +123,11 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
                 },
               ),
             ),
-            addBtn(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Center(
+                child: addBtn()),
+            ),
           ],
         ),
       ),

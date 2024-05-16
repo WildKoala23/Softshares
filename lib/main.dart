@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           textTheme: GoogleFonts.robotoTextTheme(), fontFamily: 'Roboto'),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/createForm',
+      initialRoute: '/createRadioBtnForm',
       routes: routes,
       home: const MyHomePage(),
     );

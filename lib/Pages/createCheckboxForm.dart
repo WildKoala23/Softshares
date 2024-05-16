@@ -122,7 +122,11 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
                 },
               ),
             ),
-            addBtn(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Center(
+                child: addBtn()),
+            ),
           ],
         ),
       ),
@@ -142,7 +146,7 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
         }
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(widget.mainColor),
+        foregroundColor: MaterialStateProperty.all<Color>(widget.mainColor),
       ),
       child: const Text('Add Fieldtext'),
     );

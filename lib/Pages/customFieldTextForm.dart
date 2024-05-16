@@ -84,7 +84,11 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
               ],
             ),
           ),
-          addBtn()
+          Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Center(
+                child: addBtn()),
+            ),
         ],
       ),
     );
