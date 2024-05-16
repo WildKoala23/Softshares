@@ -52,13 +52,13 @@ class MyApp extends StatelessWidget {
       '/createRadioBtnForm': (context) => customRadioBtnForm(),
       '/createFieldTextForm': (context) => customFieldtextForm(),
       '/createCheckboxForm': (context) => customCheckboxForm(),
-      '/test':(context) => test()
+      '/test': (context) => test()
     };
 
     for (var area in areas) {
       routes['/$area'] = (context) => Area(title: area);
     }
-    
+
     return MaterialApp(
       title: 'SoftShares',
       theme: ThemeData(
