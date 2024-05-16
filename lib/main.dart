@@ -15,6 +15,19 @@ import 'package:softshares/test.dart';
 import './Pages/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+final lightColorScheme = const ColorScheme(
+    brightness: Brightness.light,
+    primary: Color(0xff80ADD7),
+    onPrimary: Colors.white,
+    secondary: Color(0xff00C2FF),
+    onSecondary: Color(0xff80ADD7),
+    error: Colors.red,
+    onError: Colors.white,
+    background: Colors.white,
+    onBackground: Colors.black,
+    surface: Color(0xFFFEF7FF),
+    onSurface: Colors.black);
+
 void main() {
   List<String> areas = [
     'Education',
@@ -62,9 +75,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SoftShares',
       theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Color(0xff80ADD7),
-      ),
+          brightness: Brightness.light, colorScheme: lightColorScheme),
       debugShowCheckedModeBanner: false,
       initialRoute: '/home',
       routes: routes,

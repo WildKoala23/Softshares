@@ -13,9 +13,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AppBar(
-      backgroundColor: Theme.of(context).primaryColor,
-      foregroundColor: Colors.white,
+      backgroundColor: colorScheme.onSecondary,
+      foregroundColor: colorScheme.onPrimary,
       title: Text(title),
       actions: [
         //If Right icon exists, create button
