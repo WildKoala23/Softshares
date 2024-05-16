@@ -35,7 +35,9 @@ class _MyWidgetState extends State<createForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: formAppbar(title: 'Create Form',),
+      appBar: const formAppbar(
+        title: 'Create Form',
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -50,7 +52,10 @@ class _MyWidgetState extends State<createForm> {
                 },
               ),
             ),
-            addItem(context),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0, top: 15),
+              child: addItem(context),
+            ),
           ],
         ),
       ),
@@ -154,6 +159,7 @@ class _MyWidgetState extends State<createForm> {
                     final result = await Navigator.pushNamed(
                         context, "/createFieldTextForm");
                     if (result != null && result is Map<String, dynamic>) {
+
                       item = customTextField(
                           label: result["userLabel"],
                           numericInput: result["numeric"]);
@@ -201,7 +207,6 @@ class _MyWidgetState extends State<createForm> {
                 foregroundColor:
                     MaterialStateProperty.all<Color>(widget.mainColor)),
             onPressed: () {
-              print("It is I, Pajama Man");
               Navigator.pop(context);
             },
             child: const Text('Add Radio Button'),

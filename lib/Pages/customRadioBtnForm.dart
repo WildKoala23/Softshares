@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:softshares/Components/formAppBar.dart';
 
 class customRadioBtnForm extends StatefulWidget {
   customRadioBtnForm({super.key});
@@ -11,33 +9,27 @@ class customRadioBtnForm extends StatefulWidget {
   Color mainColor = const Color(0xff80ADD7);
 
   @override
-  State<customRadioBtnForm> createState() => _customRadioBtnState();
+  State<customRadioBtnForm> createState() => _CustomRadioBtnState();
 }
 
-class _customRadioBtnState extends State<customRadioBtnForm> {
+class _CustomRadioBtnState extends State<customRadioBtnForm> {
   TextEditingController labelController = TextEditingController();
-  /*Number of options controller */
   TextEditingController numOptController = TextEditingController();
 
-  /*List of controllers to controll user defined textfields*/
   List<TextEditingController> controllers = [];
-
-  /*Options that the user has created*/
   List<String> options = [];
-  /*Label to the Radio Button in the form*/
   String userLabel = '';
-
-  /*Number of options to spawn*/
   int opt_num = 1;
 
   void clearIndexControllers() {
-    for (int i = 0; i < opt_num; i++) {
-      controllers.remove(TextEditingController());
+    for (var controller in controllers) {
+      controller.dispose();
     }
+    controllers.clear();
   }
 
-  void addControllers() {
-    for (int i = 0; i < opt_num; i++) {
+  void addControllers(int count) {
+    for (int i = 0; i < count; i++) {
       controllers.add(TextEditingController());
     }
   }
@@ -45,91 +37,94 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers based on the itemCount
-    addControllers();
-    /*Placeholder*/
+    addControllers(opt_num);
     numOptController.text = "1";
     labelController.text = "Label";
   }
 
   @override
   void dispose() {
-    super.dispose();
     labelController.dispose();
     numOptController.dispose();
-    for (var controller in controllers) {
-      controller.dispose();
-    }
+    clearIndexControllers();
+    super.dispose();
   }
 
-  void returnValues() {
+  bool returnValues() {
+    options.clear();
+    bool result = true;
     setState(() {
       userLabel = labelController.text;
       for (var controller in controllers) {
+        if (controller.text.isEmpty) {
+          result = false;
+          break;
+        }
         options.add(controller.text);
       }
     });
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: formAppbar(title: 'Create Radio Button',),
+      appBar: AppBar(
+        backgroundColor: widget.appBarColor,
+        foregroundColor: widget.appBarFont,
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context, null),
+        ),
+        title: const Text('Create Radio Button'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (returnValues()) {
+                Navigator.pop(
+                    context, {"userLabel": userLabel, "options": options});
+              } else {
+                print('Invalid options');
+              }
+            },
+            icon: const Icon(Icons.check),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              child: Text(
-                'Label',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+            const Text(
+              'Label',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             labelContent(),
-            const SizedBox(
-                child: Text(
+            const Text(
               'Number of options',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )),
+            ),
             numOptionContent(),
             Expanded(
               child: ListView.builder(
-                  itemCount: opt_num,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      child: TextField(
-                        /*Assign controller based on index */
-                        controller: controllers[index],
-                        decoration:
-                            InputDecoration(labelText: 'Option ${index + 1}'),
-                      ),
-                    );
-                  }),
-            )
+                itemCount: controllers.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: TextField(
+                      controller: controllers[index],
+                      decoration:
+                          InputDecoration(labelText: 'Option ${index + 1}'),
+                    ),
+                  );
+                },
+              ),
+            ),
+            addBtn(),
           ],
         ),
       ),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: widget.appBarColor,
-      foregroundColor: widget.appBarFont,
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () => {Navigator.pop(context, null)},
-      ),
-      title: const Text('Create Radio Button'),
-      actions: [
-        IconButton(
-            onPressed: () {
-              returnValues();
-              Navigator.pop(context, {"userLabel":userLabel,"options": options});
-            },
-            icon: const Icon(Icons.check))
-      ],
     );
   }
 
@@ -140,19 +135,45 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
         controller: numOptController,
         onSubmitted: (value) {
           try {
-            setState(() {
-              clearIndexControllers();
-              opt_num = int.parse(numOptController.text);
-              addControllers();
-            });
+            int newOptNum = int.parse(numOptController.text);
+            if (newOptNum > 0) {
+              setState(() {
+                opt_num = newOptNum;
+                clearIndexControllers();
+                addControllers(opt_num);
+              });
+            } else {
+              setState(() {
+                numOptController.text = "1";
+              });
+              showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Invalid number of options!'),
+                      content:
+                          const Text('Please insert valid number of options'),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, 'Try again');
+                            },
+                            child: const Text('Try again'))
+                      ],
+                    );
+                  });
+            }
           } catch (e) {
-            opt_num = 1;
+            print(e);
           }
         },
         keyboardType: TextInputType.number,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF49454F)),
+          ),
+        ),
       ),
     );
   }
@@ -167,10 +188,27 @@ class _customRadioBtnState extends State<customRadioBtnForm> {
         },
         keyboardType: TextInputType.name,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF49454F)),
+          ),
+        ),
       ),
     );
   }
 
+  ElevatedButton addBtn() {
+    return ElevatedButton(
+      onPressed: () {
+        if (returnValues()) {
+          Navigator.pop(context, {"userLabel": userLabel, "options": options});
+        } else {
+          print('Invalid options');
+        }
+      },
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all<Color>(widget.mainColor),
+      ),
+      child: Text('Add Fieldtext'),
+    );
+  }
 }

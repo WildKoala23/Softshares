@@ -18,10 +18,6 @@ class _CustomRadioBtnState extends State<customRadioBtn> {
   void initState() {
     super.initState();
     currentOption = widget.options[0];
-    /*Remove null char at the end of list */
-    if (widget.options.length > 1) {
-      widget.options.removeLast();
-    }
   }
 
   @override

@@ -22,7 +22,6 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
   @override
   void initState() {
     super.initState();
-    userLabelController.text = 'Label';
   }
 
   @override
@@ -34,7 +33,9 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: formAppbar(title: 'Create Textfield',),
+      appBar: formAppbar(
+        title: 'Create Textfield',
+      ),
       body: Column(
         children: [
           Container(
@@ -42,18 +43,20 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   child: Text('Label',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
                 TextField(
+                  textCapitalization: TextCapitalization.words,
                   controller: userLabelController,
                   onSubmitted: (value) {
                     userLabel = userLabelController.text;
                   },
                   keyboardType: TextInputType.name,
                   decoration: const InputDecoration(
+                      label: Text('Label'),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFF49454F)))),
                 ),
@@ -64,7 +67,7 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
             margin: const EdgeInsets.only(left: 25, top: 20, right: 25),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   child: Text(
                     'Numeric input ',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -80,10 +83,40 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
                 )
               ],
             ),
-          )
+          ),
+          addBtn()
         ],
       ),
     );
   }
 
+  ElevatedButton addBtn() {
+    return ElevatedButton(
+        onPressed: () {
+          if (userLabel != '') {
+            Navigator.pop(context, {"userLabel": userLabel, "numeric":isChecked});
+          } else {
+            showDialog<void>(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Invalid label!'),
+                    content: const Text('Please insert valid label'),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context, 'Try again');
+                          },
+                          child: const Text('Try again'))
+                    ],
+                  );
+                });
+          }
+        },
+        style: ButtonStyle(
+            foregroundColor:
+                MaterialStateProperty.all<Color>(widget.mainColor)),
+        child: Text('Add Fieldtext'));
+  }
 }
