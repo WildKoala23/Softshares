@@ -8,44 +8,43 @@ class MyLoginIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: titleWidget(),
+      appBar: titleWidget(colorScheme),
       body: Padding(
         padding: const EdgeInsets.only(top: 65.0, bottom: 40),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              actionsInfo(context),
-              continueBtn(context)
-            ],
+            children: [actionsInfo(context, colorScheme), continueBtn(context, colorScheme)],
           ),
         ),
       ),
     );
   }
 
-  Container continueBtn(BuildContext context) {
+  Container continueBtn(BuildContext context, ColorScheme colorScheme) {
     return Container(
-              width: double.infinity,
-              margin: const EdgeInsets.only(left: 20, right: 20),
-              height: 45,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color(0xFF80ADD7),
-                  ),
-                  onPressed: () => {Navigator.pushNamed(context, '/home')},
-                  child: const Text('Continue')),
-            );
+      width: double.infinity,
+      margin: const EdgeInsets.only(left: 20, right: 20),
+      height: 45,
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary,
+          ),
+          onPressed: () => {Navigator.pushNamed(context, '/home')},
+          child: const Text('Continue')),
+    );
   }
 
-  Column actionsInfo(context) {
+  Column actionsInfo(context, ColorScheme colorScheme) {
     return Column(
       children: [
-        const Icon(
+         Icon(
           Icons.account_circle,
-          color: Color(0xff80ADD7),
+          color: colorScheme.primary,
           size: 180,
         ),
         const SizedBox(
@@ -53,7 +52,7 @@ class MyLoginIn extends StatelessWidget {
         ),
         Text(
           'Welcome back, \n$username!',
-          style: const TextStyle(fontSize: 32, color: Colors.black),
+          style:  TextStyle(fontSize: 32, color: colorScheme.onSecondary),
           textAlign: TextAlign.center,
         ),
         const SizedBox(
@@ -65,24 +64,24 @@ class MyLoginIn extends StatelessWidget {
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
                 foregroundColor:
-                    MaterialStateProperty.all(const Color(0xFF4A92FD))),
+                    MaterialStateProperty.all( colorScheme.primary)),
             child: const Text('Log in with another account')),
       ],
     );
   }
 
-  AppBar titleWidget() {
+  AppBar titleWidget(ColorScheme colorScheme) {
     return AppBar(
       centerTitle: true,
       leading: const Icon(null),
       title: RichText(
-        text: const TextSpan(
+        text:  TextSpan(
             text: 'Soft',
             style: TextStyle(color: Colors.black, fontSize: 36),
             children: <TextSpan>[
               TextSpan(
                   text: 'Shares',
-                  style: TextStyle(color: Color(0xff00C2FF), fontSize: 36))
+                  style: TextStyle(color: colorScheme.secondary, fontSize: 36))
             ]),
       ),
     );

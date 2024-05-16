@@ -15,19 +15,19 @@ import 'package:softshares/test.dart';
 import './Pages/homepage.dart';
 
 const lightColorScheme = ColorScheme(
-    brightness: Brightness.light,
-    primary: Color(0xff80ADD7),
-    onPrimary: Colors.white,
-    secondary: Color(0xff00C2FF),
-    onSecondary: Colors.black,
-    error: Colors.red,
-    onError: Colors.white,
-    background: Colors.white,
-    onBackground: Colors.black,
-    surface: Color(0xFFFEF7FF),
-    onSurface: Colors.black,
-    onTertiary: Color(0xFF49454F),
-    );
+  brightness: Brightness.light,
+  primary: Color(0xff80ADD7),
+  onPrimary: Colors.white,
+  secondary: Color(0xff00C2FF),
+  onSecondary: Colors.black,
+  error: Colors.red,
+  onError: Colors.white,
+  background: Colors.white,
+  onBackground: Colors.black,
+  surface: Color(0xFFFEF7FF),
+  onSurface: Colors.black,
+  onTertiary: Color(0xFF49454F),
+);
 
 void main() {
   List<String> areas = [
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           brightness: Brightness.light, colorScheme: lightColorScheme),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home',
+      initialRoute: '/Login',
       routes: routes,
       home: const MyHomePage(),
     );

@@ -15,14 +15,16 @@ class MyProfile extends StatefulWidget {
 
 class _MyHomePageState extends State<MyProfile> {
   //Placeholder User for testing
-  User user = User('Guilherme', 'Pedrinho', 'Software Engineer', 'Viseu', "email@example.com", 23, 09, 2001);
+  User user = User('Guilherme', 'Pedrinho', 'Software Engineer', 'Viseu',
+      "email@example.com", 23, 09, 2001);
 
-  void rightCallback(context){
+  void rightCallback(context) {
     print('settings');
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: MyAppBar(
         iconR: const Icon(Icons.settings),
@@ -31,23 +33,23 @@ class _MyHomePageState extends State<MyProfile> {
       ),
       body: Column(
         children: [
-          profilePicture(),
+          profilePicture(colorScheme),
           const SizedBox(
             height: 10,
           ),
-          userInfo(),
+          userInfo(colorScheme),
           const SizedBox(
             height: 15,
           ),
-          actionBtns(),
+          actionBtns(colorScheme),
           const SizedBox(
             height: 15,
           ),
-          const DefaultTabController(
+          DefaultTabController(
               length: 2,
               child: TabBar(
                 labelColor: Colors.black,
-                indicatorColor: Color(0xff00C2FF),
+                indicatorColor: colorScheme.secondary,
                 splashFactory: NoSplash.splashFactory,
                 tabs: [
                   Tab(
@@ -67,7 +69,7 @@ class _MyHomePageState extends State<MyProfile> {
     );
   }
 
-  Row actionBtns() {
+  Row actionBtns(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -78,10 +80,11 @@ class _MyHomePageState extends State<MyProfile> {
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
                 backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                foregroundColor: MaterialStateProperty.all(Color(0xff00C2FF)),
+                foregroundColor:
+                    MaterialStateProperty.all(colorScheme.secondary),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: Color(0xff00C2FF))))),
+                    side: BorderSide(color: colorScheme.secondary)))),
             child: const Text('Edit Profile')),
         ElevatedButton(
             onPressed: () {
@@ -90,28 +93,29 @@ class _MyHomePageState extends State<MyProfile> {
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
                 backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                foregroundColor: MaterialStateProperty.all(Color(0xff00C2FF)),
+                foregroundColor:
+                    MaterialStateProperty.all(colorScheme.secondary),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: Color(0xff00C2FF))))),
+                    side: BorderSide(color: colorScheme.secondary)))),
             child: const Text('Log off')),
       ],
     );
   }
 
-  Column userInfo() {
+  Column userInfo(ColorScheme colorScheme) {
     return Column(
       children: [
         Text(
           '${user.firstname} ${user.lastName}',
-          style: const TextStyle(fontSize: 24, color: Color(0xff80ADD7)),
+          style: TextStyle(fontSize: 24, color: colorScheme.primary),
         ),
         const SizedBox(
           height: 5,
         ),
         Text(
           user.job,
-          style: const TextStyle(fontSize: 14, color: Color(0xff79747E)),
+          style: TextStyle(fontSize: 14, color: colorScheme.onTertiary),
         ),
         const SizedBox(
           height: 2,
@@ -119,14 +123,14 @@ class _MyHomePageState extends State<MyProfile> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.location_on_outlined,
               size: 14,
-              color: Color(0xff79747E),
+              color: colorScheme.onTertiary,
             ),
             Text(
               user.location,
-              style: const TextStyle(fontSize: 14, color: Color(0xff79747E)),
+              style: TextStyle(fontSize: 14, color: colorScheme.onTertiary),
             )
           ],
         )
@@ -134,21 +138,15 @@ class _MyHomePageState extends State<MyProfile> {
     );
   }
 
-  Container profilePicture() {
+  Container profilePicture(ColorScheme colorScheme) {
     return Container(
-      height: 220,
-      decoration: const BoxDecoration(
-          color: Color(0x4080ADD7),
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(110),
-              bottomRight: Radius.circular(110))),
       child: Center(
         child: Container(
           margin: const EdgeInsets.only(top: 30),
           height: 170,
           width: 170,
           decoration: BoxDecoration(
-              border: Border.all(color: Color(0xff00C2FF), width: 3),
+              border: Border.all(color: colorScheme.secondary, width: 3),
               borderRadius: BorderRadius.circular(95)),
           child: Center(
             child: Container(
@@ -156,11 +154,12 @@ class _MyHomePageState extends State<MyProfile> {
                 width: 150,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(75),
-                    color: Color(0xff00C2FF)),
+                    color: colorScheme.secondary),
                 child: Center(
                   child: Text(
                     user.lastName[0],
-                    style: TextStyle(fontSize: 54, color: Colors.white),
+                    style:
+                        TextStyle(fontSize: 54, color: colorScheme.onPrimary),
                   ),
                 )),
           ),
