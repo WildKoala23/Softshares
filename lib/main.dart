@@ -4,6 +4,7 @@ import 'package:softshares/Pages/MyProfile.dart';
 import 'package:softshares/Pages/calendar.dart';
 import 'package:softshares/Pages/createCheckboxForm.dart';
 import 'package:softshares/Pages/createFrom.dart';
+import 'package:softshares/Pages/createPost.dart';
 import 'package:softshares/Pages/customFieldTextForm.dart';
 import 'package:softshares/Pages/customRadioBtnForm.dart';
 import 'package:softshares/Pages/editProfile.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
       '/Login': (context) => const MyLoginIn(username: 'Gui'),
       '/SignIn': (context) => const SignIn(),
       '/SignUp': (context) => const SignUp(),
+      '/createPost': (context) => createPost(),
       '/createForm': (context) => createForm(),
       '/createRadioBtnForm': (context) => customRadioBtnForm(),
       '/createFieldTextForm': (context) => customFieldtextForm(),
