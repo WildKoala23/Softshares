@@ -39,7 +39,6 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
     super.initState();
     addControllers(opt_num);
     numOptController.text = "1";
-    labelController.text = "Label";
   }
 
   @override
@@ -50,14 +49,17 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
     super.dispose();
   }
 
-  bool returnValues() {
+  int returnValues() {
     options.clear();
-    bool result = true;
+    int result = 1;
     setState(() {
+      if (labelController.text == '') {
+        result = -1;
+      }
       userLabel = labelController.text;
       for (var controller in controllers) {
         if (controller.text.isEmpty) {
-          result = false;
+          result = 0;
           break;
         }
         options.add(controller.text);
@@ -80,7 +82,7 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
         actions: [
           IconButton(
             onPressed: () {
-              if (returnValues()) {
+              if (returnValues() == 1) {
                 Navigator.pop(
                     context, {"userLabel": userLabel, "options": options});
               } else {
@@ -143,15 +145,13 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
                 addControllers(opt_num);
               });
             } else {
-              setState(() {
-                numOptController.text = "1";
-              });
               showDialog<void>(
                   context: context,
                   barrierDismissible: false,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text('Invalid number of options!'),
+                      title: const Text(
+                          'Invalid number of options!Must be a positive number'),
                       content:
                           const Text('Please insert valid number of options'),
                       actions: [
@@ -163,6 +163,10 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
                       ],
                     );
                   });
+              setState(() {
+                numOptController.text = "1";
+                opt_num = 1;
+              });
             }
           } catch (e) {
             print(e);
@@ -188,6 +192,7 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
         },
         keyboardType: TextInputType.name,
         decoration: const InputDecoration(
+          label: Text('Label'),
           border: OutlineInputBorder(
             borderSide: BorderSide(color: Color(0xFF49454F)),
           ),
@@ -199,10 +204,46 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
   ElevatedButton addBtn() {
     return ElevatedButton(
       onPressed: () {
-        if (returnValues()) {
-          Navigator.pop(context, {"userLabel": userLabel, "options": options});
+        int result = returnValues();
+        //If there is null options
+        if (result == -1) {
+          showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Invalid label. Must not be empty'),
+                  content: const Text('Please insert valid label'),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, 'Try again');
+                        },
+                        child: const Text('Try again'))
+                  ],
+                );
+              });
+        }
+        //If a label is null
+        else if (result == 0) {
+          showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Invalid options. Must not be empty'),
+                  content: const Text('Please insert valid options'),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, 'Try again');
+                        },
+                        child: const Text('Try again'))
+                  ],
+                );
+              });
         } else {
-          print('Invalid options');
+          Navigator.pop(context, {"userLabel": userLabel, "options": options});
         }
       },
       style: ButtonStyle(
