@@ -4,121 +4,147 @@ import 'package:softshares/Components/formAppBar.dart';
 class customCheckboxForm extends StatefulWidget {
   customCheckboxForm({super.key});
 
-  Color containerColor = const Color(0xFFFEF7FF);
-  Color appBarColor = const Color(0xff80ADD7);
-  Color appBarFont = const Color(0xFFFFFFFF);
-  Color mainColor = const Color(0xff80ADD7);
+  final Color containerColor = const Color(0xFFFEF7FF);
+  final Color appBarColor = const Color(0xff80ADD7);
+  final Color appBarFont = const Color(0xFFFFFFFF);
+  final Color mainColor = const Color(0xff80ADD7);
 
   @override
-  State<customCheckboxForm> createState() => _customCheckboxFormState();
+  State<customCheckboxForm> createState() => _CustomCheckboxFormState();
 }
 
-class _customCheckboxFormState extends State<customCheckboxForm> {
-  TextEditingController labelController = TextEditingController();
-  /*Number of options controller */
-  TextEditingController numOptController = TextEditingController();
+class _CustomCheckboxFormState extends State<customCheckboxForm> {
+  final TextEditingController labelController = TextEditingController();
+  final TextEditingController numOptController = TextEditingController();
 
-  /*List of controllers to controll user defined textfields*/
-  List<TextEditingController> controllers = [];
+  final List<TextEditingController> controllers = [];
+  final List<String> options = [];
 
-  /*Options that the user has created*/
-  List<String> options = [];
-  /*Label to the Radio Button in the form*/
   String userLabel = '';
-
-  /*Number of options to spawn*/
-  int opt_num = 1;
+  int optNum = 1;
 
   @override
   void initState() {
     super.initState();
-    // Initialize controllers based on the itemCount
+    numOptController.text = optNum.toString();
     addControllers();
-    /*Placeholder*/
-    numOptController.text = "1";
-    labelController.text = "Label";
   }
 
-  void clearIndexControllers() {
-    for (int i = 0; i < opt_num; i++) {
-      controllers.remove(TextEditingController());
+  @override
+  void dispose() {
+    labelController.dispose();
+    numOptController.dispose();
+    for (var controller in controllers) {
+      controller.dispose();
     }
+    super.dispose();
+  }
+
+  void clearControllers() {
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    controllers.clear();
   }
 
   void addControllers() {
-    for (int i = 0; i < opt_num; i++) {
+    for (int i = 0; i < optNum; i++) {
       controllers.add(TextEditingController());
     }
   }
 
-  void returnValues() {
-    setState(() {
+  int returnValues() {
+    options.clear();
+    int result = 1;
+    if (labelController.text.isEmpty) {
+      result = -1;
+    } else {
       userLabel = labelController.text;
       for (var controller in controllers) {
+        if (controller.text.isEmpty) {
+          result = 0;
+          break;
+        }
         options.add(controller.text);
       }
-    });
+    }
+    return result;
+  }
+
+  void showAlertDialog(String title, String content) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Try again'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: formAppbar(title: 'Create Checkbox'),
+      appBar: const formAppbar(title: 'Create Checkbox'),
       body: Padding(
-        padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              child: Text(
-                'Label',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+            const Text(
+              'Label',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             labelContent(),
-            const SizedBox(
-                child: Text(
+            const Text(
               'Number of options',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )),
+            ),
             numOptionContent(),
             Expanded(
               child: ListView.builder(
-                  itemCount: opt_num,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      child: TextField(
-                        /*Assign controller based on index */
-                        controller: controllers[index],
-                        decoration:
-                            InputDecoration(labelText: 'Option ${index + 1}'),
-                      ),
-                    );
-                  }),
-            )
+                itemCount: optNum,
+                itemBuilder: (context, index) {
+                  return TextField(
+                    controller: controllers[index],
+                    decoration: InputDecoration(labelText: 'Option ${index + 1}'),
+                  );
+                },
+              ),
+            ),
+            addBtn(),
           ],
         ),
       ),
     );
   }
 
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: widget.appBarColor,
-      foregroundColor: widget.appBarFont,
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () => {Navigator.pop(context, null)},
+  ElevatedButton addBtn() {
+    return ElevatedButton(
+      onPressed: () {
+        int result = returnValues();
+        if (result == -1) {
+          showAlertDialog('Invalid label', 'Label must not be empty.');
+        } else if (result == 0) {
+          showAlertDialog('Invalid options', 'Options must not be empty.');
+        } else {
+          Navigator.pop(context, {"userLabel": userLabel, "options": options});
+        }
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(widget.mainColor),
       ),
-      title: const Text('Create Checkbox'),
-      actions: [
-        IconButton(
-            onPressed: () {
-              returnValues();
-              Navigator.pop(context, {"userLabel":userLabel,"options": options});
-            },
-            icon: const Icon(Icons.check))
-      ],
+      child: const Text('Add Fieldtext'),
     );
   }
 
@@ -128,20 +154,30 @@ class _customCheckboxFormState extends State<customCheckboxForm> {
       child: TextField(
         controller: numOptController,
         onSubmitted: (value) {
-          try {
+          int newOptNum = int.tryParse(value) ?? 1;
+          if (newOptNum > 0) {
             setState(() {
-              clearIndexControllers();
-              opt_num = int.parse(numOptController.text);
+              optNum = newOptNum;
+              clearControllers();
               addControllers();
             });
-          } catch (e) {
-            opt_num = 1;
+          } else {
+            showAlertDialog(
+              'Invalid number of options',
+              'Must be a positive number.',
+            );
+            setState(() {
+              numOptController.text = "1";
+              optNum = 1;
+              clearControllers();
+              addControllers();
+            });
           }
         },
         keyboardType: TextInputType.number,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+          border: OutlineInputBorder(),
+        ),
       ),
     );
   }
@@ -151,13 +187,10 @@ class _customCheckboxFormState extends State<customCheckboxForm> {
       padding: const EdgeInsets.only(bottom: 20),
       child: TextField(
         controller: labelController,
-        onSubmitted: (value) {
-          userLabel = labelController.text;
-        },
-        keyboardType: TextInputType.name,
         decoration: const InputDecoration(
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+          labelText: 'Label',
+          border: OutlineInputBorder(),
+        ),
       ),
     );
   }

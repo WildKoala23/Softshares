@@ -19,10 +19,6 @@ class _customCheckboxState extends State<customCheckbox> {
     super.initState();
     // Initialize all options as unselected
     selectedOptions = List<bool>.filled(widget.options.length, false);
-    /*Remove null char at the end of list */
-    if (widget.options.length > 1) {
-      widget.options.removeLast();
-    }
   }
 
   @override
