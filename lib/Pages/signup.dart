@@ -18,8 +18,9 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: myAppBar(context),
+      appBar: myAppBar(context, colorScheme),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -30,53 +31,53 @@ class _SignUpState extends State<SignUp> {
             ),
             Column(
               children: [
-                facebookBtn(),
+                facebookBtn(colorScheme),
                 const SizedBox(
                   height: 25,
                 ),
-                googleBtn(),
-                myDivider(),
-                emailField(),
-                passField(),
-                confirmPassField(),
+                googleBtn(colorScheme),
+                myDivider(colorScheme),
+                emailField(colorScheme),
+                passField(colorScheme),
+                confirmPassField(colorScheme),
               ],
             ),
-            continueBtn(context)
+            continueBtn(context, colorScheme)
           ],
         ),
       ),
     );
   }
 
-  Container continueBtn(BuildContext context) {
+  Container continueBtn(BuildContext context, ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 45,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: const Color(0xFF80ADD7),
+            foregroundColor: colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary,
           ),
           onPressed: () => {Navigator.pushNamed(context, '/home')},
           child: const Text('Continue')),
     );
   }
 
-  Container confirmPassField() {
+  Container confirmPassField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         obscureText: hideConfirmPassword,
         controller: confirmPasswordController,
         decoration: InputDecoration(
-            label: const Text(
+            label:  Text(
               'Confirm password',
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
-            prefixIcon: const Icon(
+            prefixIcon:  Icon(
               Icons.password,
-              color: Color(0xFF49454F),
+              color: colorScheme.onTertiary,
               size: 32,
             ),
             suffixIcon: IconButton(
@@ -92,28 +93,28 @@ class _SignUpState extends State<SignUp> {
                   }
                 },
                 icon: hideConfirmPassword == true
-                    ? Icon(Icons.visibility)
-                    : Icon(Icons.visibility_off)),
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+                    ? const Icon(Icons.visibility)
+                    : const Icon(Icons.visibility_off)),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
   }
 
-  Container passField() {
+  Container passField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
-            label: const Text(
+            label: Text(
               'Password',
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
-            prefixIcon: const Icon(
+            prefixIcon:  Icon(
               Icons.password,
-              color: Color(0xFF49454F),
+              color: colorScheme.onTertiary,
               size: 32,
             ),
             suffixIcon: IconButton(
@@ -131,21 +132,21 @@ class _SignUpState extends State<SignUp> {
                 icon: hidePassword == true
                     ? const Icon(Icons.visibility)
                     : const Icon(Icons.visibility_off)),
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+            border:  OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
   }
 
-  Container emailField() {
+  Container emailField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: emailController,
-        decoration: const InputDecoration(
+        decoration:  InputDecoration(
             label: Text(
               'Email',
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             prefixIcon: Icon(
               Icons.account_circle,
@@ -153,13 +154,13 @@ class _SignUpState extends State<SignUp> {
               size: 32,
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
   }
 
-  Row myDivider() {
-    return const Row(
+  Row myDivider(ColorScheme colorScheme) {
+    return  Row(
       children: [
         Expanded(
           child: Divider(
@@ -167,7 +168,7 @@ class _SignUpState extends State<SignUp> {
             thickness: 1,
             indent: 25,
             endIndent: 15, // Adjust endIndent as needed
-            color: Color(0xFFCAC4D0),
+            color: colorScheme.onTertiary,
           ),
         ),
         SizedBox(width: 2),
@@ -182,23 +183,25 @@ class _SignUpState extends State<SignUp> {
             thickness: 1,
             indent: 15, // Adjust indent as needed
             endIndent: 25,
-            color: Color(0xFFCAC4D0),
+            color: colorScheme.onTertiary,
           ),
         ),
       ],
     );
   }
 
-  Container googleBtn() {
+  Container googleBtn(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
+            backgroundColor: colorScheme.onPrimary,
               foregroundColor: Colors.black,
-              side: const BorderSide(color: Color(0xff79747E)),
+              side:  BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
+
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -218,14 +221,14 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Container facebookBtn() {
+  Container facebookBtn(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black,
-              side: const BorderSide(color: Color(0xFF79747E)),
+              foregroundColor: colorScheme.onSecondary,
+              side:  BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
           child: const Row(
@@ -246,7 +249,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  AppBar myAppBar(BuildContext context) {
+  AppBar myAppBar(BuildContext context, ColorScheme colorScheme) {
     return AppBar(
       centerTitle: true,
       leading: IconButton(
@@ -254,13 +257,13 @@ class _SignUpState extends State<SignUp> {
         onPressed: () => {Navigator.pop(context)},
       ),
       title: RichText(
-        text: const TextSpan(
+        text:  TextSpan(
             text: 'Soft',
-            style: TextStyle(color: Colors.black, fontSize: 36),
+            style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
             children: <TextSpan>[
               TextSpan(
                   text: 'Shares',
-                  style: TextStyle(color: Color(0xff00C2FF), fontSize: 36))
+                  style: TextStyle(color: colorScheme.secondary, fontSize: 36))
             ]),
       ),
     );

@@ -23,8 +23,9 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: myAppBar(),
+      appBar: myAppBar(colorScheme),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -35,14 +36,14 @@ class _SignInState extends State<SignIn> {
             ),
             Column(
               children: [
-                facebookBtn(),
+                facebookBtn(colorScheme),
                 const SizedBox(
                   height: 25,
                 ),
-                googleBtn(),
-                myDivider(),
-                userTextfield(),
-                passwordFieldtext(),
+                googleBtn(colorScheme),
+                myDivider(colorScheme),
+                userTextfield(colorScheme),
+                passwordFieldtext(colorScheme),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ElevatedButton(
@@ -57,42 +58,42 @@ class _SignInState extends State<SignIn> {
                 )
               ],
             ),
-            continueBtn(context)
+            continueBtn(context, colorScheme)
           ],
         ),
       ),
     );
   }
 
-  Container continueBtn(BuildContext context) {
+  Container continueBtn(BuildContext context, ColorScheme colorScheme) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 45,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: const Color(0xFF80ADD7),
+            foregroundColor: colorScheme.onPrimary,
+            backgroundColor: colorScheme.primary,
           ),
           onPressed: () => {Navigator.pushNamed(context, '/home')},
           child: const Text('Continue')),
     );
   }
 
-  Container passwordFieldtext() {
+  Container passwordFieldtext(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
-            label: const Text(
+            label:  Text(
               'password',
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
-            prefixIcon: const Icon(
+            prefixIcon: Icon(
               Icons.password,
-              color: Color(0xFF49454F),
+              color: colorScheme.onTertiary,
               size: 32,
             ),
             suffixIcon: IconButton(
@@ -110,21 +111,21 @@ class _SignInState extends State<SignIn> {
                 icon: hidePassword == true
                     ? const Icon(Icons.visibility)
                     : const Icon(Icons.visibility_off)),
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+            border:  OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
   }
 
-  Container userTextfield() {
+  Container userTextfield(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: usernameController,
-        decoration: const InputDecoration(
+        decoration:  InputDecoration(
             label: Text(
               'Username/email/cellphone',
-              style: TextStyle(color: Color(0xFF79747E)),
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             prefixIcon: Icon(
               Icons.account_circle,
@@ -132,50 +133,50 @@ class _SignInState extends State<SignIn> {
               size: 32,
             ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF49454F)))),
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
   }
 
-  Row myDivider() {
-    return const Row(
+  Row myDivider(ColorScheme colorScheme) {
+    return Row(
       children: [
-        Expanded(
+         Expanded(
           child: Divider(
             height: 50,
             thickness: 1,
             indent: 25,
             endIndent: 15, // Adjust endIndent as needed
-            color: Color(0xFFCAC4D0),
+            color: colorScheme.onTertiary,
           ),
         ),
-        SizedBox(width: 2),
-        Text(
+        const SizedBox(width: 2),
+        const Text(
           'Or',
           style: TextStyle(fontSize: 18),
         ),
-        SizedBox(width: 2), // Add space between dividers
+        const SizedBox(width: 2), // Add space between dividers
         Expanded(
           child: Divider(
             height: 50,
             thickness: 1,
             indent: 15, // Adjust indent as needed
             endIndent: 25,
-            color: Color(0xFFCAC4D0),
+            color: colorScheme.onTertiary,
           ),
         ),
       ],
     );
   }
 
-  Container googleBtn() {
+  Container googleBtn(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black,
-              side: const BorderSide(color: Color(0xff79747E)),
+              foregroundColor: colorScheme.onSecondary,
+              side:  BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
           child: const Row(
@@ -197,14 +198,14 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Container facebookBtn() {
+  Container facebookBtn(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black,
-              side: const BorderSide(color: Color(0xFF79747E)),
+              foregroundColor: colorScheme.onSecondary,
+              side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
           child: const Row(
@@ -225,18 +226,18 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  AppBar myAppBar() {
+  AppBar myAppBar(ColorScheme colorScheme) {
     return AppBar(
       centerTitle: true,
       leading: const Icon(null),
       title: RichText(
-        text: const TextSpan(
+        text:  TextSpan(
             text: 'Soft',
-            style: TextStyle(color: Colors.black, fontSize: 36),
+            style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
             children: <TextSpan>[
               TextSpan(
                   text: 'Shares',
-                  style: TextStyle(color: Color(0xff00C2FF), fontSize: 36))
+                  style: TextStyle(color: colorScheme.secondary, fontSize: 36))
             ]),
       ),
       actions: [

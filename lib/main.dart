@@ -27,6 +27,7 @@ const lightColorScheme = ColorScheme(
   surface: Color(0xFFFEF7FF),
   onSurface: Colors.black,
   onTertiary: Color(0xFF49454F),
+  
 );
 
 void main() {

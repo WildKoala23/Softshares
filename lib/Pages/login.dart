@@ -17,7 +17,10 @@ class MyLoginIn extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [actionsInfo(context, colorScheme), continueBtn(context, colorScheme)],
+            children: [
+              actionsInfo(context, colorScheme),
+              continueBtn(context, colorScheme)
+            ],
           ),
         ),
       ),
@@ -42,7 +45,7 @@ class MyLoginIn extends StatelessWidget {
   Column actionsInfo(context, ColorScheme colorScheme) {
     return Column(
       children: [
-         Icon(
+        Icon(
           Icons.account_circle,
           color: colorScheme.primary,
           size: 180,
@@ -52,7 +55,7 @@ class MyLoginIn extends StatelessWidget {
         ),
         Text(
           'Welcome back, \n$username!',
-          style:  TextStyle(fontSize: 32, color: colorScheme.onSecondary),
+          style: TextStyle(fontSize: 32, color: colorScheme.onSecondary),
           textAlign: TextAlign.center,
         ),
         const SizedBox(
@@ -63,8 +66,10 @@ class MyLoginIn extends StatelessWidget {
             onPressed: () => {Navigator.pushNamed(context, '/SignIn')},
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
+                backgroundColor:
+                    MaterialStateProperty.all(colorScheme.onPrimary),
                 foregroundColor:
-                    MaterialStateProperty.all( colorScheme.primary)),
+                    MaterialStateProperty.all(colorScheme.primary)),
             child: const Text('Log in with another account')),
       ],
     );
@@ -74,10 +79,11 @@ class MyLoginIn extends StatelessWidget {
     return AppBar(
       centerTitle: true,
       leading: const Icon(null),
+      backgroundColor: colorScheme.onPrimary,
       title: RichText(
-        text:  TextSpan(
+        text: TextSpan(
             text: 'Soft',
-            style: TextStyle(color: Colors.black, fontSize: 36),
+            style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
             children: <TextSpan>[
               TextSpan(
                   text: 'Shares',
