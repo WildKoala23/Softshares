@@ -48,8 +48,11 @@ class _SignInState extends State<SignIn> {
                   alignment: Alignment.centerLeft,
                   child: ElevatedButton(
                       onPressed: () {},
-                      style: ElevatedButton.styleFrom(elevation: 0),
-                      child: const Text(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: colorScheme.onPrimary,
+                      ),
+                      child: Text(
                         'Forgot password?',
                         style: TextStyle(
                             color: Colors.black,
@@ -87,7 +90,7 @@ class _SignInState extends State<SignIn> {
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
-            label:  Text(
+            label: Text(
               'password',
               style: TextStyle(color: colorScheme.onTertiary),
             ),
@@ -111,7 +114,7 @@ class _SignInState extends State<SignIn> {
                 icon: hidePassword == true
                     ? const Icon(Icons.visibility)
                     : const Icon(Icons.visibility_off)),
-            border:  OutlineInputBorder(
+            border: OutlineInputBorder(
                 borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
@@ -122,14 +125,14 @@ class _SignInState extends State<SignIn> {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: usernameController,
-        decoration:  InputDecoration(
+        decoration: InputDecoration(
             label: Text(
               'Username/email/cellphone',
               style: TextStyle(color: colorScheme.onTertiary),
             ),
             prefixIcon: Icon(
               Icons.account_circle,
-              color: Color(0xFF49454F),
+              color: colorScheme.onTertiary,
               size: 32,
             ),
             border: OutlineInputBorder(
@@ -141,7 +144,7 @@ class _SignInState extends State<SignIn> {
   Row myDivider(ColorScheme colorScheme) {
     return Row(
       children: [
-         Expanded(
+        Expanded(
           child: Divider(
             height: 50,
             thickness: 1,
@@ -176,7 +179,8 @@ class _SignInState extends State<SignIn> {
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
               foregroundColor: colorScheme.onSecondary,
-              side:  BorderSide(color: colorScheme.onTertiary),
+              backgroundColor: colorScheme.onPrimary,
+              side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
           child: const Row(
@@ -204,6 +208,7 @@ class _SignInState extends State<SignIn> {
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.onPrimary,
               foregroundColor: colorScheme.onSecondary,
               side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
@@ -231,7 +236,7 @@ class _SignInState extends State<SignIn> {
       centerTitle: true,
       leading: const Icon(null),
       title: RichText(
-        text:  TextSpan(
+        text: TextSpan(
             text: 'Soft',
             style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
             children: <TextSpan>[
@@ -240,6 +245,7 @@ class _SignInState extends State<SignIn> {
                   style: TextStyle(color: colorScheme.secondary, fontSize: 36))
             ]),
       ),
+      backgroundColor: colorScheme.onPrimary,
       actions: [
         IconButton(
             onPressed: () => {Navigator.pushNamed(context, '/SignUp')},

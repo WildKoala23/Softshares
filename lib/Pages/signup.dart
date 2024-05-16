@@ -71,11 +71,11 @@ class _SignUpState extends State<SignUp> {
         obscureText: hideConfirmPassword,
         controller: confirmPasswordController,
         decoration: InputDecoration(
-            label:  Text(
+            label: Text(
               'Confirm password',
               style: TextStyle(color: colorScheme.onTertiary),
             ),
-            prefixIcon:  Icon(
+            prefixIcon: Icon(
               Icons.password,
               color: colorScheme.onTertiary,
               size: 32,
@@ -112,7 +112,7 @@ class _SignUpState extends State<SignUp> {
               'Password',
               style: TextStyle(color: colorScheme.onTertiary),
             ),
-            prefixIcon:  Icon(
+            prefixIcon: Icon(
               Icons.password,
               color: colorScheme.onTertiary,
               size: 32,
@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
                 icon: hidePassword == true
                     ? const Icon(Icons.visibility)
                     : const Icon(Icons.visibility_off)),
-            border:  OutlineInputBorder(
+            border: OutlineInputBorder(
                 borderSide: BorderSide(color: colorScheme.onTertiary))),
       ),
     );
@@ -143,7 +143,7 @@ class _SignUpState extends State<SignUp> {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextField(
         controller: emailController,
-        decoration:  InputDecoration(
+        decoration: InputDecoration(
             label: Text(
               'Email',
               style: TextStyle(color: colorScheme.onTertiary),
@@ -160,7 +160,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   Row myDivider(ColorScheme colorScheme) {
-    return  Row(
+    return Row(
       children: [
         Expanded(
           child: Divider(
@@ -196,12 +196,11 @@ class _SignUpState extends State<SignUp> {
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.onPrimary,
+              backgroundColor: colorScheme.onPrimary,
               foregroundColor: Colors.black,
-              side:  BorderSide(color: colorScheme.onTertiary),
+              side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
-
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -227,8 +226,9 @@ class _SignUpState extends State<SignUp> {
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.onPrimary,
               foregroundColor: colorScheme.onSecondary,
-              side:  BorderSide(color: colorScheme.onTertiary),
+              side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
           child: const Row(
@@ -251,13 +251,14 @@ class _SignUpState extends State<SignUp> {
 
   AppBar myAppBar(BuildContext context, ColorScheme colorScheme) {
     return AppBar(
+      backgroundColor: colorScheme.onPrimary,
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () => {Navigator.pop(context)},
       ),
       title: RichText(
-        text:  TextSpan(
+        text: TextSpan(
             text: 'Soft',
             style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
             children: <TextSpan>[
