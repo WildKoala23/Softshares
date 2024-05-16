@@ -62,9 +62,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SoftShares',
       theme: ThemeData(
-          textTheme: GoogleFonts.robotoTextTheme(), fontFamily: 'Roboto'),
+        brightness: Brightness.light,
+        primaryColor: Color(0xff80ADD7),
+      ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/createRadioBtnForm',
+      initialRoute: '/home',
       routes: routes,
       home: const MyHomePage(),
     );
