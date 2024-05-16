@@ -18,12 +18,13 @@ class myDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Drawer(
       width: 262,
       child: ListView(
         padding: const EdgeInsets.all(0),
         children: [
-          SafeArea(child: header()),
+          SafeArea(child: header(colorScheme)),
           ListTile(
             leading: const Icon(Icons.calendar_month),
             title: const Text('Calendar'),
@@ -68,7 +69,7 @@ class myDrawer extends StatelessWidget {
     );
   }
 
-  Container header() {
+  Container header(ColorScheme scheme) {
     // ignore: sized_box_for_whitespace
     return Container(
       //alignment: Alignment.bottomCenter,
@@ -85,9 +86,9 @@ class myDrawer extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.location_history,
-                    color: Colors.black,
+                    color: scheme.onSecondary,
                     size: 30,
                   ),
                   const SizedBox(
@@ -95,14 +96,14 @@ class myDrawer extends StatelessWidget {
                   ),
                   Text(
                     location,
-                    style: const TextStyle(fontSize: 28, color: Colors.black),
+                    style: TextStyle(fontSize: 28, color: scheme.onSecondary),
                   ),
                 ],
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_right,
                 size: 40,
-                color: Colors.black,
+                color: scheme.onSecondary,
               ),
             ],
           )),

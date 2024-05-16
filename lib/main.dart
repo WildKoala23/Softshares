@@ -20,13 +20,14 @@ final lightColorScheme = const ColorScheme(
     primary: Color(0xff80ADD7),
     onPrimary: Colors.white,
     secondary: Color(0xff00C2FF),
-    onSecondary: Color(0xff80ADD7),
+    onSecondary: Colors.black,
     error: Colors.red,
     onError: Colors.white,
     background: Colors.white,
     onBackground: Colors.black,
     surface: Color(0xFFFEF7FF),
-    onSurface: Colors.black);
+    onSurface: Colors.black,
+    onTertiary: Color(0xFF49454F));
 
 void main() {
   List<String> areas = [

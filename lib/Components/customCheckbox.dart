@@ -13,6 +13,7 @@ class customCheckbox extends StatefulWidget {
 
 class _customCheckboxState extends State<customCheckbox> {
   late List<bool> selectedOptions;
+  
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class _customCheckboxState extends State<customCheckbox> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

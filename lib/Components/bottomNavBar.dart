@@ -6,11 +6,12 @@ class MyBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return BottomNavigationBar(
-      fixedColor: Colors.black,
+      fixedColor: colorScheme.onSecondary,
       showUnselectedLabels: true,
       showSelectedLabels: true,
-      unselectedItemColor: Colors.black,
+      unselectedItemColor: colorScheme.onSecondary,
       items: [
         BottomNavigationBarItem(
           icon: IconButton(

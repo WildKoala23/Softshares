@@ -13,13 +13,14 @@ class ForumCard extends StatefulWidget {
 class _POIState extends State<ForumCard> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
-            child: cardHeader(),
+            child: cardHeader(colorScheme),
           ),
           //If image == null, put color instead
           widget.forum.getImage() == null
@@ -31,7 +32,7 @@ class _POIState extends State<ForumCard> {
                 ),
           Padding(
             padding: const EdgeInsets.all(14.0),
-            child: textContent(),
+            child: textContent(colorScheme),
           ),
           Padding(
             padding: const EdgeInsets.only(
@@ -49,7 +50,7 @@ class _POIState extends State<ForumCard> {
     );
   }
 
-  Row textContent() {
+  Row textContent(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -62,7 +63,7 @@ class _POIState extends State<ForumCard> {
             ),
             Text(
               widget.forum.getSubCategory(),
-              style: TextStyle(color: Color(0xFF49454F), fontSize: 16),
+              style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
         ),
@@ -70,7 +71,7 @@ class _POIState extends State<ForumCard> {
     );
   }
 
-  Row cardHeader() {
+  Row cardHeader(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -81,7 +82,7 @@ class _POIState extends State<ForumCard> {
               height: 40,
               width: 40,
               decoration: BoxDecoration(
-                  color: Color(0xff00C2FF),
+                  color: colorScheme.secondary,
                   border: Border.all(width: 3, color: Colors.transparent),
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
@@ -89,8 +90,8 @@ class _POIState extends State<ForumCard> {
                   child: widget.forum.profilePic != null
                       ? Text(
                           widget.forum.getFirstName()[0],
-                          style: const TextStyle(
-                              fontSize: 20, color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 20, color: colorScheme.onPrimary),
                         )
                       : const Text('PP')),
             ),

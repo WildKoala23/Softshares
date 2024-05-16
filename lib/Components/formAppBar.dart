@@ -5,16 +5,12 @@ class formAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   const formAppbar({Key? key, required this.title}) : super(key: key);
 
-  static const Color containerColor = Color(0xFFFEF7FF);
-  static const Color appBarColor = Color(0xFF80ADD7);
-  static const Color appBarFont = Color(0xFFFFFFFF);
-  static const Color mainColor = Color(0xFF80ADD7);
-
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AppBar(
-      backgroundColor: appBarColor,
-      foregroundColor: appBarFont,
+      backgroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onPrimary,
       leading: IconButton(
         icon: const Icon(Icons.close),
         onPressed: () {

@@ -15,7 +15,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return AppBar(
-      backgroundColor: colorScheme.onSecondary,
+      backgroundColor: colorScheme.primary,
       foregroundColor: colorScheme.onPrimary,
       title: Text(title),
       actions: [
