@@ -18,9 +18,9 @@ class _testState extends State<test> {
             child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        customTextField(
-          label: 'Teste',
-          numericInput: false,
+        customRadioBtn(
+          label: 'Test',
+          options: ['option1', 'option2', 'option3'],
           controller: controller,
         ),
         ElevatedButton(

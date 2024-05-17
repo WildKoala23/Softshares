@@ -19,19 +19,19 @@ class customTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<customTextField> {
-  late TextEditingController labelController;
+  late TextEditingController controller;
 
   @override
   void initState() {
     /*If not provided with a controller, create a new one */
-    labelController = widget.controller ?? TextEditingController();
+    controller = widget.controller ?? TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-    labelController.dispose();
+    controller.dispose();
   }
 
   @override
@@ -39,7 +39,7 @@ class _CustomTextFieldState extends State<customTextField> {
     return Container(
       padding: EdgeInsets.only(left: 25, top: 20, right: 25),
       child: TextField(
-        controller: labelController,
+        controller: controller,
         keyboardType:
             widget.numericInput ? TextInputType.number : TextInputType.name,
         decoration: InputDecoration(

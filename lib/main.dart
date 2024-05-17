@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           brightness: Brightness.light, colorScheme: lightColorScheme),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/Login',
+      initialRoute: '/test',
       routes: routes,
       home: const MyHomePage(),
     );

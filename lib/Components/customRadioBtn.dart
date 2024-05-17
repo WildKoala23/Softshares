@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class customRadioBtn extends StatefulWidget {
   final String label;
   final List<String> options;
+  TextEditingController? controller;
 
-  const customRadioBtn({Key? key, required this.label, required this.options})
+  customRadioBtn(
+      {Key? key, required this.label, required this.options, this.controller})
       : super(key: key);
 
   @override
@@ -13,11 +15,13 @@ class customRadioBtn extends StatefulWidget {
 
 class _CustomRadioBtnState extends State<customRadioBtn> {
   late String currentOption;
+  late TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
     currentOption = widget.options[0];
+    controller = widget.controller ?? TextEditingController();
   }
 
   @override
@@ -44,6 +48,7 @@ class _CustomRadioBtnState extends State<customRadioBtn> {
               onChanged: (value) {
                 setState(() {
                   currentOption = value.toString();
+                  controller.text = currentOption;
                 });
               },
             );
