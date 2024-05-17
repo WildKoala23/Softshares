@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Pages/createFrom.dart';
 
 class customCheckbox extends StatefulWidget {
   final String label;
   final List<String> options;
+  TextEditingController? controller;
 
-  const customCheckbox({Key? key, required this.label, required this.options})
+  customCheckbox(
+      {Key? key, required this.label, required this.options, this.controller})
       : super(key: key);
 
   @override
@@ -13,13 +16,15 @@ class customCheckbox extends StatefulWidget {
 
 class _customCheckboxState extends State<customCheckbox> {
   late List<bool> selectedOptions;
-  
+  late TextEditingController controller;
+  List<String> returnOptions = [];
 
   @override
   void initState() {
     super.initState();
     // Initialize all options as unselected
     selectedOptions = List<bool>.filled(widget.options.length, false);
+    controller = widget.controller ?? TextEditingController();
   }
 
   @override
@@ -47,6 +52,10 @@ class _customCheckboxState extends State<customCheckbox> {
               onChanged: (value) {
                 setState(() {
                   selectedOptions[index] = value ?? false;
+                  selectedOptions[index]
+                      ? returnOptions.add(widget.options[index])
+                      : returnOptions.remove(widget.options[index]);
+                  controller.text = returnOptions.toString();
                 });
               },
             );

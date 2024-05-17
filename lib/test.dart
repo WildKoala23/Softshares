@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
 
@@ -18,7 +19,7 @@ class _testState extends State<test> {
             child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        customRadioBtn(
+        customCheckbox(
           label: 'Test',
           options: ['option1', 'option2', 'option3'],
           controller: controller,
