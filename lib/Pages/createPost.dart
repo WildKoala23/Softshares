@@ -259,7 +259,7 @@ class _CreatePostState extends State<createPost> {
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                // Add your navigation logic here
+                Navigator.pushNamed(context, '/createForm');
               },
               child: const Text('Advance'),
             ),
