@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
+import 'package:softshares/Components/customTextField.dart';
 
 class test extends StatefulWidget {
   const test({Key? key});
@@ -9,20 +10,25 @@ class test extends StatefulWidget {
 }
 
 class _testState extends State<test> {
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          height: 200, // Example height, you can adjust as needed
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              customRadioBtn(label: 'label', options: ['option1', 'option2']),
-            ],
-          ),
+        body: Center(
+            child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        customTextField(
+          label: 'Teste',
+          numericInput: false,
+          controller: controller,
         ),
-      ),
-    );
+        ElevatedButton(
+            onPressed: () {
+              print(controller.text);
+            },
+            child: Text('Teste'))
+      ],
+    )));
   }
 }
