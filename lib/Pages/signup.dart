@@ -25,24 +25,35 @@ class _SignUpState extends State<SignUp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Text(
-              'Sign In',
-              style: TextStyle(fontSize: 32),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30.0, top: 15.0),
+              child: const Text(
+                'Sign In',
+                style: TextStyle(fontSize: 32),
+              ),
             ),
-            Column(
-              children: [
-                facebookBtn(colorScheme),
-                const SizedBox(
-                  height: 25,
-                ),
-                googleBtn(colorScheme),
-                myDivider(colorScheme),
-                emailField(colorScheme),
-                passField(colorScheme),
-                confirmPassField(colorScheme),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30.0, top: 10.0),
+              child: Column(
+                children: [
+                  facebookBtn(colorScheme),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  googleBtn(colorScheme),
+                  myDivider(colorScheme),
+                  firstNameField(colorScheme),
+                  lastNameField(colorScheme),
+                  emailField(colorScheme),
+                  passField(colorScheme),
+                  confirmPassField(colorScheme),
+                ],
+              ),
             ),
-            continueBtn(context, colorScheme)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: continueBtn(context, colorScheme),
+            )
           ],
         ),
       ),
@@ -152,6 +163,38 @@ class _SignUpState extends State<SignUp> {
               Icons.account_circle,
               color: Color(0xFF49454F),
               size: 32,
+            ),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
+      ),
+    );
+  }
+
+  Container firstNameField(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextField(
+        controller: emailController,
+        decoration: InputDecoration(
+            label: Text(
+              'First name',
+              style: TextStyle(color: colorScheme.onTertiary),
+            ),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.onTertiary))),
+      ),
+    );
+  }
+
+  Container lastNameField(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextField(
+        controller: emailController,
+        decoration: InputDecoration(
+            label: Text(
+              'Last name',
+              style: TextStyle(color: colorScheme.onTertiary),
             ),
             border: OutlineInputBorder(
                 borderSide: BorderSide(color: colorScheme.onTertiary))),

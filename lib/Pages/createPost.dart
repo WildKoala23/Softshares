@@ -23,6 +23,7 @@ class _CreatePostState extends State<createPost> {
   TextEditingController dateController = TextEditingController();
   TextEditingController descController = TextEditingController();
   String? selectedOption;
+  late double currentSlideValue;
 
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
@@ -41,6 +42,7 @@ class _CreatePostState extends State<createPost> {
   void initState() {
     super.initState();
     selectedOption = areas[0];
+    currentSlideValue = 3;
   }
 
   @override
@@ -75,7 +77,7 @@ class _CreatePostState extends State<createPost> {
                 children: [
                   eventContent(colorScheme),
                   forumContent(colorScheme),
-                  Container(color: Colors.blue),
+                  poiContent(colorScheme, context)
                 ],
               ),
             ),
@@ -85,13 +87,20 @@ class _CreatePostState extends State<createPost> {
     );
   }
 
-  SingleChildScrollView forumContent(ColorScheme colorScheme) {
+  SingleChildScrollView poiContent(
+      ColorScheme colorScheme, BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(
+              child: Text(
+                'Title',
+                style: TextStyle(fontSize: 22),
+              ),
+            ),
             TextField(
               controller: titleController,
               decoration: const InputDecoration(
@@ -103,7 +112,9 @@ class _CreatePostState extends State<createPost> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(
+              height: 20,
+            ),
             GestureDetector(
               onTap: () {
                 print('Selected Images');
@@ -126,6 +137,11 @@ class _CreatePostState extends State<createPost> {
                 ),
               ),
             ),
+
+            Text(
+              'Description',
+              style: TextStyle(fontSize: 22),
+            ),
             TextField(
               controller: descController,
               decoration: const InputDecoration(
@@ -139,7 +155,31 @@ class _CreatePostState extends State<createPost> {
               ),
               maxLines: null,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Location',
+              style: TextStyle(fontSize: 22),
+            ),
+            //IMPLEMENT WITH GOOGLE API//
+            const TextField(
+              //IMPLEMENT WITH GOOGLE API//
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Area',
+              style: TextStyle(fontSize: 22),
+            ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
@@ -163,12 +203,31 @@ class _CreatePostState extends State<createPost> {
                 },
               ),
             ),
-            const SizedBox(height: 50),
-            ElevatedButton(
-              onPressed: () {
-                // Add your navigation logic here
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Rating',
+              style: TextStyle(fontSize: 22),
+            ),
+            Slider(
+              min: 1,
+              max: 5,
+              value: currentSlideValue,
+              onChanged: (double value) {
+                setState(() {
+                  currentSlideValue = value;
+                });
               },
-              child: const Text('Create Forum'),
+              divisions: 4,
+              label: currentSlideValue.toString(),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Advance'),
             ),
           ],
         ),
@@ -176,13 +235,17 @@ class _CreatePostState extends State<createPost> {
     );
   }
 
-  SingleChildScrollView eventContent(ColorScheme colorScheme) {
+  SingleChildScrollView forumContent(ColorScheme colorScheme) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Text(
+              'Title',
+              style: TextStyle(fontSize: 22),
+            ),
             TextField(
               controller: titleController,
               decoration: const InputDecoration(
@@ -217,6 +280,10 @@ class _CreatePostState extends State<createPost> {
                 ),
               ),
             ),
+            const Text(
+              'Description',
+              style: TextStyle(fontSize: 22),
+            ),
             TextField(
               controller: descController,
               decoration: const InputDecoration(
@@ -230,9 +297,118 @@ class _CreatePostState extends State<createPost> {
               ),
               maxLines: null,
             ),
+            const SizedBox(height: 30),
+            const Text(
+              'Area',
+              style: TextStyle(fontSize: 22),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+              decoration: BoxDecoration(
+                  border: Border.all(),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text('Select Area'),
+                underline: SizedBox.shrink(),
+                value: selectedOption,
+                items: areas.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedOption = value;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Create Forum'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SingleChildScrollView eventContent(ColorScheme colorScheme) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Title',
+              style: TextStyle(fontSize: 22),
+            ),
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                print('Selected Images');
+              },
+              child: Container(
+                margin: const EdgeInsets.only(top: 20, bottom: 20),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+                height: 221,
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.image),
+                      Text('Add Image +'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const Text(
+              'Description',
+              style: TextStyle(fontSize: 22),
+            ),
+            TextField(
+              controller: descController,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                hintText: 'Body text (optional)',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
+              ),
+              maxLines: null,
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              'Date',
+              style: TextStyle(fontSize: 22),
+            ),
             dateContent(colorScheme),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
+            const Text(
+              'Area',
+              style: TextStyle(fontSize: 22),
+            ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
