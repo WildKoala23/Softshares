@@ -30,19 +30,6 @@ class _EditProfileState extends State<EditProfile> {
   User user = User('Guilherme', 'Pedrinho', 'Software Engineer', 'Viseu',
       "email@example.com", 23, 09, 2001);
 
-  Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
-        context: context,
-        firstDate: DateTime(1970),
-        lastDate: DateTime(2026),
-        initialDate: DateTime.now());
-    if (_picked != null) {
-      setState(() {
-        dateController.text = _picked.toString().split(" ")[0];
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -81,8 +68,6 @@ class _EditProfileState extends State<EditProfile> {
             nameContent(colorScheme),
             //Email
             emailContent(colorScheme),
-            //Date
-            dateContent(colorScheme),
             //City
             cityContent(colorScheme),
             Container(
@@ -162,26 +147,6 @@ class _EditProfileState extends State<EditProfile> {
         decoration: InputDecoration(
             label: Text(
               'City',
-              style: TextStyle(color: colorScheme.onTertiary),
-            ),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: colorScheme.primary))),
-      ),
-    );
-  }
-
-  Container dateContent(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
-        controller: dateController,
-        onTap: () {
-          _selectDate();
-        },
-        decoration: InputDecoration(
-            suffixIcon: Icon(Icons.calendar_today),
-            label: Text(
-              "Date",
               style: TextStyle(color: colorScheme.onTertiary),
             ),
             border: OutlineInputBorder(
