@@ -3,8 +3,8 @@ import 'package:softshares/Pages/area.dart';
 import 'package:softshares/Pages/MyProfile.dart';
 import 'package:softshares/Pages/calendar.dart';
 import 'package:softshares/Pages/createCheckboxForm.dart';
-import 'package:softshares/Pages/createFrom.dart';
-import 'package:softshares/Pages/createPost.dart';
+import 'package:softshares/Pages/createForm.dart';
+import 'package:softshares/Pages/createPub.dart';
 import 'package:softshares/Pages/customFieldTextForm.dart';
 import 'package:softshares/Pages/customRadioBtnForm.dart';
 import 'package:softshares/Pages/editProfile.dart';
@@ -52,7 +52,6 @@ class MyApp extends StatelessWidget {
 
   const MyApp({super.key, required this.areas});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     Map<String, WidgetBuilder> routes = {
