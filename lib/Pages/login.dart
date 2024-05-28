@@ -66,10 +66,8 @@ class MyLoginIn extends StatelessWidget {
             onPressed: () => {Navigator.pushNamed(context, '/SignIn')},
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
-                backgroundColor:
-                    MaterialStateProperty.all(colorScheme.onPrimary),
-                foregroundColor:
-                    MaterialStateProperty.all(colorScheme.primary)),
+                backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                foregroundColor: MaterialStateProperty.all(Colors.blue)),
             child: const Text('Log in with another account')),
       ],
     );
@@ -79,7 +77,7 @@ class MyLoginIn extends StatelessWidget {
     return AppBar(
       centerTitle: true,
       leading: const Icon(null),
-      backgroundColor: colorScheme.onPrimary,
+      backgroundColor: Colors.transparent,
       title: RichText(
         text: TextSpan(
             text: 'Soft',

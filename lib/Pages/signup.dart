@@ -239,8 +239,8 @@ class _SignUpState extends State<SignUp> {
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.onPrimary,
-              foregroundColor: Colors.black,
+              backgroundColor: Colors.transparent,
+              foregroundColor: colorScheme.onPrimary,
               side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
@@ -269,7 +269,7 @@ class _SignUpState extends State<SignUp> {
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.onPrimary,
+              backgroundColor: Colors.transparent,
               foregroundColor: colorScheme.onSecondary,
               side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
@@ -294,7 +294,7 @@ class _SignUpState extends State<SignUp> {
 
   AppBar myAppBar(BuildContext context, ColorScheme colorScheme) {
     return AppBar(
-      backgroundColor: colorScheme.onPrimary,
+      backgroundColor: Colors.transparent,
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),

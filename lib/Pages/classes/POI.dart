@@ -1,7 +1,7 @@
 class POI {
-  final String firstName, lastName, title, department, subCategory, desc;
+  late String firstName, lastName, title, department, subCategory, desc;
   String? profilePic, image;
-  final int aval;
+  late int aval;
 
   POI(this.firstName, this.lastName, this.title, this.department,
       this.subCategory, this.desc, this.aval, this.profilePic, this.image);

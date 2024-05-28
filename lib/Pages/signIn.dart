@@ -179,7 +179,7 @@ class _SignInState extends State<SignIn> {
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
               foregroundColor: colorScheme.onSecondary,
-              backgroundColor: colorScheme.onPrimary,
+              backgroundColor: Colors.transparent,
               side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},
@@ -208,7 +208,7 @@ class _SignInState extends State<SignIn> {
       height: 55,
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.onPrimary,
+              backgroundColor: Colors.transparent,
               foregroundColor: colorScheme.onSecondary,
               side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
@@ -245,7 +245,7 @@ class _SignInState extends State<SignIn> {
                   style: TextStyle(color: colorScheme.secondary, fontSize: 36))
             ]),
       ),
-      backgroundColor: colorScheme.onPrimary,
+      backgroundColor: Colors.transparent,
       actions: [
         IconButton(
             onPressed: () => {Navigator.pushNamed(context, '/SignUp')},

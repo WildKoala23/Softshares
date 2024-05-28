@@ -200,7 +200,7 @@ class _CreatePostState extends State<createPost> {
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
-                  border: Border.all(),
+                  border: Border.all(color: colorScheme.onPrimary),
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
               child: DropdownButton<String>(
                 isExpanded: true,
@@ -244,7 +244,10 @@ class _CreatePostState extends State<createPost> {
             ),
             ElevatedButton(
               onPressed: () {},
-              child: const Text('Advance'),
+              child: Text(
+                'Advance',
+                style: TextStyle(color: colorScheme.onPrimary),
+              ),
             ),
           ],
         ),
@@ -322,7 +325,7 @@ class _CreatePostState extends State<createPost> {
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
-                  border: Border.all(),
+                  border: Border.all(color: colorScheme.onPrimary),
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
               child: DropdownButton<String>(
                 isExpanded: true,
@@ -345,7 +348,8 @@ class _CreatePostState extends State<createPost> {
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {},
-              child: const Text('Create Forum'),
+              child: Text('Create Forum',
+                  style: TextStyle(color: colorScheme.onPrimary)),
             ),
           ],
         ),
@@ -445,7 +449,7 @@ class _CreatePostState extends State<createPost> {
                 padding:
                     EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
-                    border: Border.all(),
+                    border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<String>(
                   underline: SizedBox.shrink(),
@@ -480,7 +484,7 @@ class _CreatePostState extends State<createPost> {
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
-                  border: Border.all(),
+                  border: Border.all(color: colorScheme.onPrimary),
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
               child: DropdownButton<String>(
                 isExpanded: true,
@@ -505,7 +509,8 @@ class _CreatePostState extends State<createPost> {
               onPressed: () {
                 Navigator.pushNamed(context, '/createForm');
               },
-              child: const Text('Advance'),
+              child: Text('Advance',
+                  style: TextStyle(color: colorScheme.onPrimary)),
             ),
           ],
         ),
@@ -609,7 +614,7 @@ class _CreatePostState extends State<createPost> {
             Container(
               padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
               decoration: BoxDecoration(
-                  border: Border.all(),
+                  border: Border.all(color: colorScheme.onPrimary),
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
               child: DropdownButton<String>(
                 isExpanded: true,
@@ -678,25 +683,26 @@ class _CreatePostState extends State<createPost> {
                     })
               ],
             ),
-            if(nonPrice)
-            Slider(
-              min: 1,
-              max: 4,
-              value: currentPriceValue,
-              onChanged: (double value) {
-                setState(() {
-                  currentPriceValue = value;
-                });
-              },
-              divisions: 3,
-              label: currentPriceValue.toString(),
-            ),
+            if (nonPrice)
+              Slider(
+                min: 1,
+                max: 4,
+                value: currentPriceValue,
+                onChanged: (double value) {
+                  setState(() {
+                    currentPriceValue = value;
+                  });
+                },
+                divisions: 3,
+                label: currentPriceValue.toString(),
+              ),
             const SizedBox(
               height: 30,
             ),
             ElevatedButton(
               onPressed: () {},
-              child: const Text('Advance'),
+              child: Text('Advance',
+                  style: TextStyle(color: colorScheme.onPrimary)),
             ),
           ],
         ),
