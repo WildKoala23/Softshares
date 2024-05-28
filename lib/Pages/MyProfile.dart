@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyProfile> {
       "email@example.com", 23, 09, 2001);
 
   void rightCallback(context) {
-    print('settings');
+    Navigator.pushNamed(context, '/settings');
   }
 
   @override

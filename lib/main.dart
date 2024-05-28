@@ -1,52 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/area.dart';
-import 'package:softshares/Pages/MyProfile.dart';
-import 'package:softshares/Pages/calendar.dart';
-import 'package:softshares/Pages/createCheckboxForm.dart';
-import 'package:softshares/Pages/createForm.dart';
-import 'package:softshares/Pages/createPub.dart';
-import 'package:softshares/Pages/customFieldTextForm.dart';
-import 'package:softshares/Pages/customRadioBtnForm.dart';
-import 'package:softshares/Pages/editProfile.dart';
-import 'package:softshares/Pages/login.dart';
-import 'package:softshares/Pages/notifications.dart';
-import 'package:softshares/Pages/pointsOfInterest.dart';
-import 'package:softshares/Pages/signIn.dart';
-import 'package:softshares/Pages/signup.dart';
-import 'package:softshares/test.dart';
-import './Pages/homepage.dart';
-
-const lightColorScheme = ColorScheme(
-  brightness: Brightness.light,
-  primary: Color(0xff80ADD7),
-  onPrimary: Colors.white,
-  secondary: Color(0xff00C2FF),
-  onSecondary: Colors.black,
-  error: Colors.red,
-  onError: Colors.white,
-  background: Colors.white,
-  onBackground: Colors.black,
-  surface: Color(0xFFFEF7FF),
-  onSurface: Colors.black,
-  onTertiary: Color(0xFF49454F),
-);
-
-// const lightColorScheme = ColorScheme(
-//     brightness: Brightness.dark,
-//     primary: Color.fromARGB(255, 50, 63,
-//         75), // Light blue primary color remains the same for consistency
-//     onPrimary: Colors.white, // Black text on light primary color
-//     secondary: Color.fromARGB(
-//         255, 80, 128, 143), // Light blue secondary color remains the same
-//     onSecondary: Colors.white, // White text on light secondary color
-//     error: Colors
-//         .redAccent, // Slightly lighter red for error to stand out on dark background
-//     onError: Colors.black, // Black text on red error color
-//     background: Color(0xFF121212), // Dark background color
-//     onBackground: Colors.white, // White text on dark background
-//     surface: Color(0xFF1E1E1E), // Dark surface color
-//     onSurface: Colors.white, // White text on dark surface
-//     onTertiary: Color(0xFFCACACA));
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:softshares/Pages/settings.dart';
+import 'Pages/classes/ThemeNotifier.dart';
+import 'Pages/homepage.dart';
+import 'Pages/area.dart';
+import 'Pages/MyProfile.dart';
+import 'Pages/calendar.dart';
+import 'Pages/createCheckboxForm.dart';
+import 'Pages/createForm.dart';
+import 'Pages/createPub.dart';
+import 'Pages/customFieldTextForm.dart';
+import 'Pages/customRadioBtnForm.dart';
+import 'Pages/editProfile.dart';
+import 'Pages/login.dart';
+import 'Pages/notifications.dart';
+import 'Pages/pointsOfInterest.dart';
+import 'Pages/signIn.dart';
+import 'Pages/signup.dart';
+import 'test.dart';
 
 void main() {
   List<String> areas = [
@@ -59,9 +31,12 @@ void main() {
     'Transports'
   ];
 
-  runApp(MyApp(
-    areas: areas,
-  ));
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: MyApp(areas: areas),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -71,36 +46,40 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, WidgetBuilder> routes = {
-      '/home': (context) => const MyHomePage(),
-      '/PointOfInterest': (context) => PointsOfInterest(),
-      '/Calendar': (context) => Calendar(),
-      '/Profile': (context) => const MyProfile(),
-      '/Editprofile': (context) => EditProfile(),
-      '/Login': (context) => const MyLoginIn(username: 'Gui'),
-      '/SignIn': (context) => const SignIn(),
-      '/SignUp': (context) => const SignUp(),
-      '/createPost': (context) => createPost(),
-      '/createForm': (context) => createForm(),
-      '/createRadioBtnForm': (context) => customRadioBtnForm(),
-      '/createFieldTextForm': (context) => customFieldtextForm(),
-      '/createCheckboxForm': (context) => customCheckboxForm(),
-      '/notifications': (context) => Notifications(),
-      '/test': (context) => test()
-    };
+    return Consumer<ThemeNotifier>(
+      builder: (context, themeNotifier, child) {
+        Map<String, WidgetBuilder> routes = {
+          '/home': (context) => const MyHomePage(),
+          '/PointOfInterest': (context) => PointsOfInterest(),
+          '/Calendar': (context) => Calendar(),
+          '/Profile': (context) => const MyProfile(),
+          '/Editprofile': (context) => EditProfile(),
+          '/Login': (context) => const MyLoginIn(username: 'Gui'),
+          '/SignIn': (context) => const SignIn(),
+          '/SignUp': (context) => const SignUp(),
+          '/createPost': (context) => createPost(),
+          '/createForm': (context) => createForm(),
+          '/createRadioBtnForm': (context) => customRadioBtnForm(),
+          '/createFieldTextForm': (context) => customFieldtextForm(),
+          '/createCheckboxForm': (context) => customCheckboxForm(),
+          '/notifications': (context) => Notifications(),
+          '/settings': (context) => SettingsPage(),
+          '/test': (context) => test()
+        };
 
-    for (var area in areas) {
-      routes['/$area'] = (context) => Area(title: area);
-    }
+        for (var area in areas) {
+          routes['/$area'] = (context) => Area(title: area);
+        }
 
-    return MaterialApp(
-      title: 'SoftShares',
-      theme: ThemeData(
-          brightness: Brightness.light, colorScheme: lightColorScheme),
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/Login',
-      routes: routes,
-      home: const MyHomePage(),
+        return MaterialApp(
+          title: 'SoftShares',
+          theme: themeNotifier.themeData,
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/Login',
+          routes: routes,
+          home: const MyHomePage(),
+        );
+      },
     );
   }
 }
