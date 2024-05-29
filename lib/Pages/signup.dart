@@ -13,8 +13,22 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   bool hidePassword = true, hideConfirmPassword = true;
+
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,39 +36,42 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       appBar: myAppBar(context, colorScheme),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30.0, top: 15.0),
-              child: const Text(
-                'Sign In',
-                style: TextStyle(fontSize: 32),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30.0, top: 15.0),
+                child: const Text(
+                  'Sign In',
+                  style: TextStyle(fontSize: 32),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30.0, top: 10.0),
-              child: Column(
-                children: [
-                  facebookBtn(colorScheme),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  googleBtn(colorScheme),
-                  myDivider(colorScheme),
-                  firstNameField(colorScheme),
-                  lastNameField(colorScheme),
-                  emailField(colorScheme),
-                  passField(colorScheme),
-                  confirmPassField(colorScheme),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30.0, top: 10.0),
+                child: Column(
+                  children: [
+                    facebookBtn(colorScheme),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    googleBtn(colorScheme),
+                    myDivider(colorScheme),
+                    firstNameField(colorScheme),
+                    lastNameField(colorScheme),
+                    emailField(colorScheme),
+                    passField(colorScheme),
+                    confirmPassField(colorScheme),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: continueBtn(context, colorScheme),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: continueBtn(context, colorScheme),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -70,7 +87,14 @@ class _SignUpState extends State<SignUp> {
             foregroundColor: colorScheme.onPrimary,
             backgroundColor: colorScheme.primary,
           ),
-          onPressed: () => {Navigator.pushNamed(context, '/home')},
+          onPressed: () {
+            // Validate returns true if the form is valid, or false otherwise.
+            if (_formKey.currentState!.validate()) {
+              // If the form is valid, continue to homepage
+              //Later, implement verification with DB
+              Navigator.pushNamed(context, '/home');
+            }
+          },
           child: const Text('Continue')),
     );
   }
@@ -78,7 +102,13 @@ class _SignUpState extends State<SignUp> {
   Container confirmPassField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter email/phone number';
+          }
+          return null;
+        },
         obscureText: hideConfirmPassword,
         controller: confirmPasswordController,
         decoration: InputDecoration(
@@ -115,7 +145,13 @@ class _SignUpState extends State<SignUp> {
   Container passField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter email/phone number';
+          }
+          return null;
+        },
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
@@ -152,7 +188,13 @@ class _SignUpState extends State<SignUp> {
   Container emailField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter email';
+          }
+          return null;
+        },
         controller: emailController,
         decoration: InputDecoration(
             label: Text(
@@ -173,8 +215,14 @@ class _SignUpState extends State<SignUp> {
   Container firstNameField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
-        controller: emailController,
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter first name';
+          }
+          return null;
+        },
+        controller: firstNameController,
         decoration: InputDecoration(
             label: Text(
               'First name',
@@ -189,8 +237,14 @@ class _SignUpState extends State<SignUp> {
   Container lastNameField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
-        controller: emailController,
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter last name';
+          }
+          return null;
+        },
+        controller: lastNameController,
         decoration: InputDecoration(
             label: Text(
               'Last name',
@@ -240,7 +294,7 @@ class _SignUpState extends State<SignUp> {
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              foregroundColor: colorScheme.onPrimary,
+              foregroundColor: colorScheme.onSecondary,
               side: BorderSide(color: colorScheme.onTertiary),
               elevation: 0),
           onPressed: () {},

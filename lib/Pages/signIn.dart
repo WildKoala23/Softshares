@@ -12,7 +12,16 @@ class _SignInState extends State<SignIn> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  final _formkey = GlobalKey<FormState>();
+
   bool hidePassword = true;
+
+  bool validInput() {
+    if (usernameController.text == '' || passwordController.text == '') {
+      return false;
+    }
+    return true;
+  }
 
   @override
   void dispose() {
@@ -27,42 +36,45 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       appBar: myAppBar(colorScheme),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            const Text(
-              'Log In',
-              style: TextStyle(fontSize: 32),
-            ),
-            Column(
-              children: [
-                facebookBtn(colorScheme),
-                const SizedBox(
-                  height: 25,
-                ),
-                googleBtn(colorScheme),
-                myDivider(colorScheme),
-                userTextfield(colorScheme),
-                passwordFieldtext(colorScheme),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: colorScheme.onPrimary,
-                      ),
-                      child: Text(
-                        'Forgot password?',
-                        style: TextStyle(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline),
-                      )),
-                )
-              ],
-            ),
-            continueBtn(context, colorScheme)
-          ],
+        child: Form(
+          key: _formkey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              const Text(
+                'Log In',
+                style: TextStyle(fontSize: 32),
+              ),
+              Column(
+                children: [
+                  facebookBtn(colorScheme),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  googleBtn(colorScheme),
+                  myDivider(colorScheme),
+                  userTextfield(colorScheme),
+                  passwordFieldtext(colorScheme),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: colorScheme.onPrimary,
+                        ),
+                        child: Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline),
+                        )),
+                  )
+                ],
+              ),
+              continueBtn(context, colorScheme)
+            ],
+          ),
         ),
       ),
     );
@@ -78,7 +90,14 @@ class _SignInState extends State<SignIn> {
             foregroundColor: colorScheme.onPrimary,
             backgroundColor: colorScheme.primary,
           ),
-          onPressed: () => {Navigator.pushNamed(context, '/home')},
+          onPressed: () {
+            // Validate returns true if the form is valid, or false otherwise.
+            if (_formkey.currentState!.validate()) {
+              // If the form is valid, continue to homepage
+              //Later, implement verification with DB
+              Navigator.pushNamed(context, '/home');
+            }
+          },
           child: const Text('Continue')),
     );
   }
@@ -86,7 +105,13 @@ class _SignInState extends State<SignIn> {
   Container passwordFieldtext(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter password';
+          }
+          return null;
+        },
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
@@ -123,11 +148,17 @@ class _SignInState extends State<SignIn> {
   Container userTextfield(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter email/phone number';
+          }
+          return null;
+        },
         controller: usernameController,
         decoration: InputDecoration(
             label: Text(
-              'Username/email/cellphone',
+              'Email/phone number',
               style: TextStyle(color: colorScheme.onTertiary),
             ),
             prefixIcon: Icon(
