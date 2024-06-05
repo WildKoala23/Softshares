@@ -18,8 +18,6 @@ class _SignUpState extends State<SignUp> {
 
   final _formKey = GlobalKey<FormState>();
 
-  bool hidePassword = true, hideConfirmPassword = true;
-
   @override
   void dispose() {
     super.dispose();
@@ -61,8 +59,6 @@ class _SignUpState extends State<SignUp> {
                     firstNameField(colorScheme),
                     lastNameField(colorScheme),
                     emailField(colorScheme),
-                    passField(colorScheme),
-                    confirmPassField(colorScheme),
                   ],
                 ),
               ),
@@ -96,92 +92,6 @@ class _SignUpState extends State<SignUp> {
             }
           },
           child: const Text('Continue')),
-    );
-  }
-
-  Container confirmPassField(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextFormField(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter email/phone number';
-          }
-          return null;
-        },
-        obscureText: hideConfirmPassword,
-        controller: confirmPasswordController,
-        decoration: InputDecoration(
-            label: Text(
-              'Confirm password',
-              style: TextStyle(color: colorScheme.onTertiary),
-            ),
-            prefixIcon: Icon(
-              Icons.password,
-              color: colorScheme.onTertiary,
-              size: 32,
-            ),
-            suffixIcon: IconButton(
-                onPressed: () {
-                  if (hideConfirmPassword == true) {
-                    setState(() {
-                      hideConfirmPassword = false;
-                    });
-                  } else {
-                    setState(() {
-                      hideConfirmPassword = true;
-                    });
-                  }
-                },
-                icon: hideConfirmPassword == true
-                    ? const Icon(Icons.visibility)
-                    : const Icon(Icons.visibility_off)),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: colorScheme.onTertiary))),
-      ),
-    );
-  }
-
-  Container passField(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextFormField(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter email/phone number';
-          }
-          return null;
-        },
-        obscureText: hidePassword,
-        controller: passwordController,
-        decoration: InputDecoration(
-            label: Text(
-              'Password',
-              style: TextStyle(color: colorScheme.onTertiary),
-            ),
-            prefixIcon: Icon(
-              Icons.password,
-              color: colorScheme.onTertiary,
-              size: 32,
-            ),
-            suffixIcon: IconButton(
-                onPressed: () {
-                  if (hidePassword == true) {
-                    setState(() {
-                      hidePassword = false;
-                    });
-                  } else {
-                    setState(() {
-                      hidePassword = true;
-                    });
-                  }
-                },
-                icon: hidePassword == true
-                    ? const Icon(Icons.visibility)
-                    : const Icon(Icons.visibility_off)),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: colorScheme.onTertiary))),
-      ),
     );
   }
 

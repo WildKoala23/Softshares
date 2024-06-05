@@ -22,18 +22,28 @@ class _CreatePostState extends State<createPost> {
   TextEditingController titleController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController descController = TextEditingController();
+
   String? selectedOption;
   late double currentSlideValue;
   late double currentPriceValue;
+
   //Variables to en/disable rating and price sliders when not necessary
   late bool nonRating;
   late bool nonPrice;
-  List<String> recurrentOpt = ["Weekly", "Monthly"];
+
   //Depending on the recurrency, the label for date changes (This variable controls the text)
   String? dateOpt;
 
+  //Variables to help checking if the event is recurrent or not
+  List<String> recurrentOpt = ["Weekly", "Monthly"];
   bool recurrent = false;
   late String recurrentValue;
+
+  //Variables to validate created content
+  final _postKey = GlobalKey<FormState>();
+  final _forumKey = GlobalKey<FormState>();
+  final _poiKey = GlobalKey<FormState>();
+  final _eventKey = GlobalKey<FormState>();
 
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
@@ -107,344 +117,110 @@ class _CreatePostState extends State<createPost> {
   SingleChildScrollView poiContent(
       ColorScheme colorScheme, BuildContext context) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(
-              child: Text(
-                'Title',
-                style: TextStyle(fontSize: 22),
-              ),
-            ),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () {
-                print('Selected Images');
-              },
-              child: Container(
-                margin: const EdgeInsets.only(top: 20, bottom: 20),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                height: 221,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image),
-                      Text('Add Image +'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            Text(
-              'Description',
-              style: TextStyle(fontSize: 22),
-            ),
-            TextField(
-              controller: descController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                hintText: 'Body text (optional)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-              maxLines: null,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Location',
-              style: TextStyle(fontSize: 22),
-            ),
-            //IMPLEMENT WITH GOOGLE API//
-            const TextField(
-              //IMPLEMENT WITH GOOGLE API//
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Area',
-              style: TextStyle(fontSize: 22),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: colorScheme.onPrimary),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Area'),
-                underline: SizedBox.shrink(),
-                value: selectedOption,
-                items: areas.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Rating',
-              style: TextStyle(fontSize: 22),
-            ),
-            Slider(
-              min: 1,
-              max: 5,
-              value: currentSlideValue,
-              onChanged: (double value) {
-                setState(() {
-                  currentSlideValue = value;
-                });
-              },
-              divisions: 4,
-              label: currentSlideValue.toString(),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text(
-                'Advance',
-                style: TextStyle(color: colorScheme.onPrimary),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SingleChildScrollView forumContent(ColorScheme colorScheme) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Title',
-              style: TextStyle(fontSize: 22),
-            ),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                print('Selected Images');
-              },
-              child: Container(
-                margin: const EdgeInsets.only(top: 20, bottom: 20),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                height: 221,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image),
-                      Text('Add Image +'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const Text(
-              'Description',
-              style: TextStyle(fontSize: 22),
-            ),
-            TextField(
-              controller: descController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                hintText: 'Body text (optional)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-              maxLines: null,
-            ),
-            const SizedBox(height: 30),
-            const Text(
-              'Area',
-              style: TextStyle(fontSize: 22),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: colorScheme.onPrimary),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Area'),
-                underline: SizedBox.shrink(),
-                value: selectedOption,
-                items: areas.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('Create Forum',
-                  style: TextStyle(color: colorScheme.onPrimary)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SingleChildScrollView eventContent(ColorScheme colorScheme) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Title',
-              style: TextStyle(fontSize: 22),
-            ),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                print('Selected Images');
-              },
-              child: Container(
-                margin: const EdgeInsets.only(top: 20, bottom: 20),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                height: 221,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image),
-                      Text('Add Image +'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const Text(
-              'Description',
-              style: TextStyle(fontSize: 22),
-            ),
-            TextField(
-              controller: descController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                hintText: 'Body text (optional)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-              maxLines: null,
-            ),
-
-            const SizedBox(height: 30),
-            Row(
-              children: [
-                const Text(
-                  'Recurrent (weekly/monthly):',
+      child: Form(
+        key: _poiKey,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(
+                child: Text(
+                  'Title',
                   style: TextStyle(fontSize: 22),
                 ),
-                const SizedBox(height: 30),
-                Checkbox(
-                    value: recurrent,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        recurrent = value!;
-                        if (recurrent == true) {
-                          dateOpt = 'Start Date';
-                        } else {
-                          dateOpt = 'Date';
-                        }
-                      });
-                    }),
-              ],
-            ),
-            //If the event is recurrent
-            //Add a dropdown to select type
-            if (recurrent)
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter title';
+                  }
+                  return null;
+                },
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: () {
+                  print('Selected Images');
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  height: 221,
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image),
+                        Text('Add Image +'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              Text(
+                'Description',
+                style: TextStyle(fontSize: 22),
+              ),
+              TextFormField(
+                controller: descController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  hintText: 'Body text (optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+                maxLines: null,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Location',
+                style: TextStyle(fontSize: 22),
+              ),
+              //IMPLEMENT WITH GOOGLE API//
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter location';
+                  }
+                  return null;
+                },
+                //IMPLEMENT WITH GOOGLE API//
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Area',
+                style: TextStyle(fontSize: 22),
+              ),
               Container(
                 padding:
                     EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
@@ -452,207 +228,30 @@ class _CreatePostState extends State<createPost> {
                     border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<String>(
-                  underline: SizedBox.shrink(),
                   isExpanded: true,
-                  value: recurrentValue,
-                  onChanged: (String? value) {
-                    // This is called when the user selects an item.
-                    setState(() {
-                      recurrentValue = value!;
-                    });
-                  },
-                  items: recurrentOpt
-                      .map<DropdownMenuItem<String>>((String value) {
+                  hint: const Text('Select Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedOption,
+                  items: areas.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
                   }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedOption = value;
+                    });
+                  },
                 ),
               ),
-            const SizedBox(height: 30),
-            Text(
-              dateOpt!,
-              style: TextStyle(fontSize: 22),
-            ),
-            dateContent(colorScheme),
-            const SizedBox(height: 30),
-            const Text(
-              'Area',
-              style: TextStyle(fontSize: 22),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: colorScheme.onPrimary),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Area'),
-                underline: SizedBox.shrink(),
-                value: selectedOption,
-                items: areas.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
+              const SizedBox(
+                height: 30,
               ),
-            ),
-            const SizedBox(height: 50),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/createForm');
-              },
-              child: Text('Advance',
-                  style: TextStyle(color: colorScheme.onPrimary)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SingleChildScrollView postContent(
-      ColorScheme colorScheme, BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(
-              child: Text(
-                'Title',
+              Text(
+                'Rating',
                 style: TextStyle(fontSize: 22),
               ),
-            ),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () {
-                print('Selected Images');
-              },
-              child: Container(
-                margin: const EdgeInsets.only(top: 20, bottom: 20),
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                height: 221,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image),
-                      Text('Add Image +'),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            Text(
-              'Description',
-              style: TextStyle(fontSize: 22),
-            ),
-            TextField(
-              controller: descController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                hintText: 'Body text (optional)',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-              maxLines: null,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Location',
-              style: TextStyle(fontSize: 22),
-            ),
-            //IMPLEMENT WITH GOOGLE API//
-            const TextField(
-              //IMPLEMENT WITH GOOGLE API//
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(8.0),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Text(
-              'Area',
-              style: TextStyle(fontSize: 22),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: colorScheme.onPrimary),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Area'),
-                underline: SizedBox.shrink(),
-                value: selectedOption,
-                items: areas.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                Text(
-                  'Rating',
-                  style: TextStyle(fontSize: 22),
-                ),
-                Checkbox(
-                    value: nonRating,
-                    onChanged: (value) {
-                      setState(() {
-                        nonRating = value!;
-                      });
-                    })
-              ],
-            ),
-            if (nonRating)
               Slider(
                 min: 1,
                 max: 5,
@@ -665,46 +264,532 @@ class _CreatePostState extends State<createPost> {
                 divisions: 4,
                 label: currentSlideValue.toString(),
               ),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                Text(
-                  'Price',
+              const SizedBox(
+                height: 30,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary),
+                onPressed: () {
+                  if (_poiKey.currentState!.validate()) {
+                    // If the form is valid, continue to homepage
+                    //Later, implement verification with DB
+                    Navigator.pushNamed(context, '/home');
+                  }
+                },
+                child: Text(
+                  'Advance',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SingleChildScrollView forumContent(ColorScheme colorScheme) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _forumKey,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Title',
+                style: TextStyle(fontSize: 22),
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please insert title';
+                  }
+                  return null;
+                },
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  print('Selected Images');
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  height: 221,
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image),
+                        Text('Add Image +'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const Text(
+                'Description',
+                style: TextStyle(fontSize: 22),
+              ),
+              TextFormField(
+                controller: descController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  hintText: 'Body text (optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+                maxLines: null,
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: const Text('Select Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedOption,
+                  items: areas.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedOption = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary),
+                onPressed: () {
+                  if (_forumKey.currentState!.validate()) {
+                    Navigator.pushNamed(context, '/home');
+                  }
+                },
+                child: Text('Create Forum',
+                    style: TextStyle(color: colorScheme.onPrimary)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SingleChildScrollView eventContent(ColorScheme colorScheme) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _eventKey,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Title',
+                style: TextStyle(fontSize: 22),
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter title';
+                  }
+                  return null;
+                },
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  print('Selected Images');
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  height: 221,
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image),
+                        Text('Add Image +'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const Text(
+                'Description',
+                style: TextStyle(fontSize: 22),
+              ),
+              TextFormField(
+                controller: descController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  hintText: 'Body text (optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+                maxLines: null,
+              ),
+
+              const SizedBox(height: 30),
+              Row(
+                children: [
+                  const Text(
+                    'Recurrent (weekly/monthly):',
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  const SizedBox(height: 30),
+                  Checkbox(
+                      value: recurrent,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          recurrent = value!;
+                          if (recurrent == true) {
+                            dateOpt = 'Start Date';
+                          } else {
+                            dateOpt = 'Date';
+                          }
+                        });
+                      }),
+                ],
+              ),
+              //If the event is recurrent
+              //Add a dropdown to select type
+              if (recurrent)
+                Container(
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: colorScheme.onPrimary),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  child: DropdownButton<String>(
+                    underline: SizedBox.shrink(),
+                    isExpanded: true,
+                    value: recurrentValue,
+                    onChanged: (String? value) {
+                      // This is called when the user selects an item.
+                      setState(() {
+                        recurrentValue = value!;
+                      });
+                    },
+                    items: recurrentOpt
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              const SizedBox(height: 30),
+              Text(
+                dateOpt!,
+                style: TextStyle(fontSize: 22),
+              ),
+              dateContent(colorScheme, _eventKey),
+              const SizedBox(height: 30),
+              const Text(
+                'Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: const Text('Select Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedOption,
+                  items: areas.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedOption = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 50),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary),
+                onPressed: () {
+                  if (_eventKey.currentState!.validate()) {
+                    Navigator.pushNamed(context, '/createForm');
+                  }
+                },
+                child: Text('Advance',
+                    style: TextStyle(color: colorScheme.onPrimary)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SingleChildScrollView postContent(
+      ColorScheme colorScheme, BuildContext context) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _postKey,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(
+                child: Text(
+                  'Title',
                   style: TextStyle(fontSize: 22),
                 ),
-                Checkbox(
-                    value: nonPrice,
-                    onChanged: (value) {
-                      setState(() {
-                        nonPrice = value!;
-                      });
-                    })
-              ],
-            ),
-            if (nonPrice)
-              Slider(
-                min: 1,
-                max: 4,
-                value: currentPriceValue,
-                onChanged: (double value) {
-                  setState(() {
-                    currentPriceValue = value;
-                  });
-                },
-                divisions: 3,
-                label: currentPriceValue.toString(),
               ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('Advance',
-                  style: TextStyle(color: colorScheme.onPrimary)),
-            ),
-          ],
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please insert title';
+                  }
+                },
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: () {
+                  print('Selected Images');
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  height: 221,
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image),
+                        Text('Add Image +'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              Text(
+                'Description',
+                style: TextStyle(fontSize: 22),
+              ),
+              TextFormField(
+                controller: descController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  hintText: 'Body text (optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+                maxLines: null,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Location',
+                style: TextStyle(fontSize: 22),
+              ),
+              //IMPLEMENT WITH GOOGLE API//
+              TextFormField(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please insert location';
+                  }
+                  return null;
+                },
+                //IMPLEMENT WITH GOOGLE API//
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Text(
+                'Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: const Text('Select Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedOption,
+                  items: areas.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedOption = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Rating',
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  Checkbox(
+                      value: nonRating,
+                      onChanged: (value) {
+                        setState(() {
+                          nonRating = value!;
+                        });
+                      })
+                ],
+              ),
+              if (nonRating)
+                Slider(
+                  min: 1,
+                  max: 5,
+                  value: currentSlideValue,
+                  onChanged: (double value) {
+                    setState(() {
+                      currentSlideValue = value;
+                    });
+                  },
+                  divisions: 4,
+                  label: currentSlideValue.toString(),
+                ),
+              const SizedBox(
+                height: 30,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'Price',
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  Checkbox(
+                      value: nonPrice,
+                      onChanged: (value) {
+                        setState(() {
+                          nonPrice = value!;
+                        });
+                      })
+                ],
+              ),
+              if (nonPrice)
+                Slider(
+                  min: 1,
+                  max: 4,
+                  value: currentPriceValue,
+                  onChanged: (double value) {
+                    setState(() {
+                      currentPriceValue = value;
+                    });
+                  },
+                  divisions: 3,
+                  label: currentPriceValue.toString(),
+                ),
+              const SizedBox(
+                height: 30,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary),
+                onPressed: () {
+                  if (_postKey.currentState!.validate()) {
+                    Navigator.pushNamed(context, '/home');
+                  }
+                },
+                child: Text('Advance',
+                    style: TextStyle(color: colorScheme.onPrimary)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -724,9 +809,15 @@ class _CreatePostState extends State<createPost> {
     );
   }
 
-  Container dateContent(ColorScheme colorScheme) {
+  Container dateContent(ColorScheme colorScheme, GlobalKey key) {
     return Container(
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please insert date';
+          }
+          return null;
+        },
         controller: dateController,
         onTap: () {
           _selectDate();
