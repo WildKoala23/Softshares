@@ -8,6 +8,8 @@ class SignUp extends StatefulWidget {
   State<SignUp> createState() => _SignUpState();
 }
 
+List<String> cities = ['Viseu', 'Tomar', 'Portoalegre', 'Fundão', 'Vilareal'];
+
 class _SignUpState extends State<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -18,6 +20,8 @@ class _SignUpState extends State<SignUp> {
 
   final _formKey = GlobalKey<FormState>();
 
+  late String selectedCity;
+
   @override
   void dispose() {
     super.dispose();
@@ -26,6 +30,13 @@ class _SignUpState extends State<SignUp> {
     confirmPasswordController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedCity = cities[0];
   }
 
   @override
@@ -59,6 +70,7 @@ class _SignUpState extends State<SignUp> {
                     firstNameField(colorScheme),
                     lastNameField(colorScheme),
                     emailField(colorScheme),
+                    cityField(colorScheme)
                   ],
                 ),
               ),
@@ -162,6 +174,32 @@ class _SignUpState extends State<SignUp> {
             ),
             border: OutlineInputBorder(
                 borderSide: BorderSide(color: colorScheme.onTertiary))),
+      ),
+    );
+  }
+
+  Container cityField(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          border: Border.all(), borderRadius: BorderRadius.circular(7)),
+      child: DropdownButton<String>(
+        isExpanded: true,
+        hint: const Text('Select Area'),
+        underline: SizedBox.shrink(),
+        value: selectedCity,
+        items: cities.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            selectedCity = value!;
+          });
+        },
       ),
     );
   }
