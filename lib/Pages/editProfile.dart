@@ -57,7 +57,7 @@ class _EditProfileState extends State<EditProfile> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: MyAppBar(iconR: const Icon(Icons.close), title: 'Edit Profile', rightCallback: closeCallback,),
-      drawer: myDrawer(location: 'Viseu'),
+      drawer: myDrawer(),
       bottomNavigationBar: MyBottomBar(),
       body: SingleChildScrollView(
         child: Column(

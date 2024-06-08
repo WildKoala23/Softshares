@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:softshares/Pages/chooseCityPage.dart';
 import 'package:softshares/Pages/settings.dart';
 import 'Pages/classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
           '/createCheckboxForm': (context) => customCheckboxForm(),
           '/notifications': (context) => Notifications(),
           '/settings': (context) => SettingsPage(),
+          '/chooseCity': (context) => ChooseCityPage(),
           '/test': (context) => test()
         };
 

@@ -56,7 +56,6 @@ class _MyWidgetState extends State<Area> {
         ),
       ),
       drawer: myDrawer(
-        location: 'Viseu',
       ),
       bottomNavigationBar: const MyBottomBar(),
     );

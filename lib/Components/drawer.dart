@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:softshares/Pages/chooseCityPage.dart';
 
 // ignore: must_be_immutable, camel_case_types
-class myDrawer extends StatelessWidget {
-  final String location;
-  myDrawer({super.key, required this.location});
+class myDrawer extends StatefulWidget {
+  myDrawer({super.key});
+
+  @override
+  State<myDrawer> createState() => _myDrawerState();
+}
+
+class _myDrawerState extends State<myDrawer> {
+  String city = "Viseu"; //Get city from database
 
   Map<String, Icon> areas = {
     "Education": const Icon(Icons.school),
@@ -24,7 +30,7 @@ class myDrawer extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(0),
         children: [
-          SafeArea(child: header(colorScheme)),
+          SafeArea(child: header(colorScheme, context)),
           ListTile(
             leading: const Icon(Icons.calendar_month),
             title: const Text('Calendar'),
@@ -69,7 +75,7 @@ class myDrawer extends StatelessWidget {
     );
   }
 
-  Container header(ColorScheme scheme) {
+  Container header(ColorScheme scheme, BuildContext context) {
     // ignore: sized_box_for_whitespace
     return Container(
       //alignment: Alignment.bottomCenter,
@@ -80,7 +86,15 @@ class myDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(1)),
               elevation: 0,
               backgroundColor: Colors.transparent),
-          onPressed: () {},
+          onPressed: () async {
+            final selectedCity =
+                await Navigator.pushNamed(context, '/chooseCity');
+            if (selectedCity != null && selectedCity is Map<String, dynamic>) {
+              setState(() {
+                city = selectedCity['city'];
+              });
+            }
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -95,8 +109,8 @@ class myDrawer extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    location,
-                    style: TextStyle(fontSize: 28, color: scheme.onSecondary),
+                    city,
+                    style: TextStyle(fontSize: 24, color: scheme.onSecondary),
                   ),
                 ],
               ),

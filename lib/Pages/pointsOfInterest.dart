@@ -33,7 +33,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
         iconR: const Icon(Icons.search),
         rightCallback: rightCallback,
       ),
-      drawer: myDrawer(location: 'Viseu'),
+      drawer: myDrawer(),
       body: Center(
           child: ListView.builder(
         itemCount: testPOICards.length,

@@ -39,6 +39,12 @@ class _CalendarState extends State<Calendar> {
             padding: const EdgeInsets.fromLTRB(12, 20, 12, 40),
             child: TableCalendar(
               focusedDay: today,
+              headerStyle:
+                  const HeaderStyle(
+                    formatButtonVisible: false, 
+                    titleCentered: true,
+                    
+                    ),
               firstDay: DateTime.utc(2023, 09, 01),
               selectedDayPredicate: (day) => isSameDay(day, today),
               lastDay: DateTime.utc(2026, 09, 01),
@@ -48,7 +54,7 @@ class _CalendarState extends State<Calendar> {
         ],
       ),
       drawer: myDrawer(
-        location: 'Viseu',
+
       ),
       bottomNavigationBar: MyBottomBar(),
     );

@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       )),
       drawer: myDrawer(
-        location: 'Viseu',
+
       ),
       bottomNavigationBar: const MyBottomBar(),
     );

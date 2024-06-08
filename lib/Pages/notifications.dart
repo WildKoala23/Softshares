@@ -23,7 +23,6 @@ class _NotificationsState extends State<Notifications> {
         title: Text('Notifications'),
       ),
       drawer: myDrawer(
-        location: 'Viseu',
       ),
       body: Center(
         child: Text('To be implemented'),
