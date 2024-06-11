@@ -11,6 +11,8 @@ class POICard extends StatefulWidget {
 }
 
 class _POIState extends State<POICard> {
+  bool saved = false;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -97,10 +99,10 @@ class _POIState extends State<POICard> {
                   child: widget.pointOfInterest.profilePic != null
                       ? Text(
                           widget.pointOfInterest.getFirstName()[0],
-                          style:  TextStyle(
+                          style: TextStyle(
                               fontSize: 20, color: colorScheme.onPrimary),
                         )
-                      : const Text('PP')),
+                      : const Text('I')),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,10 +119,29 @@ class _POIState extends State<POICard> {
             ),
           ],
         ),
-        const Icon(
-          Icons.bookmark_add_outlined,
-          size: 30,
-        )
+        !saved
+            ? IconButton(
+                icon: Icon(
+                  Icons.bookmark_add_outlined,
+                  size: 30,
+                ),
+                onPressed: () {
+                  setState(() {
+                    saved = true;
+                  });
+                },
+              )
+            : IconButton(
+                icon: Icon(
+                  Icons.bookmark,
+                  size: 30,
+                ),
+                onPressed: () {
+                  setState(() {
+                    saved = false;
+                  });
+                },
+              )
       ],
     );
   }

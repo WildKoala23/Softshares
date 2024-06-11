@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:search_map_location/search_map_location.dart';
 
 class createPost extends StatefulWidget {
   const createPost({Key? key}) : super(key: key);
@@ -193,27 +193,35 @@ class _CreatePostState extends State<createPost> {
               const SizedBox(
                 height: 30,
               ),
-              Text(
+              const Text(
                 'Location',
                 style: TextStyle(fontSize: 22),
               ),
-              //IMPLEMENT WITH GOOGLE API//
-              TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter location';
-                  }
-                  return null;
+              SearchLocation(
+                apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
+                country: 'PT',
+                onSelected: (place) async {
+                  final geolocation = await place.geolocation;
+                  print('PLACE SELECTED: ${place.description}\n ${place.fullJSON}');
                 },
-                //IMPLEMENT WITH GOOGLE API//
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                ),
               ),
+
+              // TextFormField(
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter location';
+              //     }
+              //     return null;
+              //   },
+
+              //   decoration: InputDecoration(
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.all(
+              //         Radius.circular(8.0),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 30,
               ),

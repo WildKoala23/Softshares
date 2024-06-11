@@ -11,6 +11,8 @@ class ForumCard extends StatefulWidget {
 }
 
 class _POIState extends State<ForumCard> {
+  bool saved = false;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -110,10 +112,29 @@ class _POIState extends State<ForumCard> {
             ),
           ],
         ),
-        const Icon(
-          Icons.bookmark_add_outlined,
-          size: 30,
-        )
+        !saved
+            ? IconButton(
+                icon: Icon(
+                  Icons.bookmark_add_outlined,
+                  size: 30,
+                ),
+                onPressed: () {
+                  setState(() {
+                    saved = true;
+                  });
+                },
+              )
+            : IconButton(
+                icon: Icon(
+                  Icons.bookmark,
+                  size: 30,
+                ),
+                onPressed: () {
+                  setState(() {
+                    saved = false;
+                  });
+                },
+              )
       ],
     );
   }
