@@ -89,7 +89,7 @@ class _POIState extends State<ForumCard> {
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
                   //If user does not have Profile Pic, print first letter of first name
-                  child: widget.forum.user.profileImg != null
+                  child: widget.forum.user.profileImg == null
                       ? Text(
                           widget.forum.user.firstname[0],
                           style: TextStyle(
