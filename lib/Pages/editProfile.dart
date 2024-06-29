@@ -27,15 +27,15 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController dateController = TextEditingController();
   TextEditingController cityController = TextEditingController();
 
-  User user = User('Guilherme', 'Pedrinho', 'Software Engineer', 'Viseu',
-      "email@example.com", 23, 09, 2001);
+  User user = User('John', 'Doe', 'Software Engineer', 'San Francisco, CA',
+    'john.doe@example.com', DateTime(1990, 5, 15), false);
 
   @override
   void initState() {
     super.initState();
     nameController.text = "${user.firstname}  ${user.lastName}";
     emailController.text = user.email;
-    dateController.text = "${user.year}-${user.month}-${user.day}";
+    dateController.text = "${user.birthday}";
     cityController.text = user.location;
   }
 

@@ -1,47 +1,10 @@
-class Forum {
-  final String firstName, lastName, title, department, subCategory, desc;
-  String? profilePic, image;
-  Forum(this.firstName, this.lastName, this.title, this.department,
-      this.subCategory, this.desc, this.profilePic, this.image);
+import 'package:softshares/classes/publication.dart';
+import 'package:softshares/classes/user.dart';
 
-  String getFirstName() {
-    return firstName;
-  }
+class Forum extends Publication{
 
-  String getLastName() {
-    return lastName;
-  }
-
-  String getTitle() {
-    return title;
-  }
-
-  String getDepartment() {
-    return department;
-  }
-
-  String getSubCategory() {
-    return subCategory;
-  }
-
-  String getDescription() {
-    return desc;
-  }
-
-
-  String? getProfilePic() {
-    return profilePic;
-  }
-
-  String? getImage() {
-    return image;
-  }
-
-  void setProfilePic(String? pic) {
-    profilePic = pic;
-  }
-
-  void setImage(String? img) {
-    image = img;
-  }
+  Forum(User user, User admin, String desc, int office, String title,
+      bool validated, String category, String subCategory, DateTime postDate)
+      : super(user, admin, desc, office, title, validated, category, subCategory, postDate);
 }
+

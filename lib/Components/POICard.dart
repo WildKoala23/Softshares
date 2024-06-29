@@ -25,12 +25,12 @@ class _POIState extends State<POICard> {
             child: cardHeader(colorScheme),
           ),
           //If image == null, put color instead
-          widget.pointOfInterest.getImage() == null
+          widget.pointOfInterest.imgPath == null
               ? Container(
                   color: Color.fromARGB(255, 150, 216, 255),
                   height: 120,
                 )
-              : Image.asset(widget.pointOfInterest.getImage()!),
+              : Image.asset(widget.pointOfInterest.imgPath!),
           Padding(
             padding: const EdgeInsets.all(14.0),
             child: textContent(colorScheme),
@@ -41,7 +41,7 @@ class _POIState extends State<POICard> {
             child: Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                widget.pointOfInterest.getDescription(),
+                widget.pointOfInterest.desc,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -59,18 +59,18 @@ class _POIState extends State<POICard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.pointOfInterest.getTitle(),
+              widget.pointOfInterest.title,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.pointOfInterest.getSubCategory(),
+              widget.pointOfInterest.subCategory,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
         ),
         Row(
             children: List.generate(
-                widget.pointOfInterest.getAval(),
+                widget.pointOfInterest.aval,
                 (start) => Icon(
                       Icons.star,
                       color: colorScheme.secondary,
@@ -96,9 +96,9 @@ class _POIState extends State<POICard> {
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
                   //If user does not have Profile Pic, print first letter of first name
-                  child: widget.pointOfInterest.profilePic != null
+                  child: widget.pointOfInterest.user.profileImg != null
                       ? Text(
-                          widget.pointOfInterest.getFirstName()[0],
+                          widget.pointOfInterest.user.firstname[0],
                           style: TextStyle(
                               fontSize: 20, color: colorScheme.onPrimary),
                         )
@@ -108,11 +108,11 @@ class _POIState extends State<POICard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${widget.pointOfInterest.getFirstName()} ${widget.pointOfInterest.getLastName()}",
+                  "${widget.pointOfInterest.user.firstname} ${widget.pointOfInterest.user.lastName}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Text(
-                  widget.pointOfInterest.getDepartment(),
+                  widget.pointOfInterest.user.job,
                   style: TextStyle(fontWeight: FontWeight.w100, fontSize: 14),
                 )
               ],

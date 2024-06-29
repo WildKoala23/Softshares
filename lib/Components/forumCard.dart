@@ -25,12 +25,12 @@ class _POIState extends State<ForumCard> {
             child: cardHeader(colorScheme),
           ),
           //If image == null, put color instead
-          widget.forum.getImage() == null
+          widget.forum.user.profileImg == null
               ? Container(
                   height: 0,
                 )
               : Image.network(
-                  widget.forum.getImage()!,
+                  widget.forum.user.profileImg!,
                 ),
           Padding(
             padding: const EdgeInsets.all(14.0),
@@ -42,7 +42,7 @@ class _POIState extends State<ForumCard> {
             child: Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                widget.forum.getDescription(),
+                widget.forum.desc,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -60,11 +60,11 @@ class _POIState extends State<ForumCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.forum.getTitle(),
+              widget.forum.title,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.forum.getSubCategory(),
+              widget.forum.subCategory,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
@@ -89,23 +89,24 @@ class _POIState extends State<ForumCard> {
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
                   //If user does not have Profile Pic, print first letter of first name
-                  child: widget.forum.profilePic != null
+                  child: widget.forum.user.profileImg != null
                       ? Text(
-                          widget.forum.getFirstName()[0],
+                          widget.forum.user.firstname[0],
                           style: TextStyle(
                               fontSize: 20, color: colorScheme.onPrimary),
                         )
-                      : const Text('PP')),
+                        
+                      : Image.network(widget.forum.user.profileImg!)),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${widget.forum.getFirstName()} ${widget.forum.getLastName()}",
+                  "${widget.forum.user.firstname} ${widget.forum.user.lastName}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Text(
-                  widget.forum.getDepartment(),
+                  widget.forum.user.job,
                   style: TextStyle(fontWeight: FontWeight.w100, fontSize: 14),
                 )
               ],

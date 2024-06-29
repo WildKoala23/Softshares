@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/classes/forums.dart';
+import 'package:softshares/classes/user.dart';
 import '../Components/appBar.dart';
 import '../Components/forumCard.dart';
+
+//Test dummies
+User user1 = User('John', 'Doe', 'Software Engineer', 'San Francisco, CA',
+    'john.doe@example.com', DateTime(1990, 5, 15), false);
+User user2 = User('Jane', 'Smith', 'Product Manager', 'New York, NY',
+    'jane.smith@example.com', DateTime(1985, 8, 25), true);
+User user3 = User('Emily', 'Johnson', 'Designer', 'Los Angeles, CA',
+    'emily.johnson@example.com', DateTime(1992, 11, 30), true);
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -53,25 +62,28 @@ List<ForumCard> createTestForumCards() {
 
   // Create multiple instances of Forum with different data
   Forum forum1 = Forum(
-    "John",
-    "Doe",
-    "Title 1",
-    "Department 1",
-    "SubCategory 1",
-    "Description 1",
-    "profilePic1",
-    "https://img.freepik.com/free-photo/colorful-design-with-spiral-design_188544-9588.jpg?size=626&ext=jpg&ga=GA1.1.553209589.1715126400&semt=sph",
+    user1,
+    user3,
+    'Discussion about new software trends',
+    1,
+    'Tech Talk',
+    true,
+    'Technology',
+    'Software',
+    DateTime.now()
   );
 
+  // Create a new Forum instance
   Forum forum2 = Forum(
-    "Peter",
-    "Parker",
-    "Title 2",
-    "Department 2",
-    "SubCategory 2",
-    "Description 2",
-    "profilePic2",
-    null,
+    user2,
+    user3,
+    'Discussion about sports events',
+    1,
+    'Sports Forum',
+    true,
+    'Sports',
+    'Football',
+    DateTime.now()
   );
 
   // Create ForumCard widgets with the Forum objects

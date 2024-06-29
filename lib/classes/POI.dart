@@ -1,52 +1,28 @@
-class POI {
-  late String firstName, lastName, title, department, subCategory, desc;
-  String? profilePic, image;
-  late int aval;
+import 'package:softshares/classes/publication.dart';
+import 'package:softshares/classes/user.dart';
 
-  POI(this.firstName, this.lastName, this.title, this.department,
-      this.subCategory, this.desc, this.aval, this.profilePic, this.image);
+class POI extends Publication {
+  int _aval;
+  String? imgPath;
 
-  String getFirstName() {
-    return firstName;
-  }
+  POI(
+      User user,
+      User admin,
+      String desc,
+      int office,
+      String title,
+      bool validated,
+      String category,
+      String subCategory,
+      DateTime postDate,
+      this._aval,
+      this.imgPath)
+      : super(user, admin, desc, office, title, validated, category,
+            subCategory, postDate);
 
-  String getLastName() {
-    return lastName;
-  }
+  int get aval => _aval;
 
-  String getTitle() {
-    return title;
-  }
-
-  String getDepartment() {
-    return department;
-  }
-
-  String getSubCategory() {
-    return subCategory;
-  }
-
-  String getDescription() {
-    return desc;
-  }
-
-  int getAval() {
-    return aval;
-  }
-
-  String? getProfilePic() {
-    return profilePic;
-  }
-
-  String? getImage() {
-    return image;
-  }
-
-  void setProfilePic(String? pic) {
-    profilePic = pic;
-  }
-
-  void setImage(String? img) {
-    image = img;
+  set aval(int value) {
+    _aval = value;
   }
 }

@@ -4,6 +4,9 @@ import 'package:softshares/Components/drawer.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
+User user = User('Alice', 'Williams', 'Architect', 'Los Angeles, CA',
+    'alice.williams@example.com', DateTime(1993, 7, 22), false);
+
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
 
@@ -15,8 +18,6 @@ class MyProfile extends StatefulWidget {
 
 class _MyHomePageState extends State<MyProfile> {
   //Placeholder User for testing
-  User user = User('Guilherme', 'Pedrinho', 'Software Engineer', 'Viseu',
-      "email@example.com", 23, 09, 2001);
 
   void rightCallback(context) {
     Navigator.pushNamed(context, '/settings');
