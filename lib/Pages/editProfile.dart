@@ -27,16 +27,14 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController dateController = TextEditingController();
   TextEditingController cityController = TextEditingController();
 
-  User user = User('John', 'Doe', 'Software Engineer', 'San Francisco, CA',
-    'john.doe@example.com', DateTime(1990, 5, 15), false);
+  User user = User('John', 'Doe', 'Software Engineer'
+    'john.doe@example.com');
 
   @override
   void initState() {
     super.initState();
     nameController.text = "${user.firstname}  ${user.lastName}";
     emailController.text = user.email;
-    dateController.text = "${user.birthday}";
-    cityController.text = user.location;
   }
 
   @override
@@ -44,8 +42,7 @@ class _EditProfileState extends State<EditProfile> {
     super.dispose();
     nameController.dispose();
     emailController.dispose();
-    dateController.dispose();
-    cityController.dispose();
+
   }
   /*Callback function to exit screen */
   void closeCallback(context) {
@@ -68,8 +65,6 @@ class _EditProfileState extends State<EditProfile> {
             nameContent(colorScheme),
             //Email
             emailContent(colorScheme),
-            //City
-            cityContent(colorScheme),
             Container(
               height: 30,
               margin: const EdgeInsets.only(left: 20, right: 20),
@@ -135,22 +130,6 @@ class _EditProfileState extends State<EditProfile> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Container cityContent(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextField(
-        controller: cityController,
-        decoration: InputDecoration(
-            label: Text(
-              'City',
-              style: TextStyle(color: colorScheme.onTertiary),
-            ),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: colorScheme.primary))),
       ),
     );
   }

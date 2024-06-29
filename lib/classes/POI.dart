@@ -9,7 +9,7 @@ class POI extends Publication {
       User user,
       User admin,
       String desc,
-      int office,
+      String office,
       String title,
       bool validated,
       String category,

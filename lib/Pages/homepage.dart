@@ -1,30 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/Components/publicationCard.dart';
 import 'package:softshares/classes/forums.dart';
+import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 import '../Components/appBar.dart';
 import '../Components/forumCard.dart';
+import '../classes/ClasseAPI.dart';
+import 'package:http/http.dart' as http;
 
 //Test dummies
-User user1 = User('John', 'Doe', 'Software Engineer', 'San Francisco, CA',
-    'john.doe@example.com', DateTime(1990, 5, 15), false);
-User user2 = User('Jane', 'Smith', 'Product Manager', 'New York, NY',
-    'jane.smith@example.com', DateTime(1985, 8, 25), true);
-User user3 = User('Emily', 'Johnson', 'Designer', 'Los Angeles, CA',
-    'emily.johnson@example.com', DateTime(1992, 11, 30), true);
+User user1 = User('John', 'Doe', 'john.doe@example.com');
+User user2 = User('Jane', 'Smith', 'jane.smith@example.com');
+User user3 = User('Emily', 'Johnson', 'emily.johnson@example.com');
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
-
-  final Color appBarColor = const Color(0xff80ADD7);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<ForumCard> testList = createTestForumCards();
+  List<Publication> posts = [];
+  final API api = API();
+
+  Future<void> getPosts() async {
+    posts = await api.getAllPosts();
+  }
 
   void leftCallback(context) {
     print('Notifications');
@@ -32,6 +38,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void rightCallback(context) {
     print('search');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getPosts();
+    print(posts.length);
   }
 
   @override
@@ -44,55 +57,80 @@ class _MyHomePageState extends State<MyHomePage> {
         rightCallback: rightCallback,
         title: 'Homepage',
       ), //homeAppBar(),
-      body: Center(
-          child: ListView.builder(
-        itemCount: testList.length,
-        itemBuilder: (context, index) {
-          return testList[index];
+      body: FutureBuilder(
+        future: getPosts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return (ListView.builder(
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  return PublicationCard(pub: posts[index]);
+                }));
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
-      )),
+      ),
       drawer: myDrawer(),
       bottomNavigationBar: const MyBottomBar(),
     );
   }
 }
 
-List<ForumCard> createTestForumCards() {
-  List<ForumCard> cards = [];
+// List<ForumCard> createTestForumCards() {
+//   List<ForumCard> cards = [];
 
-  // Create multiple instances of Forum with different data
-  Forum forum1 = Forum(
-    user1,
-    user3,
-    'Discussion about new software trends',
-    1,
-    'Tech Talk',
-    true,
-    'Technology',
-    'Software',
-    DateTime.now()
-  );
+//   // Create multiple instances of Forum with different data
+//   Forum forum1 = Forum(user1, user3, 'Discussion about new software trends',
+//       'Tech Talk', true, 'Technology', 'Software', DateTime.now(), );
 
-  // Create a new Forum instance
-  Forum forum2 = Forum(
-    user2,
-    user3,
-    'Discussion about sports events',
-    1,
-    'Sports Forum',
-    true,
-    'Sports',
-    'Football',
-    DateTime.now()
-  );
+//   // Create a new Forum instance
+//   Forum forum2 = Forum(user2, user3, 'Discussion about sports events',
+//       'Sports Forum', true, 'Sports', 'Football', DateTime.now(), );
 
-  // Create ForumCard widgets with the Forum objects
-  ForumCard card1 = ForumCard(forum: forum1);
-  ForumCard card2 = ForumCard(forum: forum2);
+//   // Create ForumCard widgets with the Forum objects
+//   ForumCard card1 = ForumCard(forum: forum1);
+//   ForumCard card2 = ForumCard(forum: forum2);
 
-  // Add the ForumCard widgets to the list
-  cards.add(card1);
-  cards.add(card2);
+//   // Add the ForumCard widgets to the list
+//   cards.add(card1);
+//   cards.add(card2);
 
-  return cards;
-}
+//   return cards;
+// }
+
+
+// ListView.builder(
+//         itemCount: testList.length,
+//         itemBuilder: (context, index) {
+//           return testList[index];
+//         },
+
+// FutureBuilder(
+//         future: getPosts(),
+//         builder: (context, snapshot) {
+//           if (snapshot.hasData) {
+//             return (ListView.builder(
+//               itemCount: testList.length,
+//               itemBuilder: (context, index) {
+//                 return testList[index];
+//               },
+//             ));
+//           } else {
+//             return const Center(
+//               child: CircularProgressIndicator(),
+//             );
+//           }
+//         },
+//       )
+
+
+// Center(
+//           child: ListView.builder(
+//         itemCount: testList.length,
+//         itemBuilder: (context, index) {
+//           return testList[index];
+//         },
+//       )

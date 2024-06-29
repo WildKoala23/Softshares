@@ -86,7 +86,6 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute:userId != null ? '/Login' : '/SignIn',
           routes: routes,
-          home: const MyHomePage(),
         );
       },
     );

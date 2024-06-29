@@ -111,10 +111,6 @@ class _POIState extends State<POICard> {
                   "${widget.pointOfInterest.user.firstname} ${widget.pointOfInterest.user.lastName}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                Text(
-                  widget.pointOfInterest.user.job,
-                  style: TextStyle(fontWeight: FontWeight.w100, fontSize: 14),
-                )
               ],
             ),
           ],
