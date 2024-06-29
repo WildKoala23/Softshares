@@ -3,7 +3,7 @@ import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import '../Components/POICard.dart';
-import 'classes/POI.dart';
+import '../classes/POI.dart';
 
 class PointsOfInterest extends StatefulWidget {
   const PointsOfInterest({super.key});

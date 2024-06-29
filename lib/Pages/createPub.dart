@@ -172,7 +172,6 @@ class _CreatePostState extends State<createPost> {
                   ),
                 ),
               ),
-
               Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
@@ -202,43 +201,27 @@ class _CreatePostState extends State<createPost> {
                 country: 'PT',
                 onSelected: (place) async {
                   final geolocation = await place.geolocation;
-                  print('PLACE SELECTED: ${place.description}\n ${place.fullJSON}');
+                  print(
+                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON}');
                 },
               ),
-
-              // TextFormField(
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Please enter location';
-              //     }
-              //     return null;
-              //   },
-
-              //   decoration: InputDecoration(
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.all(
-              //         Radius.circular(8.0),
-              //       ),
-              //     ),
-              //   ),
-              // ),
               const SizedBox(
                 height: 30,
               ),
-              Text(
+              const Text(
                 'Area',
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<String>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
-                  underline: SizedBox.shrink(),
+                  underline: const SizedBox.shrink(),
                   value: selectedOption,
                   items: areas.map((String value) {
                     return DropdownMenuItem<String>(
@@ -832,7 +815,7 @@ class _CreatePostState extends State<createPost> {
         },
         readOnly: true,
         decoration: InputDecoration(
-            suffixIcon: Icon(Icons.calendar_today),
+            suffixIcon: const Icon(Icons.calendar_today),
             label: Text(
               "Date",
               style: TextStyle(color: colorScheme.onTertiary),

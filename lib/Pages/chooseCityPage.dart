@@ -8,11 +8,11 @@ class ChooseCityPage extends StatefulWidget {
 }
 
 Map<String, String> cities = {
+  'Tomar': 'lib/images/tomar.jpg',
+  'Viseu': 'lib/images/viseu.jpg',
   'Fundão': 'lib/images/Fundao.jpg',
   'Portoalegre': 'lib/images/Portalegre.jpg',
-  'Tomar': 'lib/images/tomar.jpg',
-  'Vilareal': 'lib/images/vilareal.jpg',
-  'Viseu': 'lib/images/viseu.jpg'
+  'Vilareal': 'lib/images/vilareal.jpg'
 };
 
 class _ChooseCityPageState extends State<ChooseCityPage> {
@@ -38,10 +38,10 @@ class _ChooseCityPageState extends State<ChooseCityPage> {
                 onTap: () {
                   city = key;
                   print('Choosen city: ${key}');
-                  Navigator.pop(context, {'city': key});
+                  Navigator.pop(context, {'index': index + 1});
                 },
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(10, 50, 10, 50),
+                  padding: const EdgeInsets.fromLTRB(10, 50, 10, 50),
                   child: cityCard(context, key, value),
                 ),
               );

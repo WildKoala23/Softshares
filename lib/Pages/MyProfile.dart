@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import '../Components/appBar.dart';
-import './classes/user.dart';
+import '../classes/user.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyProfile> {
           DefaultTabController(
               length: 2,
               child: TabBar(
-                labelColor: Colors.black,
+                labelColor: colorScheme.onPrimary,
                 indicatorColor: colorScheme.secondary,
                 splashFactory: NoSplash.splashFactory,
                 tabs: [
@@ -62,9 +62,7 @@ class _MyHomePageState extends State<MyProfile> {
               ))
         ],
       ),
-      drawer: myDrawer(
-
-      ),
+      drawer: myDrawer(),
       bottomNavigationBar: const MyBottomBar(),
     );
   }
@@ -108,14 +106,14 @@ class _MyHomePageState extends State<MyProfile> {
       children: [
         Text(
           '${user.firstname} ${user.lastName}',
-          style: TextStyle(fontSize: 24, color: colorScheme.primary),
+          style: TextStyle(fontSize: 24, color: colorScheme.secondary),
         ),
         const SizedBox(
           height: 5,
         ),
         Text(
           user.job,
-          style: TextStyle(fontSize: 14, color: colorScheme.onTertiary),
+          style: TextStyle(fontSize: 14, color: colorScheme.secondary),
         ),
         const SizedBox(
           height: 2,
@@ -126,11 +124,11 @@ class _MyHomePageState extends State<MyProfile> {
             Icon(
               Icons.location_on_outlined,
               size: 14,
-              color: colorScheme.onTertiary,
+              color: colorScheme.secondary,
             ),
             Text(
               user.location,
-              style: TextStyle(fontSize: 14, color: colorScheme.onTertiary),
+              style: TextStyle(fontSize: 14, color: colorScheme.secondary),
             )
           ],
         )

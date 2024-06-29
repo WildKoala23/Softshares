@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
-import 'package:softshares/Pages/classes/forums.dart';
+import 'package:softshares/classes/forums.dart';
 import '../Components/appBar.dart';
 import '../Components/forumCard.dart';
 
@@ -42,9 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return testList[index];
         },
       )),
-      drawer: myDrawer(
-
-      ),
+      drawer: myDrawer(),
       bottomNavigationBar: const MyBottomBar(),
     );
   }

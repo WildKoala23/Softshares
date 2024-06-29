@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/classes/forums.dart';
+import 'package:softshares/classes/forums.dart';
 
 class ForumCard extends StatefulWidget {
   const ForumCard({super.key, required this.forum});

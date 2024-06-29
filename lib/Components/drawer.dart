@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/chooseCityPage.dart';
+import 'package:softshares/classes/db.dart';
 
 // ignore: must_be_immutable, camel_case_types
 class myDrawer extends StatefulWidget {
@@ -10,7 +10,14 @@ class myDrawer extends StatefulWidget {
 }
 
 class _myDrawerState extends State<myDrawer> {
-  String city = "Viseu"; //Get city from database
+  String cityName = 'Select City'; // Change with user's city
+
+  void _getCity(int id) async {
+    var data = await SQLHelper.getCity(id);
+    setState(() {
+      cityName = data[0]['CITY'];
+    });
+  }
 
   Map<String, Icon> areas = {
     "Education": const Icon(Icons.school),
@@ -90,9 +97,8 @@ class _myDrawerState extends State<myDrawer> {
             final selectedCity =
                 await Navigator.pushNamed(context, '/chooseCity');
             if (selectedCity != null && selectedCity is Map<String, dynamic>) {
-              setState(() {
-                city = selectedCity['city'];
-              });
+              _getCity(selectedCity['index']);
+              print(cityName);
             }
           },
           child: Row(
@@ -109,7 +115,7 @@ class _myDrawerState extends State<myDrawer> {
                     width: 10,
                   ),
                   Text(
-                    city,
+                    cityName,
                     style: TextStyle(fontSize: 24, color: scheme.onSecondary),
                   ),
                 ],

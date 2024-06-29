@@ -3,7 +3,7 @@ import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/formAppBar.dart';
-import './classes/notifications.dart';
+import '../classes/notifications.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({super.key});

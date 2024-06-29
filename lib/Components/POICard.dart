@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/classes/POI.dart';
+import 'package:softshares/classes/POI.dart';
 
 class POICard extends StatefulWidget {
   const POICard({super.key, required this.pointOfInterest});

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:softshares/Pages/chooseCityPage.dart';
 import 'package:softshares/Pages/settings.dart';
-import 'Pages/classes/ThemeNotifier.dart';
+import 'classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
 import 'Pages/area.dart';
 import 'Pages/MyProfile.dart';
@@ -20,8 +19,11 @@ import 'Pages/pointsOfInterest.dart';
 import 'Pages/signIn.dart';
 import 'Pages/signup.dart';
 import 'test.dart';
+import 'package:get_storage/get_storage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  //Replace with BD
   List<String> areas = [
     'Education',
     'Gastronomy',
@@ -32,18 +34,23 @@ void main() {
     'Transports'
   ];
 
+  await GetStorage.init();
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
-      child: MyApp(areas: areas),
+      child: MyApp(
+        areas: areas,
+      ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  MyApp({super.key, required this.areas});
   final List<String> areas;
+  final box = GetStorage();
 
-  const MyApp({super.key, required this.areas});
+  int? get userId => box.read('userId');
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +62,7 @@ class MyApp extends StatelessWidget {
           '/Calendar': (context) => Calendar(),
           '/Profile': (context) => const MyProfile(),
           '/Editprofile': (context) => EditProfile(),
-          '/Login': (context) => const MyLoginIn(username: 'Gui'),
+          '/Login': (context) => MyLoginIn(userID: userId!),
           '/SignIn': (context) => const SignIn(),
           '/SignUp': (context) => const SignUp(),
           '/createPost': (context) => createPost(),
@@ -77,7 +84,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: '/Login',
+          initialRoute: '/test', //userId != null ? '/Login' : '/SignIn'
           routes: routes,
           home: const MyHomePage(),
         );

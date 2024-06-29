@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class MyLoginIn extends StatelessWidget {
-  final String username;
+  final int userID;
 
-  const MyLoginIn({super.key, required this.username});
+  const MyLoginIn({super.key, required this.userID});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class MyLoginIn extends StatelessWidget {
           height: 20,
         ),
         Text(
-          'Welcome back, \n$username!',
+          'Welcome back, Gui!',
           style: TextStyle(fontSize: 32, color: colorScheme.onSecondary),
           textAlign: TextAlign.center,
         ),

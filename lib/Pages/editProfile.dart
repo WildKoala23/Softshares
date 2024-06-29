@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
-import './classes/user.dart';
+import '../classes/user.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({super.key});

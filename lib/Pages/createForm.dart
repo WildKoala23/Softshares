@@ -34,6 +34,7 @@ class _MyWidgetState extends State<createForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: const formAppbar(
         title: 'Create Form',
@@ -54,7 +55,7 @@ class _MyWidgetState extends State<createForm> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0, top: 15),
-              child: addItem(context),
+              child: addItem(context, colorScheme),
             ),
           ],
         ),
@@ -62,17 +63,20 @@ class _MyWidgetState extends State<createForm> {
     );
   }
 
-  ElevatedButton addItem(BuildContext context) {
+  ElevatedButton addItem(BuildContext context, ColorScheme colorScheme) {
     return ElevatedButton(
       style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(widget.mainColor)),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(colorScheme.onPrimary),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(colorScheme.primary)),
       onPressed: () {
         showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
             return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
-              return formBottomSheet(setState, context);
+              return formBottomSheet(setState, context, colorScheme);
             });
           },
         );
@@ -81,12 +85,13 @@ class _MyWidgetState extends State<createForm> {
     );
   }
 
-  Container formBottomSheet(StateSetter setState, BuildContext context) {
+  Container formBottomSheet(
+      StateSetter setState, BuildContext context, ColorScheme colorScheme) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: widget.containerColor,
+        color: colorScheme.onTertiary,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -123,9 +128,11 @@ class _MyWidgetState extends State<createForm> {
               }),
           ElevatedButton(
               style: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(widget.mainColor),
-              ),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(colorScheme.onPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(colorScheme.primary),
+                  elevation: MaterialStateProperty.all(10)),
               onPressed: () async {
                 String route = '';
                 Widget? item;
@@ -159,7 +166,6 @@ class _MyWidgetState extends State<createForm> {
                     final result = await Navigator.pushNamed(
                         context, "/createFieldTextForm");
                     if (result != null && result is Map<String, dynamic>) {
-
                       item = customTextField(
                           label: result["userLabel"],
                           numericInput: result["numeric"]);

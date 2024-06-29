@@ -12,7 +12,7 @@ const lightColorScheme = ColorScheme(
   onBackground: Colors.black,
   surface: Color(0xFFFEF7FF),
   onSurface: Colors.black,
-  onTertiary: Color(0xFF49454F),
+  onTertiary: Color(0xFFD5D1DB),
 );
 
 const darkColorScheme = ColorScheme(
@@ -27,7 +27,7 @@ const darkColorScheme = ColorScheme(
   onBackground: Colors.white,
   surface: Color(0xFF1E1E1E),
   onSurface: Colors.white,
-  onTertiary: Color(0xFFCACACA),
+  onTertiary: Color.fromARGB(255, 77, 97, 104),
 );
 
 class ThemeNotifier with ChangeNotifier {
