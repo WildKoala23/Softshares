@@ -7,8 +7,16 @@ class Publication {
   bool _validated;
   DateTime _postDate;
 
-  Publication(this._user, this._admin, this._desc, this._office, this._title,
-      this._validated, this._category, this._subCategory, this._postDate);
+  Publication(
+    this._user,
+    this._admin,
+    this._desc,
+    this._office,
+    this._title,
+    this._validated,
+    this._category,
+    this._subCategory,
+    this._postDate,);
 
   User get user => _user;
   User get admin => _admin!;

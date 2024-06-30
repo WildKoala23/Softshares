@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/db.dart';
 
 // ignore: must_be_immutable, camel_case_types
@@ -10,13 +11,19 @@ class myDrawer extends StatefulWidget {
 }
 
 class _myDrawerState extends State<myDrawer> {
-  String cityName = 'Select City'; // Change with user's city
+  late String cityName; // Change with user's city
+  final SQLHelper bd = SQLHelper.instance;
+  final box = GetStorage();
+  late int cityId = box.read('selectedCity');
 
-  void _getCity(int id) async {
-    var data = await SQLHelper.getCity(id);
+  Future<bool> _getCity(int id) async {
+    var data = await bd.getCityName(id);
+    // await bd.checkTable();
     setState(() {
-      cityName = data[0]['CITY'];
+      cityId = box.read('selectedCity');
+      cityName = data!;
     });
+    return true;
   }
 
   Map<String, Icon> areas = {
@@ -37,7 +44,19 @@ class _myDrawerState extends State<myDrawer> {
       child: ListView(
         padding: const EdgeInsets.all(0),
         children: [
-          SafeArea(child: header(colorScheme, context)),
+          SafeArea(
+              child: FutureBuilder(
+            future: _getCity(cityId),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return header(colorScheme, context);
+              } else {
+                return (Center(
+                  child: CircularProgressIndicator(),
+                ));
+              }
+            },
+          )),
           ListTile(
             leading: const Icon(Icons.calendar_month),
             title: const Text('Calendar'),
@@ -97,8 +116,8 @@ class _myDrawerState extends State<myDrawer> {
             final selectedCity =
                 await Navigator.pushNamed(context, '/chooseCity');
             if (selectedCity != null && selectedCity is Map<String, dynamic>) {
+              box.write('selectedCity', selectedCity['index']);
               _getCity(selectedCity['index']);
-              print(cityName);
             }
           },
           child: Row(

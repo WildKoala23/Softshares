@@ -27,7 +27,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController dateController = TextEditingController();
   TextEditingController cityController = TextEditingController();
 
-  User user = User('John', 'Doe', 'Software Engineer'
+  User user = User(1, 'John', 'Doe', 'Software Engineer'
     'john.doe@example.com');
 
   @override

@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/classes/forums.dart';
-import 'package:softshares/classes/publication.dart';
+import 'package:softshares/classes/event.dart';
 
-class ForumCard extends StatefulWidget {
-  const ForumCard({super.key, required this.forum});
+class EventCard extends StatefulWidget {
+  const EventCard({super.key, required this.event});
 
-  final Forum forum;
+  final Event event;
 
   @override
-  State<ForumCard> createState() => _POIState();
+  State<EventCard> createState() => _EventCardState();
 }
 
-class _POIState extends State<ForumCard> {
+class _EventCardState extends State<EventCard> {
   bool saved = false;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+        final colorScheme = Theme.of(context).colorScheme;
     return Card(
-      margin: const EdgeInsets.fromLTRB(26, 26, 20, 0),
+      margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
             child: cardHeader(colorScheme),
+          ),
+          Container(
+            color: Color.fromARGB(255, 150, 216, 255),
+            height: 120,
           ),
           Padding(
             padding: const EdgeInsets.all(14.0),
@@ -35,7 +38,7 @@ class _POIState extends State<ForumCard> {
             child: Container(
               alignment: Alignment.centerLeft,
               child: Text(
-                widget.forum.desc,
+                widget.event.desc,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -45,7 +48,7 @@ class _POIState extends State<ForumCard> {
     );
   }
 
-  Row textContent(ColorScheme colorScheme) {
+    Row textContent(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -53,11 +56,11 @@ class _POIState extends State<ForumCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.forum.title,
+              widget.event.title,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.forum.subCategory,
+              widget.event.subCategory,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
@@ -82,20 +85,19 @@ class _POIState extends State<ForumCard> {
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
                   //If user does not have Profile Pic, print first letter of first name
-                  child: widget.forum.user.profileImg == null
+                  child: widget.event.user.profileImg == null
                       ? Text(
-                          widget.forum.user.firstname[0],
+                          widget.event.user.firstname[0],
                           style: TextStyle(
                               fontSize: 20, color: colorScheme.onPrimary),
                         )
-                        
-                      : Image.network(widget.forum.user.profileImg!)),
+                      : const Text('I')),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${widget.forum.user.firstname} ${widget.forum.user.lastName}",
+                  "${widget.event.user.firstname} ${widget.event.user.lastName}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],

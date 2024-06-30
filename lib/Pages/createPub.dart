@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:search_map_location/search_map_location.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/publication.dart';
+import 'package:softshares/classes/user.dart';
 
 class createPost extends StatefulWidget {
   const createPost({Key? key}) : super(key: key);
@@ -19,6 +22,8 @@ List<String> areas = [
 ];
 
 class _CreatePostState extends State<createPost> {
+  final API api = API();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController descController = TextEditingController();
@@ -630,7 +635,6 @@ class _CreatePostState extends State<createPost> {
                   ),
                 ),
               ),
-
               Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
@@ -651,31 +655,23 @@ class _CreatePostState extends State<createPost> {
               const SizedBox(
                 height: 30,
               ),
-              Text(
+              const Text(
                 'Location',
                 style: TextStyle(fontSize: 22),
               ),
-              //IMPLEMENT WITH GOOGLE API//
-              TextFormField(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please insert location';
-                  }
-                  return null;
+              SearchLocation(
+                apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
+                country: 'PT',
+                onSelected: (place) async {
+                  final geolocation = await place.geolocation;
+                  print(
+                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON} \n $geolocation');
                 },
-                //IMPLEMENT WITH GOOGLE API//
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                  ),
-                ),
               ),
               const SizedBox(
                 height: 30,
               ),
-              Text(
+              const Text(
                 'Area',
                 style: TextStyle(fontSize: 22),
               ),
@@ -771,9 +767,21 @@ class _CreatePostState extends State<createPost> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
-                onPressed: () {
+                onPressed: () async {
                   if (_postKey.currentState!.validate()) {
-                    Navigator.pushNamed(context, '/home');
+                    //Change to current user
+                    User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
+                    var post = Publication(
+                        user1,
+                        null,
+                        descController.text,
+                        'Viseu',
+                        titleController.text,
+                        false,
+                        'Sporst',
+                        'Football',
+                        DateTime.now());
+                    await api.createPost(post);
                   }
                 },
                 child: Text('Advance',

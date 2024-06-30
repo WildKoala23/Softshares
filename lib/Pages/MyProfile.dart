@@ -4,8 +4,7 @@ import 'package:softshares/Components/drawer.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
-User user = User('John', 'Doe', 'john.doe@example.com');
-
+User user = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -54,10 +53,14 @@ class _MyHomePageState extends State<MyProfile> {
                 splashFactory: NoSplash.splashFactory,
                 tabs: [
                   Tab(
-                    child: Text('My Posts'),
+                    child: Text(
+                      'My Posts',
+                      style: TextStyle(color: colorScheme.onSecondary),
+                    ),
                   ),
                   Tab(
-                    child: Text('Saved Posts'),
+                    child: Text('Saved Posts',
+                        style: TextStyle(color: colorScheme.onSecondary)),
                   )
                 ],
               ))
@@ -115,16 +118,6 @@ class _MyHomePageState extends State<MyProfile> {
         const SizedBox(
           height: 2,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.location_on_outlined,
-              size: 14,
-              color: colorScheme.secondary,
-            ),
-          ],
-        )
       ],
     );
   }

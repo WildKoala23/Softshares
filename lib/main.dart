@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    box.write('selectedCity', 1);
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         Map<String, WidgetBuilder> routes = {
@@ -84,7 +85,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute:userId != null ? '/Login' : '/SignIn',
+          initialRoute:'/home', //userId != null ? '/Login' : '/SignIn',
           routes: routes,
         );
       },

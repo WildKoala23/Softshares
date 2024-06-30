@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/classes/POI.dart';
 import 'package:softshares/classes/publication.dart';
 
 class PublicationCard extends StatefulWidget {
@@ -86,7 +85,7 @@ class _PubState extends State<PublicationCard> {
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
                   //If user does not have Profile Pic, print first letter of first name
-                  child: widget.pub.user.profileImg != null
+                  child: widget.pub.user.profileImg == null
                       ? Text(
                           widget.pub.user.firstname[0],
                           style: TextStyle(

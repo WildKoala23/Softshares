@@ -7,7 +7,7 @@ class POI extends Publication {
 
   POI(
       User user,
-      User admin,
+      User? admin,
       String desc,
       String office,
       String title,
