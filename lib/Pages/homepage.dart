@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/publicationCard.dart';
+import 'package:softshares/Pages/createPub.dart';
 import 'package:softshares/classes/POI.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/forums.dart';
@@ -12,7 +11,7 @@ import 'package:softshares/classes/user.dart';
 import '../Components/appBar.dart';
 import '../Components/forumCard.dart';
 import '../classes/ClasseAPI.dart';
-import 'package:http/http.dart' as http;
+import '../classes/areaClass.dart';
 
 //Test dummies
 User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
@@ -20,7 +19,8 @@ User user2 = User(2, 'Jane', 'Smith', 'jane.smith@example.com');
 User user3 = User(3, 'Emily', 'Johnson', 'emily.johnson@example.com');
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  MyHomePage({super.key, required this.areas});
+  List<AreaClass> areas;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Publication> posts = [];
   final API api = API();
+  final String msg = 'school';
 
   Future<void> getPosts() async {
     posts = await api.getAllPosts();
@@ -46,7 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     getPosts();
-    print(posts.length);
   }
 
   @override
@@ -68,14 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (context, index) {
                   final pub = posts[index];
                   switch (pub.runtimeType) {
-                    case Event:
+                    case Event _:
                       break;
-                    case Publication:
-                      return PublicationCard(pub: pub);
-                    case POI:
+                    case POI _:
                       break;
-                    case Forum:
+                    case Forum _:
                       return ForumCard(forum: pub as Forum);
+                    default:
+                      return PublicationCard(pub: pub);
                   }
                 }));
           } else {
@@ -85,64 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         },
       ),
-      drawer: myDrawer(),
+      drawer: myDrawer(areas: widget.areas,),
       bottomNavigationBar: const MyBottomBar(),
     );
   }
 }
 
-// List<ForumCard> createTestForumCards() {
-//   List<ForumCard> cards = [];
-
-//   // Create multiple instances of Forum with different data
-//   Forum forum1 = Forum(user1, user3, 'Discussion about new software trends',
-//       'Tech Talk', true, 'Technology', 'Software', DateTime.now(), );
-
-//   // Create a new Forum instance
-//   Forum forum2 = Forum(user2, user3, 'Discussion about sports events',
-//       'Sports Forum', true, 'Sports', 'Football', DateTime.now(), );
-
-//   // Create ForumCard widgets with the Forum objects
-//   ForumCard card1 = ForumCard(forum: forum1);
-//   ForumCard card2 = ForumCard(forum: forum2);
-
-//   // Add the ForumCard widgets to the list
-//   cards.add(card1);
-//   cards.add(card2);
-
-//   return cards;
-// }
-
-
-// ListView.builder(
-//         itemCount: testList.length,
-//         itemBuilder: (context, index) {
-//           return testList[index];
-//         },
-
-// FutureBuilder(
-//         future: getPosts(),
-//         builder: (context, snapshot) {
-//           if (snapshot.hasData) {
-//             return (ListView.builder(
-//               itemCount: testList.length,
-//               itemBuilder: (context, index) {
-//                 return testList[index];
-//               },
-//             ));
-//           } else {
-//             return const Center(
-//               child: CircularProgressIndicator(),
-//             );
-//           }
-//         },
-//       )
-
-
-// Center(
-//           child: ListView.builder(
-//         itemCount: testList.length,
-//         itemBuilder: (context, index) {
-//           return testList[index];
-//         },
-//       )

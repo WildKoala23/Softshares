@@ -1,12 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:softshares/classes/areaClass.dart';
+import './usableIcons.dart';
 import '../classes/POI.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
 import 'package:http/http.dart' as http;
+import 'package:get_storage/get_storage.dart';
+import './usableIcons.dart';
 
 class API {
   var baseUrl = 'backendpint-w3vz.onrender.com';
+  final box = GetStorage();
 
   Future<User> getUser(int id) async {
     var response =
@@ -14,8 +20,8 @@ class API {
 
     var jsonData = jsonDecode(response.body);
 
-    var user = User(jsonData['user_id'], jsonData['first_name'],
-        jsonData['last_name'], jsonData['email']);
+    var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
+        jsonData['data']['last_name'], jsonData['data']['email']);
 
     return user;
   }
@@ -70,7 +76,7 @@ class API {
     var jsonData = jsonDecode(response.body);
 
     for (var eachPub in jsonData['posts']) {
-      if (eachPub['type'] == 'P' && list.length < 1) {
+      if (eachPub['type'] == 'P') {
         User publisherUser = await getUser(eachPub['publisher_id']);
         final publication = POI(
             publisherUser,
@@ -92,13 +98,12 @@ class API {
 
   //Change when api is complete
   Future<bool> createPost(Publication pub) async {
+    var office = box.read('selectedCity');
     var response =
         await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-      'sub_area_id': 1001,
-      'office_id': 1,
+      'subAreaId': 1001,
+      'officeId': office,
       'publisher_id': pub.user.id,
-      'creation_date': pub.datePost.toString(),
-      'type': 'N',
       'validated': pub.validated,
       'title': pub.title,
       'content': pub.desc,
@@ -107,5 +112,57 @@ class API {
     print(response.statusCode);
 
     return true;
+  }
+
+  Future<List<AreaClass>> getAreas() async {
+    List<AreaClass> list = [];
+    var response =
+        await http.get(Uri.https(baseUrl, '/api/categories/get-areas'));
+    var responseSub =
+        await http.get(Uri.https(baseUrl, '/api/categories/get-sub-areas'));
+
+    var jsonData = jsonDecode(response.body);
+    var jsonDataSub = jsonDecode(responseSub.body);
+
+    for (var area in jsonData['data']) {
+      List<AreaClass> subareas = [];
+      //Get subareas reletated to each area
+      for(var subarea in jsonDataSub['data']){
+        if (subarea['area_id'] == area['area_id']) {
+        var dummyArea = AreaClass(
+          id: subarea['area_id'],
+          areaName: subarea['title'],
+        );
+        subareas.add(dummyArea);
+      }
+      }
+      var dummyArea = AreaClass(
+          id: area['area_id'],
+          areaName: area['title'],
+          icon: iconMap[area['icon_name']],
+          subareas: subareas
+          );
+      list.add(dummyArea);
+    }
+    return list;
+  }
+
+  Future<List<AreaClass>> getSubareas(int areaId) async {
+    List<AreaClass> list = [];
+    var response =
+        await http.get(Uri.https(baseUrl, '/api/categories/get-sub-areas'));
+
+    var jsonData = jsonDecode(response.body);
+
+    for (var area in jsonData['data']) {
+      if (area['area_id'] == areaId) {
+        var dummyArea = AreaClass(
+          id: area['area_id'],
+          areaName: area['title'],
+        );
+        list.add(dummyArea);
+      }
+    }
+    return list;
   }
 }

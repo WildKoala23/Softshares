@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/classes/areaClass.dart';
 
 class Area extends StatefulWidget {
   final String title;
-  const Area({super.key, required this.title});
+  List<AreaClass> areas;
+  Area({super.key, required this.title, required this.areas});
 
   @override
   State<Area> createState() => _MyWidgetState();
@@ -55,8 +57,7 @@ class _MyWidgetState extends State<Area> {
           ],
         ),
       ),
-      drawer: myDrawer(
-      ),
+      drawer: myDrawer(areas: widget.areas,),
       bottomNavigationBar: const MyBottomBar(),
     );
   }

@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import '../classes/POI.dart';
-import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
 

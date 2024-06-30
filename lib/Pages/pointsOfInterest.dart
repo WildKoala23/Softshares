@@ -3,6 +3,7 @@ import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/user.dart';
 import '../Components/POICard.dart';
 import '../classes/POI.dart';
@@ -10,8 +11,8 @@ import '../classes/POI.dart';
 User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class PointsOfInterest extends StatefulWidget {
-  const PointsOfInterest({super.key});
-
+  PointsOfInterest({super.key, required this.areas});
+  List<AreaClass> areas;
   @override
   State<PointsOfInterest> createState() => _PointsOfInterestState();
 }
@@ -42,7 +43,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
         iconR: const Icon(Icons.search),
         rightCallback: rightCallback,
       ),
-      drawer: myDrawer(),
+      drawer: myDrawer(areas: widget.areas,),
       body: FutureBuilder(
         future: getPoI(),
         builder: (context, snapshot) {

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
-  const Calendar({super.key});
+  Calendar({super.key, required this.areas});
+  List<AreaClass> areas;
 
   @override
   State<Calendar> createState() => _CalendarState();
@@ -53,9 +55,7 @@ class _CalendarState extends State<Calendar> {
           )
         ],
       ),
-      drawer: myDrawer(
-
-      ),
+      drawer: myDrawer(areas: widget.areas,),
       bottomNavigationBar: MyBottomBar(),
     );
   }

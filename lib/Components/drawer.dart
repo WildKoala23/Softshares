@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:softshares/Pages/createPub.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 
 // ignore: must_be_immutable, camel_case_types
 class myDrawer extends StatefulWidget {
-  myDrawer({super.key});
+  myDrawer({super.key, required this.areas});
+
+  final List<AreaClass> areas;
 
   @override
   State<myDrawer> createState() => _myDrawerState();
@@ -18,7 +24,6 @@ class _myDrawerState extends State<myDrawer> {
 
   Future<bool> _getCity(int id) async {
     var data = await bd.getCityName(id);
-    // await bd.checkTable();
     setState(() {
       cityId = box.read('selectedCity');
       cityName = data!;
@@ -26,15 +31,10 @@ class _myDrawerState extends State<myDrawer> {
     return true;
   }
 
-  Map<String, Icon> areas = {
-    "Education": const Icon(Icons.school),
-    "Gastronomy": const Icon(Icons.restaurant),
-    "Health": const Icon(Icons.local_hospital),
-    "Housing": const Icon(Icons.house),
-    "Leisure": const Icon(Icons.live_tv),
-    "Sports": const Icon(Icons.sports),
-    "Transports": const Icon(Icons.train)
-  };
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +45,19 @@ class _myDrawerState extends State<myDrawer> {
         padding: const EdgeInsets.all(0),
         children: [
           SafeArea(
-              child: FutureBuilder(
-            future: _getCity(cityId),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return header(colorScheme, context);
-              } else {
-                return (Center(
-                  child: CircularProgressIndicator(),
-                ));
-              }
-            },
-          )),
+            child: FutureBuilder(
+              future: _getCity(cityId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return header(colorScheme, context);
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          ),
           ListTile(
             leading: const Icon(Icons.calendar_month),
             title: const Text('Calendar'),
@@ -84,17 +85,31 @@ class _myDrawerState extends State<myDrawer> {
             indent: 25,
             endIndent: 25,
           ),
-          const ListTile(
-            contentPadding: EdgeInsets.only(left: 25),
-            title: Text('Areas',
-                style: TextStyle(
-                  fontSize: 14,
-                )),
+          const Padding(
+            padding: EdgeInsets.only(left: 25, top: 12, bottom: 0),
+            child: Text(
+              'Areas',
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
           ),
-          Column(
-            children: areas.entries
-                .map((e) => areaTile(e.key, e.value, context))
-                .toList(),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.areas.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () {
+                  Navigator.pushNamed(
+                      context, '/${widget.areas[index].areaName}');
+                },
+                leading: Icon(
+                  widget.areas[index].icon,
+                  color: Colors.black,
+                ),
+                title: Text(widget.areas[index].areaName),
+              );
+            },
           ),
         ],
       ),

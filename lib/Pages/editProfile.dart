@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/classes/areaClass.dart';
 import '../classes/user.dart';
 
 class EditProfile extends StatefulWidget {
-  EditProfile({super.key});
+  EditProfile({super.key, required this.areas});
+
+  List<AreaClass> areas;
 
   Map<String, bool> checkBoxSelected = {
     'Education': false,
@@ -54,7 +57,7 @@ class _EditProfileState extends State<EditProfile> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: MyAppBar(iconR: const Icon(Icons.close), title: 'Edit Profile', rightCallback: closeCallback,),
-      drawer: myDrawer(),
+      drawer: myDrawer(areas: widget.areas,),
       bottomNavigationBar: MyBottomBar(),
       body: SingleChildScrollView(
         child: Column(

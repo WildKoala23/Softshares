@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/classes/areaClass.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
 User user = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class MyProfile extends StatefulWidget {
-  const MyProfile({super.key});
-
-  final Color appBarColor = const Color(0xff80ADD7);
+  MyProfile({super.key, required this.areas});
+List<AreaClass> areas;
 
   @override
   State<MyProfile> createState() => _MyHomePageState();
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyProfile> {
               ))
         ],
       ),
-      drawer: myDrawer(),
+      drawer: myDrawer(areas: widget.areas,),
       bottomNavigationBar: const MyBottomBar(),
     );
   }

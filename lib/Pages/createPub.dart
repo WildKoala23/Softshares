@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
 class createPost extends StatefulWidget {
-  const createPost({Key? key}) : super(key: key);
+  createPost({super.key, required this.areas});
+
+  List<AreaClass> areas;
 
   @override
   State<createPost> createState() => _CreatePostState();
 }
-
-List<String> areas = [
-  "Education",
-  "Gastronomy",
-  "Health",
-  "Housing",
-  "Leisure",
-  "Sports",
-  "Transports"
-];
 
 class _CreatePostState extends State<createPost> {
   final API api = API();
@@ -28,7 +21,8 @@ class _CreatePostState extends State<createPost> {
   TextEditingController dateController = TextEditingController();
   TextEditingController descController = TextEditingController();
 
-  String? selectedOption;
+  late AreaClass selectedArea;
+  late AreaClass selectedSubArea;
   late double currentSlideValue;
   late double currentPriceValue;
 
@@ -66,7 +60,8 @@ class _CreatePostState extends State<createPost> {
   @override
   void initState() {
     super.initState();
-    selectedOption = areas[0];
+    selectedArea = widget.areas[0];
+    selectedSubArea = selectedArea.subareas![0];
     currentSlideValue = 3;
     recurrentValue = recurrentOpt.first;
     currentPriceValue = 3;
@@ -218,25 +213,58 @@ class _CreatePostState extends State<createPost> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 5, bottom: 5),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
-                child: DropdownButton<String>(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
-                  underline: const SizedBox.shrink(),
-                  value: selectedOption,
-                  items: areas.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                  underline: SizedBox.shrink(),
+                  value: widget.areas[0],
+                  items: widget.areas.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
                     );
                   }).toList(),
-                  onChanged: (value) {
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
                     setState(() {
-                      selectedOption = value;
+                      selectedArea = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                'Sub Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<AreaClass>(
+                  isExpanded: true,
+                  hint: const Text('Select Sub Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedSubArea,
+                  items: selectedArea.subareas!.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
+                    );
+                  }).toList(),
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
+                    setState(() {
+                      selectedSubArea = value;
                     });
                   },
                 ),
@@ -316,28 +344,6 @@ class _CreatePostState extends State<createPost> {
                 ),
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  print('Selected Images');
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 20),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  height: 221,
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image),
-                        Text('Add Image +'),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               const Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
@@ -366,20 +372,53 @@ class _CreatePostState extends State<createPost> {
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                child: DropdownButton<String>(
+                child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: selectedOption,
-                  items: areas.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                  value: widget.areas[0],
+                  items: widget.areas.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
                     );
                   }).toList(),
-                  onChanged: (value) {
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
                     setState(() {
-                      selectedOption = value;
+                      selectedArea = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                'Sub Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<AreaClass>(
+                  isExpanded: true,
+                  hint: const Text('Select Sub Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedSubArea,
+                  items: selectedArea.subareas!.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
+                    );
+                  }).toList(),
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
+                    setState(() {
+                      selectedSubArea = value;
                     });
                   },
                 ),
@@ -541,20 +580,53 @@ class _CreatePostState extends State<createPost> {
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                child: DropdownButton<String>(
+                child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: selectedOption,
-                  items: areas.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                  value: widget.areas[0],
+                  items: widget.areas.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
                     );
                   }).toList(),
-                  onChanged: (value) {
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
                     setState(() {
-                      selectedOption = value;
+                      selectedArea = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                'Sub Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<AreaClass>(
+                  isExpanded: true,
+                  hint: const Text('Select Sub Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedSubArea,
+                  items: selectedArea.subareas!.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
+                    );
+                  }).toList(),
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
+                    setState(() {
+                      selectedSubArea = value;
                     });
                   },
                 ),
@@ -681,20 +753,53 @@ class _CreatePostState extends State<createPost> {
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                child: DropdownButton<String>(
+                child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: selectedOption,
-                  items: areas.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                  value: widget.areas[0],
+                  items: widget.areas.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
                     );
                   }).toList(),
-                  onChanged: (value) {
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
                     setState(() {
-                      selectedOption = value;
+                      selectedArea = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                'Sub Area',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.onPrimary),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: DropdownButton<AreaClass>(
+                  isExpanded: true,
+                  hint: const Text('Select Sub Area'),
+                  underline: SizedBox.shrink(),
+                  value: selectedSubArea,
+                  items: selectedArea.subareas!.map((AreaClass area) {
+                    return DropdownMenuItem<AreaClass>(
+                      value: area,
+                      child: Text(area.areaName),
+                    );
+                  }).toList(),
+                  onChanged: (AreaClass? value) {
+                    print(value!.id);
+                    setState(() {
+                      selectedSubArea = value;
                     });
                   },
                 ),
