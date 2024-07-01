@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
-import './usableIcons.dart';
+import 'utils.dart';
 import '../classes/POI.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';

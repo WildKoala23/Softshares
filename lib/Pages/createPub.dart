@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
+import '../classes/utils.dart';
 
 class createPost extends StatefulWidget {
   createPost({super.key, required this.areas});
@@ -16,6 +20,8 @@ class createPost extends StatefulWidget {
 
 class _CreatePostState extends State<createPost> {
   final API api = API();
+
+  File? _selectedImage;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController dateController = TextEditingController();
@@ -152,28 +158,35 @@ class _CreatePostState extends State<createPost> {
               const SizedBox(
                 height: 20,
               ),
-              GestureDetector(
-                onTap: () {
-                  print('Selected Images');
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 20),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  height: 221,
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image),
-                        Text('Add Image +'),
-                      ],
+               _selectedImage == null
+                  ? GestureDetector(
+                      onTap: () {
+                        _pickImageFromGallery();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 20, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        height: 221,
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image),
+                              Text('Add Image +'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        _pickImageFromGallery();
+                      },
+                      child: Image.file(_selectedImage!),
                     ),
-                  ),
-                ),
-              ),
               const Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
@@ -475,28 +488,35 @@ class _CreatePostState extends State<createPost> {
                 ),
               ),
               const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  print('Selected Images');
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 20),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  height: 221,
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image),
-                        Text('Add Image +'),
-                      ],
+              _selectedImage == null
+                  ? GestureDetector(
+                      onTap: () {
+                        _pickImageFromGallery();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 20, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        height: 221,
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image),
+                              Text('Add Image +'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        _pickImageFromGallery();
+                      },
+                      child: Image.file(_selectedImage!),
                     ),
-                  ),
-                ),
-              ),
               const Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
@@ -687,28 +707,35 @@ class _CreatePostState extends State<createPost> {
               const SizedBox(
                 height: 20,
               ),
-              GestureDetector(
-                onTap: () {
-                  print('Selected Images');
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, bottom: 20),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                  height: 221,
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image),
-                        Text('Add Image +'),
-                      ],
+              _selectedImage == null
+                  ? GestureDetector(
+                      onTap: () {
+                        _pickImageFromGallery();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 20, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        height: 221,
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image),
+                              Text('Add Image +'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        _pickImageFromGallery();
+                      },
+                      child: Image.file(_selectedImage!),
                     ),
-                  ),
-                ),
-              ),
               const Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
@@ -889,8 +916,7 @@ class _CreatePostState extends State<createPost> {
                         selectedSubArea.id,
                         DateTime.now(),
                         null,
-                        null
-                        );
+                        null);
                     await api.createPost(post);
                     Navigator.pushNamed(context, '/home');
                   }
@@ -943,5 +969,15 @@ class _CreatePostState extends State<createPost> {
                 borderSide: BorderSide(color: colorScheme.primary))),
       ),
     );
+  }
+
+  Future _pickImageFromGallery() async {
+    final returnedImg =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (returnedImg != null) {
+      setState(() {
+        _selectedImage = File(returnedImg.path);
+      });
+    }
   }
 }
