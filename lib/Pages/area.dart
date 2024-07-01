@@ -79,7 +79,7 @@ class _MyWidgetState extends State<Area> {
         iconL: const Icon(Icons.filter_alt),
       ),
       body: DefaultTabController(
-        length: 3, // Make sure this matches the number of tabs
+        length: 3, 
         child: Column(
           children: [
             TabBar(

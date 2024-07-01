@@ -25,11 +25,16 @@ class _POIState extends State<POICard> {
           ),
           //If image == null, put color instead
           widget.pointOfInterest.imgPath == null
-              ? Container(
-                  color: Color.fromARGB(255, 150, 216, 255),
-                  height: 120,
-                )
-              : Image.asset(widget.pointOfInterest.imgPath!),
+                ? Container(
+                    color: Color.fromARGB(255, 150, 216, 255),
+                    height: 120,
+                  )
+                : Image.network(
+                    'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.imgPath}',
+                    //Handles images not existing
+                    errorBuilder: (context, error, stackTrace) {
+                    return Container();
+                  }),
           Padding(
             padding: const EdgeInsets.all(14.0),
             child: textContent(colorScheme),

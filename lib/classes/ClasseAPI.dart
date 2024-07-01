@@ -36,26 +36,30 @@ class API {
     for (var eachPub in jsonData['posts']) {
       User publisherUser = await getUser(eachPub['publisher_id']);
       final publication = Publication(
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']));
+        publisherUser,
+        null,
+        eachPub['content'],
+        eachPub['title'],
+        eachPub['validated'],
+        eachPub['sub_area_id'],
+        DateTime.parse(eachPub['creation_date']),
+        eachPub['filepath'],
+        eachPub['p_location'],
+      );
       await publication.getSubAreaName();
       publications.add(publication);
     }
     for (var eachPub in jsonData['forums']) {
       User publisherUser = await getUser(eachPub['publisher_id']);
       final publication = Forum(
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']));
+        publisherUser,
+        null,
+        eachPub['content'],
+        eachPub['title'],
+        eachPub['validated'],
+        eachPub['sub_area_id'],
+        DateTime.parse(eachPub['creation_date']),
+      );
       await publication.getSubAreaName();
       publications.add(publication);
     }
@@ -79,6 +83,20 @@ class API {
         User publisherUser = await getUser(eachPub['publisher_id']);
         if (type == 'posts') {
           final publication = Publication(
+            publisherUser,
+            null,
+            eachPub['content'],
+            eachPub['title'],
+            eachPub['validated'],
+            eachPub['sub_area_id'],
+            DateTime.parse(eachPub['creation_date']),
+            eachPub['filepath'],
+            eachPub['p_location'],
+          );
+          await publication.getSubAreaName();
+          publications.add(publication);
+        } else if (type == 'forums') {
+          final publication = Forum(
               publisherUser,
               null,
               eachPub['content'],
@@ -88,36 +106,22 @@ class API {
               DateTime.parse(eachPub['creation_date']));
           await publication.getSubAreaName();
           publications.add(publication);
-        }else if(type == 'forums'){
-          final publication = Forum(
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']));
-          await publication.getSubAreaName();
-          publications.add(publication);
         } else {
           final publication = Event(
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']),
-          DateTime.parse(eachPub['event_date']),
-          eachPub['filepath'],
-          eachPub['eventLocation'],
-          eachPub['eventLocation']
-          );
+              publisherUser,
+              null,
+              eachPub['description'],
+              eachPub['name'],
+              eachPub['validated'],
+              eachPub['sub_area_id'],
+              DateTime.parse(eachPub['creation_date']),
+              eachPub['filepath'],
+              eachPub['eventLocation'],
+              DateTime.parse(eachPub['event_date']),
+              eachPub['recurring']);
           await publication.getSubAreaName();
           publications.add(publication);
         }
-
-        
       }
     }
 
@@ -139,15 +143,17 @@ class API {
       if (eachPub['type'] == 'P') {
         User publisherUser = await getUser(eachPub['publisher_id']);
         final publication = POI(
-            publisherUser,
-            null,
-            eachPub['content'],
-            eachPub['title'],
-            eachPub['validated'],
-            eachPub['sub_area_id'],
-            DateTime.now(),
-            3,
-            null);
+          publisherUser,
+          null,
+          eachPub['content'],
+          eachPub['title'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']),
+          eachPub['filepath'],
+          eachPub['p_location'],
+          3,
+        );
         await publication.getSubAreaName();
         list.add(publication);
       }

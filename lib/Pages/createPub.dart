@@ -879,6 +879,7 @@ class _CreatePostState extends State<createPost> {
                   if (_postKey.currentState!.validate()) {
                     //Change to current user
                     User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
+                    //Change when images and google api are working
                     var post = Publication(
                         user1,
                         null,
@@ -886,7 +887,10 @@ class _CreatePostState extends State<createPost> {
                         titleController.text,
                         false,
                         selectedSubArea.id,
-                        DateTime.now());
+                        DateTime.now(),
+                        null,
+                        null
+                        );
                     await api.createPost(post);
                     Navigator.pushNamed(context, '/home');
                   }

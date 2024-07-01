@@ -10,6 +10,7 @@ class Publication {
   DateTime _postDate;
   int _subCategory;
   late String subAreaName;
+  String? imgPath, location;
 
   Publication(
     this._user,
@@ -19,6 +20,8 @@ class Publication {
     this._validated,
     this._subCategory,
     this._postDate,
+    this.imgPath,
+    this.location
   );
 
   User get user => _user;

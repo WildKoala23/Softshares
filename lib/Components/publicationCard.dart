@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Pages/postsPage.dart';
 import 'package:softshares/classes/publication.dart';
 
 class PublicationCard extends StatefulWidget {
@@ -22,6 +23,14 @@ class _PubState extends State<PublicationCard> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostPage(publication: widget.pub),
+          ),
+        );
+      },
       child: Card(
         margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
         child: Column(
@@ -30,10 +39,17 @@ class _PubState extends State<PublicationCard> {
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
             ),
-            Container(
-              color: Color.fromARGB(255, 150, 216, 255),
-              height: 120,
-            ),
+            widget.pub.imgPath == null
+                ? Container(
+                    color: Color.fromARGB(255, 150, 216, 255),
+                    height: 120,
+                  )
+                : Image.network(
+                    'https://backendpint-w3vz.onrender.com/uploads/${widget.pub.imgPath}',
+                    //Handles images not existing
+                    errorBuilder: (context, error, stackTrace) {
+                    return Container();
+                  }),
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: textContent(colorScheme),

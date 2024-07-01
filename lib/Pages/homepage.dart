@@ -29,7 +29,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Publication> posts = [];
   final API api = API();
-  final String msg = 'school';
 
   Future<void> getPosts() async {
     posts = await api.getAllPosts();
