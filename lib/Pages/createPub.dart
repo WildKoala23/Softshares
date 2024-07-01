@@ -38,6 +38,8 @@ class _CreatePostState extends State<createPost> {
   bool recurrent = false;
   late String recurrentValue;
 
+  List<AreaClass> subAreas = [];
+
   //Variables to validate created content
   final _postKey = GlobalKey<FormState>();
   final _forumKey = GlobalKey<FormState>();
@@ -172,7 +174,7 @@ class _CreatePostState extends State<createPost> {
                   ),
                 ),
               ),
-              Text(
+              const Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
               ),
@@ -230,9 +232,9 @@ class _CreatePostState extends State<createPost> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.id);
                     setState(() {
-                      selectedArea = value;
+                      selectedArea = value!;
+                      selectedSubArea = selectedArea.subareas![0];
                     });
                   },
                 ),
@@ -367,8 +369,8 @@ class _CreatePostState extends State<createPost> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
@@ -384,9 +386,9 @@ class _CreatePostState extends State<createPost> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.id);
                     setState(() {
-                      selectedArea = value;
+                      selectedArea = value!;
+                      selectedSubArea = selectedArea.subareas![0];
                     });
                   },
                 ),
@@ -591,10 +593,11 @@ class _CreatePostState extends State<createPost> {
                       child: Text(area.areaName),
                     );
                   }).toList(),
-                  onChanged: (AreaClass? value) {
-                    print(value!.id);
+                  onChanged: (AreaClass? value) async {
+                    print(selectedArea.subareas!.length);
                     setState(() {
-                      selectedArea = value;
+                      selectedArea = value!;
+                      selectedSubArea = selectedArea.subareas![0];
                     });
                   },
                 ),
@@ -624,9 +627,8 @@ class _CreatePostState extends State<createPost> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.id);
                     setState(() {
-                      selectedSubArea = value;
+                      selectedSubArea = value!;
                     });
                   },
                 ),
@@ -707,7 +709,7 @@ class _CreatePostState extends State<createPost> {
                   ),
                 ),
               ),
-              Text(
+              const Text(
                 'Description',
                 style: TextStyle(fontSize: 22),
               ),
@@ -748,11 +750,11 @@ class _CreatePostState extends State<createPost> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
@@ -765,9 +767,10 @@ class _CreatePostState extends State<createPost> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.id);
+                    print(value!.subareas!.length);
                     setState(() {
                       selectedArea = value;
+                      selectedSubArea = selectedArea.subareas![0];
                     });
                   },
                 ),
@@ -780,15 +783,15 @@ class _CreatePostState extends State<createPost> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Sub Area'),
-                  underline: SizedBox.shrink(),
+                  underline: const SizedBox.shrink(),
                   value: selectedSubArea,
                   items: selectedArea.subareas!.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
@@ -809,7 +812,7 @@ class _CreatePostState extends State<createPost> {
               ),
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Rating',
                     style: TextStyle(fontSize: 22),
                   ),
@@ -840,7 +843,7 @@ class _CreatePostState extends State<createPost> {
               ),
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Price',
                     style: TextStyle(fontSize: 22),
                   ),
@@ -880,13 +883,12 @@ class _CreatePostState extends State<createPost> {
                         user1,
                         null,
                         descController.text,
-                        'Viseu',
                         titleController.text,
                         false,
-                        'Sporst',
-                        'Football',
+                        selectedSubArea.id,
                         DateTime.now());
                     await api.createPost(post);
+                    Navigator.pushNamed(context, 'home');
                   }
                 },
                 child: Text('Advance',

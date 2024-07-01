@@ -10,16 +10,14 @@ class Event extends Publication {
     User user,
     User? admin,
     String desc,
-    String office,
     String title,
     bool validated,
-    String category,
-    String subCategory,
+    int subCategory,
     DateTime postDate,
     this.eventDate,
     this.imgPath, 
     String this.eventLocation,
     this.recurring 
-  ) : super(user, admin, desc, office, title, validated, category, subCategory, postDate);
+  ) : super(user, admin, desc, title, validated, subCategory, postDate);
 
 }

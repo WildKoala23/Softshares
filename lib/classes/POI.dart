@@ -5,20 +5,9 @@ class POI extends Publication {
   int _aval;
   String? imgPath;
 
-  POI(
-      User user,
-      User? admin,
-      String desc,
-      String office,
-      String title,
-      bool validated,
-      String category,
-      String subCategory,
-      DateTime postDate,
-      this._aval,
-      this.imgPath)
-      : super(user, admin, desc, office, title, validated, category,
-            subCategory, postDate);
+  POI(User user, User? admin, String desc, String title, bool validated,
+      int subCategory, DateTime postDate, this._aval, this.imgPath)
+      : super(user, admin, desc, title, validated, subCategory, postDate);
 
   int get aval => _aval;
 

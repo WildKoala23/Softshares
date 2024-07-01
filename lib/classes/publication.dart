@@ -1,31 +1,32 @@
+import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/user.dart';
 
 class Publication {
+  final API api = API();
   User _user;
   User? _admin;
-  String _desc, _title, _category, _subCategory, _office;
+  String _desc, _title;
   bool _validated;
   DateTime _postDate;
+  int _subCategory;
 
   Publication(
     this._user,
     this._admin,
     this._desc,
-    this._office,
     this._title,
     this._validated,
-    this._category,
     this._subCategory,
-    this._postDate,);
+    this._postDate,
+  );
 
   User get user => _user;
   User get admin => _admin!;
   String get desc => _desc;
   String get title => _title;
-  String get category => _category;
-  String get subCategory => _subCategory;
+  int get subCategory => _subCategory;
   bool get validated => _validated;
-  String get office => _office;
+
   DateTime get datePost => _postDate;
 
   set user(User value) {
@@ -44,11 +45,7 @@ class Publication {
     _title = value;
   }
 
-  set category(String value) {
-    _category = value;
-  }
-
-  set subCategory(String value) {
+  set subCategory(int value) {
     _subCategory = value;
   }
 
@@ -56,11 +53,11 @@ class Publication {
     _validated = value;
   }
 
-  set office(String value) {
-    _office = value;
-  }
-
   set postDate(DateTime value) {
     _postDate = value;
+  }
+
+  Future<String> getSubAreaName() async {
+    return await api.getSubAreaName(subCategory);
   }
 }

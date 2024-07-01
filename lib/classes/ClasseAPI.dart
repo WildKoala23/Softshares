@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
 import './usableIcons.dart';
 import '../classes/POI.dart';
@@ -8,7 +7,6 @@ import '../classes/user.dart';
 import '../classes/publication.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
-import './usableIcons.dart';
 
 class API {
   var baseUrl = 'backendpint-w3vz.onrender.com';
@@ -40,11 +38,9 @@ class API {
           publisherUser,
           null,
           eachPub['content'],
-          'Viseu',
           eachPub['title'],
           eachPub['validated'],
-          'Sports',
-          'Football',
+          eachPub['sub_area_id'],
           DateTime.parse(eachPub['creation_date']));
       publications.add(publication);
     }
@@ -54,11 +50,9 @@ class API {
           publisherUser,
           null,
           eachPub['content'],
-          'Viseu',
           eachPub['title'],
           eachPub['validated'],
-          'Sports',
-          'Football',
+          eachPub['sub_area_id'],
           DateTime.parse(eachPub['creation_date']));
       publications.add(publication);
     }
@@ -82,11 +76,9 @@ class API {
             publisherUser,
             null,
             eachPub['content'],
-            'Viseu',
             eachPub['title'],
             eachPub['validated'],
-            'Sports',
-            'Football',
+            eachPub['sub_area_id'],
             DateTime.now(),
             3,
             null);
@@ -96,15 +88,14 @@ class API {
     return list;
   }
 
-  //Change when api is complete
   Future<bool> createPost(Publication pub) async {
     var office = box.read('selectedCity');
+    print('HERE');
     var response =
         await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-      'subAreaId': 1001,
+      'subAreaId': pub.subCategory,
       'officeId': office,
       'publisher_id': pub.user.id,
-      'validated': pub.validated,
       'title': pub.title,
       'content': pub.desc,
     });
@@ -127,21 +118,20 @@ class API {
     for (var area in jsonData['data']) {
       List<AreaClass> subareas = [];
       //Get subareas reletated to each area
-      for(var subarea in jsonDataSub['data']){
+      for (var subarea in jsonDataSub['data']) {
         if (subarea['area_id'] == area['area_id']) {
-        var dummyArea = AreaClass(
-          id: subarea['area_id'],
-          areaName: subarea['title'],
-        );
-        subareas.add(dummyArea);
-      }
+          var dummyArea = AreaClass(
+            id: subarea['area_id'],
+            areaName: subarea['title'],
+          );
+          subareas.add(dummyArea);
+        }
       }
       var dummyArea = AreaClass(
           id: area['area_id'],
           areaName: area['title'],
           icon: iconMap[area['icon_name']],
-          subareas: subareas
-          );
+          subareas: subareas);
       list.add(dummyArea);
     }
     return list;
@@ -164,5 +154,22 @@ class API {
       }
     }
     return list;
+  }
+
+  Future<String> getSubAreaName(int id) async {
+    var result = '';
+
+    var response =
+        await http.get(Uri.https(baseUrl, '/api/categories/get-sub-areas'));
+
+    var jsonData = jsonDecode(response.body);
+
+    for (var area in jsonData['data']) {
+      if (area['sub_area_id'] == id) {
+        result = area['title'];
+        break;
+      }
+    }
+    return result;
   }
 }

@@ -13,6 +13,20 @@ class ForumCard extends StatefulWidget {
 
 class _POIState extends State<ForumCard> {
   bool saved = false;
+  String subArea = '';
+
+  Future getSubArea() async {
+    var data = await widget.forum.getSubAreaName();
+    setState(() {
+      subArea = data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSubArea();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +71,7 @@ class _POIState extends State<ForumCard> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.forum.subCategory,
+              subArea,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
@@ -88,7 +102,6 @@ class _POIState extends State<ForumCard> {
                           style: TextStyle(
                               fontSize: 20, color: colorScheme.onPrimary),
                         )
-                        
                       : Image.network(widget.forum.user.profileImg!)),
             ),
             Column(

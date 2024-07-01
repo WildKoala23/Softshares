@@ -12,10 +12,24 @@ class EventCard extends StatefulWidget {
 
 class _EventCardState extends State<EventCard> {
   bool saved = false;
+  String subArea = '';
+
+  Future getSubArea() async {
+    var data = await widget.event.getSubAreaName();
+    setState(() {
+      subArea = data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSubArea();
+  }
 
   @override
   Widget build(BuildContext context) {
-        final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
       child: Column(
@@ -48,7 +62,7 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-    Row textContent(ColorScheme colorScheme) {
+  Row textContent(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -60,7 +74,7 @@ class _EventCardState extends State<EventCard> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.event.subCategory,
+              subArea,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
