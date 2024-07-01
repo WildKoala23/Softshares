@@ -47,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     getPosts();
+    print(posts.length);
   }
 
   @override
@@ -85,9 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         },
       ),
-      drawer: myDrawer(areas: widget.areas,),
+      drawer: myDrawer(
+        areas: widget.areas,
+      ),
       bottomNavigationBar: const MyBottomBar(),
     );
   }
 }
-

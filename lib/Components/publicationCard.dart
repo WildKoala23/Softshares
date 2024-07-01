@@ -21,34 +21,36 @@ class _PubState extends State<PublicationCard> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
-            child: cardHeader(colorScheme),
-          ),
-          Container(
-            color: Color.fromARGB(255, 150, 216, 255),
-            height: 120,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: textContent(colorScheme),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 20.0, bottom: 50.0, left: 14, right: 14),
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                widget.pub.desc,
-                textAlign: TextAlign.start,
-              ),
+    return GestureDetector(
+      child: Card(
+        margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
+              child: cardHeader(colorScheme),
             ),
-          )
-        ],
+            Container(
+              color: Color.fromARGB(255, 150, 216, 255),
+              height: 120,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: textContent(colorScheme),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 20.0, bottom: 50.0, left: 14, right: 14),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.pub.desc,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

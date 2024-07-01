@@ -16,7 +16,7 @@ class Event extends Publication {
     DateTime postDate,
     this.eventDate,
     this.imgPath, 
-    String this.eventLocation,
+    this.eventLocation,
     this.recurring 
   ) : super(user, admin, desc, title, validated, subCategory, postDate);
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/event.dart';
 import './usableIcons.dart';
 import '../classes/POI.dart';
 import '../classes/forums.dart';
@@ -61,6 +62,68 @@ class API {
 
     //Sort for most recent first
     publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+    return publications;
+  }
+
+  Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
+    List<Publication> publications = [];
+
+    var response =
+        await http.get(Uri.https(baseUrl, '/api/dynamic/all-content'));
+
+    var jsonData = jsonDecode(response.body);
+
+    for (var eachPub in jsonData[type]) {
+      int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
+      if (roundedAreaId == areaId) {
+        User publisherUser = await getUser(eachPub['publisher_id']);
+        if (type == 'posts') {
+          final publication = Publication(
+              publisherUser,
+              null,
+              eachPub['content'],
+              eachPub['title'],
+              eachPub['validated'],
+              eachPub['sub_area_id'],
+              DateTime.parse(eachPub['creation_date']));
+          await publication.getSubAreaName();
+          publications.add(publication);
+        }else if(type == 'forums'){
+          final publication = Forum(
+          publisherUser,
+          null,
+          eachPub['content'],
+          eachPub['title'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']));
+          await publication.getSubAreaName();
+          publications.add(publication);
+        } else {
+          final publication = Event(
+          publisherUser,
+          null,
+          eachPub['content'],
+          eachPub['title'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']),
+          DateTime.parse(eachPub['event_date']),
+          eachPub['filepath'],
+          eachPub['eventLocation'],
+          eachPub['eventLocation']
+          );
+          await publication.getSubAreaName();
+          publications.add(publication);
+        }
+
+        
+      }
+    }
+
+    //Sort for most recent first
+    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
     return publications;
   }
 
@@ -137,25 +200,6 @@ class API {
           icon: iconMap[area['icon_name']],
           subareas: subareas);
       list.add(dummyArea);
-    }
-    return list;
-  }
-
-  Future<List<AreaClass>> getSubareas(int areaId) async {
-    List<AreaClass> list = [];
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/categories/get-sub-areas'));
-
-    var jsonData = jsonDecode(response.body);
-
-    for (var area in jsonData['data']) {
-      if (area['area_id'] == areaId) {
-        var dummyArea = AreaClass(
-          id: area['area_id'],
-          areaName: area['title'],
-        );
-        list.add(dummyArea);
-      }
     }
     return list;
   }

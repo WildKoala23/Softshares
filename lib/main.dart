@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:softshares/Pages/chooseCityPage.dart';
+import 'package:softshares/Pages/postsPage.dart';
 import 'package:softshares/Pages/settings.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -116,9 +117,7 @@ class MyApp extends StatelessWidget {
           '/createRadioBtnForm': (context) => customRadioBtnForm(),
           '/createFieldTextForm': (context) => customFieldtextForm(),
           '/createCheckboxForm': (context) => customCheckboxForm(),
-          '/notifications': (context) => Notifications(
-                areas: areas,
-              ),
+          '/notifications': (context) => Notifications(areas: areas,),
           '/settings': (context) => SettingsPage(),
           '/chooseCity': (context) => ChooseCityPage(),
           '/test': (context) => test(),
