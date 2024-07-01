@@ -888,7 +888,7 @@ class _CreatePostState extends State<createPost> {
                         selectedSubArea.id,
                         DateTime.now());
                     await api.createPost(post);
-                    Navigator.pushNamed(context, 'home');
+                    Navigator.pushNamed(context, '/home');
                   }
                 },
                 child: Text('Advance',

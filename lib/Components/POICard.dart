@@ -12,22 +12,6 @@ class POICard extends StatefulWidget {
 
 class _POIState extends State<POICard> {
   bool saved = false;
-
-    String subArea = '';
-
-  Future getSubArea() async {
-    var data = await widget.pointOfInterest.getSubAreaName();
-    setState(() {
-      subArea = data;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getSubArea();
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -78,7 +62,7 @@ class _POIState extends State<POICard> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              subArea,
+              widget.pointOfInterest.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],

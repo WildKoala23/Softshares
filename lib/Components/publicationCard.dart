@@ -12,19 +12,10 @@ class PublicationCard extends StatefulWidget {
 
 class _PubState extends State<PublicationCard> {
   bool saved = false;
-  String subArea = '';
-
-  Future getSubArea() async {
-    var data = await widget.pub.getSubAreaName();
-    setState(() {
-      subArea = data;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    getSubArea();
   }
 
   @override
@@ -74,7 +65,7 @@ class _PubState extends State<PublicationCard> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              subArea,
+              widget.pub.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],

@@ -9,6 +9,7 @@ class Publication {
   bool _validated;
   DateTime _postDate;
   int _subCategory;
+  late String subAreaName;
 
   Publication(
     this._user,
@@ -57,7 +58,7 @@ class Publication {
     _postDate = value;
   }
 
-  Future<String> getSubAreaName() async {
-    return await api.getSubAreaName(subCategory);
+  Future<void> getSubAreaName() async {
+    subAreaName = await api.getSubAreaName(subCategory);
   }
 }

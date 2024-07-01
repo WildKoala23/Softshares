@@ -42,6 +42,7 @@ class API {
           eachPub['validated'],
           eachPub['sub_area_id'],
           DateTime.parse(eachPub['creation_date']));
+      await publication.getSubAreaName();
       publications.add(publication);
     }
     for (var eachPub in jsonData['forums']) {
@@ -54,10 +55,12 @@ class API {
           eachPub['validated'],
           eachPub['sub_area_id'],
           DateTime.parse(eachPub['creation_date']));
+      await publication.getSubAreaName();
       publications.add(publication);
     }
 
-    publications.sort((a, b) => a.datePost.compareTo(b.datePost));
+    //Sort for most recent first
+    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
     return publications;
   }
 
@@ -82,6 +85,7 @@ class API {
             DateTime.now(),
             3,
             null);
+        await publication.getSubAreaName();
         list.add(publication);
       }
     }
@@ -93,9 +97,9 @@ class API {
     print('HERE');
     var response =
         await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-      'subAreaId': pub.subCategory,
-      'officeId': office,
-      'publisher_id': pub.user.id,
+      'subAreaId': pub.subCategory.toString(),
+      'officeId': office.toString(),
+      'publisher_id': pub.user.id.toString(),
       'title': pub.title,
       'content': pub.desc,
     });
@@ -121,7 +125,7 @@ class API {
       for (var subarea in jsonDataSub['data']) {
         if (subarea['area_id'] == area['area_id']) {
           var dummyArea = AreaClass(
-            id: subarea['area_id'],
+            id: subarea['sub_area_id'],
             areaName: subarea['title'],
           );
           subareas.add(dummyArea);

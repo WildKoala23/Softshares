@@ -12,20 +12,6 @@ class EventCard extends StatefulWidget {
 
 class _EventCardState extends State<EventCard> {
   bool saved = false;
-  String subArea = '';
-
-  Future getSubArea() async {
-    var data = await widget.event.getSubAreaName();
-    setState(() {
-      subArea = data;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getSubArea();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +60,7 @@ class _EventCardState extends State<EventCard> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              subArea,
+              widget.event.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],

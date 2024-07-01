@@ -13,19 +13,12 @@ class ForumCard extends StatefulWidget {
 
 class _POIState extends State<ForumCard> {
   bool saved = false;
-  String subArea = '';
 
-  Future getSubArea() async {
-    var data = await widget.forum.getSubAreaName();
-    setState(() {
-      subArea = data;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    getSubArea();
+    widget.forum.getSubAreaName();
   }
 
   @override
@@ -71,7 +64,7 @@ class _POIState extends State<ForumCard> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              subArea,
+              widget.forum.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
             )
           ],
