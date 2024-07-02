@@ -57,34 +57,41 @@ class API {
       publications.add(publication);
     }
     for (var eachPub in jsonData['forums']) {
-      User publisherUser = await getUser(eachPub['publisher_id']);
-      final publication = Forum(
-        publisherUser,
-        null,
-        eachPub['content'],
-        eachPub['title'],
-        eachPub['validated'],
-        eachPub['sub_area_id'],
-        DateTime.parse(eachPub['creation_date']),
-      );
-      await publication.getSubAreaName();
-      publications.add(publication);
+      if (eachPub['event_id'] == null) {
+        User publisherUser = await getUser(eachPub['publisher_id']);
+        final publication = Forum(
+          publisherUser,
+          null,
+          eachPub['content'],
+          eachPub['title'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']),
+        );
+        await publication.getSubAreaName();
+        publications.add(publication);
+      }
     }
     for (var eachPub in jsonData['events']) {
+      var file;
+      if (eachPub['filepath'] != null) {
+        file = File(eachPub['filepath']);
+      } else {
+        file = null;
+      }
       User publisherUser = await getUser(eachPub['publisher_id']);
       final publication = Event(
-              publisherUser,
-              null,
-              eachPub['description'],
-              eachPub['name'],
-              eachPub['validated'],
-              eachPub['sub_area_id'],
-              DateTime.parse(eachPub['creation_date']),
-              eachPub['filepath'],
-              eachPub['eventLocation'],
-              DateTime.parse(eachPub['event_date']),
-              eachPub['recurring']
-      );
+          publisherUser,
+          null,
+          eachPub['description'],
+          eachPub['name'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']),
+          file,
+          eachPub['eventLocation'],
+          DateTime.parse(eachPub['event_date']),
+          eachPub['recurring']);
       await publication.getSubAreaName();
       publications.add(publication);
     }
@@ -248,6 +255,13 @@ class API {
   Future createEvent(Event event) async {
     var office = box.read('selectedCity');
 
+    String? path;
+
+    if (event.img != null) {
+      path = await uploadPhoto(event.img!);
+      print('Path: $path');
+    }
+
     var response =
         await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
       'subAreaId': event.subCategory.toString(),
@@ -255,9 +269,13 @@ class API {
       'publisher_id': event.user.id.toString(),
       'name': event.title,
       'description': event.desc,
-      'filepath': event.img,
-      'eventDate': event.eventDate,
+      'filepath': path,
+      'eventDate':
+          event.eventDate.toIso8601String(), //Convert DateTime to string
+      'location': 'somewhere',
     });
+
+    print(response.statusCode);
   }
 
   Future createForum(Forum forum) async {
@@ -343,5 +361,56 @@ class API {
       }
     }
     return result;
+  }
+
+  Future<Map<DateTime, List<Event>>> getEventCalendar() async {
+    Map<DateTime, List<Event>> events = {};
+
+    try {
+      var response =
+          await http.get(Uri.https(baseUrl, '/api/dynamic/all-content'));
+      var jsonData = jsonDecode(response.body);
+
+      for (var eachPub in jsonData['events']) {
+        var file = eachPub['filepath'] != null
+            ? File(eachPub['filepath'])
+            : null; // Check if event has image
+        User publisherUser = await getUser(eachPub['publisher_id']); // Get user
+
+        DateTime creationDate = DateTime.parse(eachPub['creation_date']);
+        DateTime eventDate = DateTime.parse(eachPub['event_date']);
+
+        // Create Event object
+        final publication = Event(
+            publisherUser,
+            null,
+            eachPub['description'],
+            eachPub['name'],
+            eachPub['validated'],
+            eachPub['sub_area_id'],
+            creationDate,
+            file,
+            eachPub['eventLocation'],
+            eventDate,
+            eachPub['recurring']);
+
+        await publication.getSubAreaName();
+
+        // Get event day with only date (year, month, day)
+        DateTime eventDay =
+            DateTime(eventDate.year, eventDate.month, eventDate.day);
+
+        // Initialize List if not already initialized
+        events[eventDay] ??= [];
+
+        // Add the publication to the list of events for that day
+        events[eventDay]!.add(publication);
+      }
+    } catch (e) {
+      print('Error fetching event data: $e');
+      return {};
+    }
+
+    return events;
   }
 }

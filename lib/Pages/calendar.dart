@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/event.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
@@ -14,16 +16,39 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  DateTime today = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+  Map<DateTime, List<Event>> events = {};
+  final API api = API();
+  bool loading = true;
 
-  void _onDaySelected(DateTime day, DateTime focusedDay) {
-    setState(() {
-      today = day;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    try {
+      events = await api.getEventCalendar();
+      setState(() {
+        loading = false;
+      });
+      print('Success fetching events, total: ${events.length}');
+    } catch (e) {
+      print("Error fetching events: $e");
+      setState(() {
+        events = {};
+      });
+    }
   }
 
   void callBack(context) {
     print('Will implement');
+  }
+
+  List<Event> _getEventsForDay(DateTime day) {
+    return events[DateTime(day.year, day.month, day.day)] ?? [];
   }
 
   @override
@@ -40,22 +65,48 @@ class _CalendarState extends State<Calendar> {
           Container(
             padding: const EdgeInsets.fromLTRB(12, 20, 12, 40),
             child: TableCalendar(
-              focusedDay: today,
-              headerStyle:
-                  const HeaderStyle(
-                    formatButtonVisible: false, 
-                    titleCentered: true,
-                    
-                    ),
+              focusedDay: _focusedDay,
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+              ),
               firstDay: DateTime.utc(2023, 09, 01),
-              selectedDayPredicate: (day) => isSameDay(day, today),
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
               lastDay: DateTime.utc(2026, 09, 01),
-              onDaySelected: _onDaySelected,
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+              eventLoader: (day) {
+                return _getEventsForDay(day);
+              },
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, day, events) {
+                  if (events.isEmpty) return SizedBox();
+                  return Container(
+                    height: 10,
+                    width: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.amber,
+                      shape: BoxShape.circle,
+                    ),
+                  );
+                },
+              ),
             ),
           )
         ],
       ),
-      drawer: myDrawer(areas: widget.areas,),
+      drawer: myDrawer(
+        areas: widget.areas,
+      ),
       bottomNavigationBar: MyBottomBar(),
     );
   }

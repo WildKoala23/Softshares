@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Pages/eventsPage.dart';
 import 'package:softshares/classes/event.dart';
 
 class EventCard extends StatefulWidget {
@@ -16,34 +17,44 @@ class _EventCardState extends State<EventCard> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
-            child: cardHeader(colorScheme),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventPage(event: widget.event,),
           ),
-          Container(
-            color: Color.fromARGB(255, 255, 204, 150),
-            height: 120,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: textContent(colorScheme),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 20.0, bottom: 50.0, left: 14, right: 14),
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                widget.event.desc,
-                textAlign: TextAlign.start,
-              ),
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
+              child: cardHeader(colorScheme),
             ),
-          )
-        ],
+            Container(
+              color: Color.fromARGB(255, 255, 204, 150),
+              height: 120,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: textContent(colorScheme),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 20.0, bottom: 50.0, left: 14, right: 14),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.event.desc,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

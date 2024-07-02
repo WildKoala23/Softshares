@@ -503,7 +503,7 @@ class _CreatePostState extends State<createPost> {
   SingleChildScrollView eventContent(ColorScheme colorScheme) {
     return SingleChildScrollView(
       child: Form(
-        key: _eventKey,
+        key: _poiKey,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -718,9 +718,23 @@ class _CreatePostState extends State<createPost> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
-                onPressed: () {
-                  if (_eventKey.currentState!.validate()) {
-                    Navigator.pushNamed(context, '/createForm');
+               onPressed: () async {
+                  if (_poiKey.currentState!.validate()) {
+                    Event post = Event(
+                        user1,
+                        null,
+                        descController.text,
+                        titleController.text,
+                        false,
+                        selectedSubArea.id,
+                        DateTime.now(),
+                        _selectedImage,
+                        null,
+                        DateTime.parse(dateController.text),
+                        recurrent
+                        );
+                    await api.createEvent(post);
+                    Navigator.pushNamed(context, '/home');
                   }
                 },
                 child: Text('Advance',
