@@ -31,10 +31,10 @@ class _PostPageState extends State<PostPage> {
                 widget.publication.title,
                 style: const TextStyle(fontSize: 26),
               ),
-              widget.publication.imgPath == null
+              widget.publication.img == null
                   ? Container()
                   : Image.network(
-                      'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.imgPath}',
+                      'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.img!.path}',
                       //Handles images not existing
                       errorBuilder: (context, error, stackTrace) {
                       return Container();

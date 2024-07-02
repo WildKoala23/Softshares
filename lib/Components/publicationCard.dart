@@ -39,17 +39,27 @@ class _PubState extends State<PublicationCard> {
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
             ),
-            widget.pub.imgPath == null
+            widget.pub.img == null
                 ? Container(
                     color: Color.fromARGB(255, 150, 216, 255),
                     height: 120,
                   )
-                : Image.network(
-                    'https://backendpint-w3vz.onrender.com/uploads/${widget.pub.imgPath}',
-                    //Handles images not existing
-                    errorBuilder: (context, error, stackTrace) {
-                    return Container();
-                  }),
+                : Container(
+                    height: 120,
+                    width: double
+                        .infinity, // Ensures the image covers the full width
+                    child: Image.network(
+                      'https://backendpint-w3vz.onrender.com/uploads/${widget.pub.img!.path}',
+                      fit: BoxFit.cover,
+                      // Handles images not existing
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Color.fromARGB(255, 150, 216, 255),
+                          height: 120,
+                        );
+                      },
+                    ),
+                  ),
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: textContent(colorScheme),

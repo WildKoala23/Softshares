@@ -158,7 +158,7 @@ class _CreatePostState extends State<createPost> {
               const SizedBox(
                 height: 20,
               ),
-               _selectedImage == null
+              _selectedImage == null
                   ? GestureDetector(
                       onTap: () {
                         _pickImageFromGallery();
@@ -169,7 +169,7 @@ class _CreatePostState extends State<createPost> {
                           color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(18.0),
                         ),
-                        height: 221,
+                        height: 220,
                         child: const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -185,7 +185,25 @@ class _CreatePostState extends State<createPost> {
                       onTap: () {
                         _pickImageFromGallery();
                       },
-                      child: Image.file(_selectedImage!),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(
+                              20), // Specifies the border radius
+                          border: Border.all(
+                            color: Colors.transparent, // Border color
+                            width: 2, // Border width
+                          ),
+                        ),
+                        height: 220,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: Image.file(
+                            _selectedImage!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
               const Text(
                 'Description',
@@ -237,7 +255,7 @@ class _CreatePostState extends State<createPost> {
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: widget.areas[0],
+                  value: selectedArea,
                   items: widget.areas.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
                       value: area,
@@ -391,7 +409,7 @@ class _CreatePostState extends State<createPost> {
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: widget.areas[0],
+                  value: selectedArea,
                   items: widget.areas.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
                       value: area,
@@ -499,7 +517,7 @@ class _CreatePostState extends State<createPost> {
                           color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(18.0),
                         ),
-                        height: 221,
+                        height: 220,
                         child: const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -515,7 +533,25 @@ class _CreatePostState extends State<createPost> {
                       onTap: () {
                         _pickImageFromGallery();
                       },
-                      child: Image.file(_selectedImage!),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(
+                              20), // Specifies the border radius
+                          border: Border.all(
+                            color: Colors.transparent, // Border color
+                            width: 2, // Border width
+                          ),
+                        ),
+                        height: 220,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: Image.file(
+                            _selectedImage!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
               const Text(
                 'Description',
@@ -606,7 +642,7 @@ class _CreatePostState extends State<createPost> {
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: widget.areas[0],
+                  value: selectedArea,
                   items: widget.areas.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
                       value: area,
@@ -718,7 +754,7 @@ class _CreatePostState extends State<createPost> {
                           color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(18.0),
                         ),
-                        height: 221,
+                        height: 220,
                         child: const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -734,7 +770,25 @@ class _CreatePostState extends State<createPost> {
                       onTap: () {
                         _pickImageFromGallery();
                       },
-                      child: Image.file(_selectedImage!),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(
+                              20), // Specifies the border radius
+                          border: Border.all(
+                            color: Colors.transparent, // Border color
+                            width: 2, // Border width
+                          ),
+                        ),
+                        height: 220,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: Image.file(
+                            _selectedImage!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
               const Text(
                 'Description',
@@ -786,7 +840,7 @@ class _CreatePostState extends State<createPost> {
                   isExpanded: true,
                   hint: const Text('Select Area'),
                   underline: SizedBox.shrink(),
-                  value: widget.areas[0],
+                  value: selectedArea,
                   items: widget.areas.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
                       value: area,
@@ -915,8 +969,9 @@ class _CreatePostState extends State<createPost> {
                         false,
                         selectedSubArea.id,
                         DateTime.now(),
-                        null,
+                        _selectedImage,
                         null);
+                    // await api.createPost(post);
                     await api.createPost(post);
                     Navigator.pushNamed(context, '/home');
                   }

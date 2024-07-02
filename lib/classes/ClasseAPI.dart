@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
 import 'utils.dart';
@@ -35,6 +36,12 @@ class API {
 
     for (var eachPub in jsonData['posts']) {
       User publisherUser = await getUser(eachPub['publisher_id']);
+      var file;
+      if (eachPub['filepath'] != null) {
+        file = File(eachPub['filepath']);
+      } else {
+        file = null;
+      }
       final publication = Publication(
         publisherUser,
         null,
@@ -43,7 +50,7 @@ class API {
         eachPub['validated'],
         eachPub['sub_area_id'],
         DateTime.parse(eachPub['creation_date']),
-        eachPub['filepath'],
+        file,
         eachPub['p_location'],
       );
       await publication.getSubAreaName();
@@ -161,9 +168,54 @@ class API {
     return list;
   }
 
-  Future<bool> createPost(Publication pub) async {
+  Future uploadPhoto(File img) async {
+    String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
+
+    // Check if the file exists
+    if (await img.exists()) {
+      final Uri url = Uri.parse(baseUrl);
+      final request = http.MultipartRequest('POST', url);
+
+      // Add the file to the request
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        img.path,
+      ));
+
+      try {
+        // Send the request
+        final streamedResponse = await request.send();
+
+        // Get the response
+        final response = await http.Response.fromStream(streamedResponse);
+
+        // Check the response status
+        if (response.statusCode == 200) {
+          print('File uploaded successfully');
+          var data = jsonDecode(response.body);
+          print(data['file']);
+          return data['file']['filename'];
+        } else {
+          print('Failed to upload file. Status code: ${response.statusCode}');
+          print(response.body);
+        }
+      } catch (e) {
+        print('Error uploading file: $e');
+      }
+    } else {
+      print('No valid image path provided.');
+    }
+  }
+
+  Future createPost(Publication pub) async {
     var office = box.read('selectedCity');
-    print('HERE');
+    String? path;
+
+    if (pub.img != null) {
+      path = await uploadPhoto(pub.img!);
+      print('Path: $path');
+    }
+
     var response =
         await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
       'subAreaId': pub.subCategory.toString(),
@@ -171,11 +223,23 @@ class API {
       'publisher_id': pub.user.id.toString(),
       'title': pub.title,
       'content': pub.desc,
+      'filePath': path
     });
+  }
 
-    print(response.statusCode);
+  Future createEvent(Event event) async {
+    var office = box.read('selectedCity');
 
-    return true;
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
+      'subAreaId': event.subCategory.toString(),
+      'officeId': office.toString(),
+      'publisher_id': event.user.id.toString(),
+      'name': event.title,
+      'description': event.desc,
+      'filepath': event.img,
+      'eventDate': event.eventDate,
+    });
   }
 
   Future<List<AreaClass>> getAreas() async {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -10,19 +12,11 @@ class Publication {
   DateTime _postDate;
   int _subCategory;
   late String subAreaName;
-  String? imgPath, location;
+  String? location;
+  File? img;
 
-  Publication(
-    this._user,
-    this._admin,
-    this._desc,
-    this._title,
-    this._validated,
-    this._subCategory,
-    this._postDate,
-    this.imgPath,
-    this.location
-  );
+  Publication(this._user, this._admin, this._desc, this._title, this._validated,
+      this._subCategory, this._postDate, this.img, this.location);
 
   User get user => _user;
   User get admin => _admin!;

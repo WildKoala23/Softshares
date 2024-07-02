@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../classes/user.dart';
 import '../classes/publication.dart';
 
@@ -13,7 +15,7 @@ class Event extends Publication {
       bool validated,
       int subCategory,
       DateTime postDate,
-      String? imgPath,
+      File? imgPath,
       String? location,
       this.eventDate,
       this.recurring)

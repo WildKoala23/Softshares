@@ -24,17 +24,17 @@ class _POIState extends State<POICard> {
             child: cardHeader(colorScheme),
           ),
           //If image == null, put color instead
-          widget.pointOfInterest.imgPath == null
-                ? Container(
-                    color: Color.fromARGB(255, 150, 216, 255),
-                    height: 120,
-                  )
-                : Image.network(
-                    'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.imgPath}',
-                    //Handles images not existing
-                    errorBuilder: (context, error, stackTrace) {
-                    return Container();
-                  }),
+          widget.pointOfInterest.img == null
+              ? Container(
+                  color: Color.fromARGB(255, 150, 216, 255),
+                  height: 120,
+                )
+              : Image.network(
+                  'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.img!.path}',
+                  //Handles images not existing
+                  errorBuilder: (context, error, stackTrace) {
+                  return Container();
+                }),
           Padding(
             padding: const EdgeInsets.all(14.0),
             child: textContent(colorScheme),
