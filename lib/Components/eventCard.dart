@@ -25,7 +25,7 @@ class _EventCardState extends State<EventCard> {
             child: cardHeader(colorScheme),
           ),
           Container(
-            color: Color.fromARGB(255, 150, 216, 255),
+            color: Color.fromARGB(255, 255, 204, 150),
             height: 120,
           ),
           Padding(

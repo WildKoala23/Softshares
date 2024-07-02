@@ -70,6 +70,24 @@ class API {
       await publication.getSubAreaName();
       publications.add(publication);
     }
+    for (var eachPub in jsonData['events']) {
+      User publisherUser = await getUser(eachPub['publisher_id']);
+      final publication = Event(
+              publisherUser,
+              null,
+              eachPub['description'],
+              eachPub['name'],
+              eachPub['validated'],
+              eachPub['sub_area_id'],
+              DateTime.parse(eachPub['creation_date']),
+              eachPub['filepath'],
+              eachPub['eventLocation'],
+              DateTime.parse(eachPub['event_date']),
+              eachPub['recurring']
+      );
+      await publication.getSubAreaName();
+      publications.add(publication);
+    }
 
     //Sort for most recent first
     publications.sort((a, b) => b.datePost.compareTo(a.datePost));
@@ -239,6 +257,42 @@ class API {
       'description': event.desc,
       'filepath': event.img,
       'eventDate': event.eventDate,
+    });
+  }
+
+  Future createForum(Forum forum) async {
+    var office = box.read('selectedCity');
+
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/forum/create'), body: {
+      'officeID': office.toString(),
+      'subAreaId': forum.subCategory.toString(),
+      'title': forum.title,
+      'description': forum.desc,
+      'publisher_id': forum.user.id.toString(),
+    });
+
+    print(response.statusCode);
+  }
+
+  Future createPOI(POI poi) async {
+    var office = box.read('selectedCity');
+    String? path;
+
+    if (poi.img != null) {
+      path = await uploadPhoto(poi.img!);
+      print('Path: $path');
+    }
+
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
+      'subAreaId': poi.subCategory.toString(),
+      'officeId': office.toString(),
+      'publisher_id': poi.user.id.toString(),
+      'title': poi.title,
+      'content': poi.desc,
+      'type': 'P',
+      'filePath': path
     });
   }
 

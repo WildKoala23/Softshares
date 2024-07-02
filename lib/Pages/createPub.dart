@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:softshares/classes/POI.dart';
 
+import '../classes/forums.dart';
+import '../classes/event.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
@@ -7,7 +10,6 @@ import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
-import '../classes/utils.dart';
 
 class createPost extends StatefulWidget {
   createPost({super.key, required this.areas});
@@ -17,6 +19,9 @@ class createPost extends StatefulWidget {
   @override
   State<createPost> createState() => _CreatePostState();
 }
+
+//Change to current user
+User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class _CreatePostState extends State<createPost> {
   final API api = API();
@@ -327,10 +332,21 @@ class _CreatePostState extends State<createPost> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
-                onPressed: () {
+                onPressed: () async {
                   if (_poiKey.currentState!.validate()) {
-                    // If the form is valid, continue to homepage
-                    //Later, implement verification with DB
+                    POI post = POI(
+                        user1,
+                        null,
+                        descController.text,
+                        titleController.text,
+                        false,
+                        selectedSubArea.id,
+                        DateTime.now(),
+                        _selectedImage,
+                        null,
+                        currentSlideValue
+                        );
+                    await api.createPOI(post);
                     Navigator.pushNamed(context, '/home');
                   }
                 },
@@ -460,8 +476,17 @@ class _CreatePostState extends State<createPost> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
-                onPressed: () {
+                onPressed: () async {
                   if (_forumKey.currentState!.validate()) {
+                    Forum post = Forum(
+                        user1,
+                        null,
+                        descController.text,
+                        titleController.text,
+                        false,
+                        selectedSubArea.id,
+                        DateTime.now());
+                    await api.createForum(post);
                     Navigator.pushNamed(context, '/home');
                   }
                 },
@@ -958,8 +983,6 @@ class _CreatePostState extends State<createPost> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_postKey.currentState!.validate()) {
-                    //Change to current user
-                    User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
                     //Change when images and google api are working
                     var post = Publication(
                         user1,

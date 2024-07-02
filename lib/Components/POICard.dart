@@ -12,6 +12,7 @@ class POICard extends StatefulWidget {
 
 class _POIState extends State<POICard> {
   bool saved = false;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -26,7 +27,7 @@ class _POIState extends State<POICard> {
           //If image == null, put color instead
           widget.pointOfInterest.img == null
               ? Container(
-                  color: Color.fromARGB(255, 150, 216, 255),
+                  color: Color.fromARGB(255, 159, 255, 150),
                   height: 120,
                 )
               : Image.network(
@@ -74,7 +75,7 @@ class _POIState extends State<POICard> {
         ),
         Row(
             children: List.generate(
-                widget.pointOfInterest.aval,
+                widget.pointOfInterest.aval.round(),
                 (start) => Icon(
                       Icons.star,
                       color: colorScheme.secondary,

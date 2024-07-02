@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/Components/eventCard.dart';
 import 'package:softshares/Components/publicationCard.dart';
 import 'package:softshares/Pages/createPub.dart';
 import 'package:softshares/classes/POI.dart';
@@ -67,14 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: posts.length,
                 itemBuilder: (context, index) {
                   final pub = posts[index];
-                  switch (pub.runtimeType) {
+                  switch (pub) {
                     case Event _:
-                      break;
-                    case POI _:
-                      break;
+                      return EventCard(event: pub as Event);
                     case Forum _:
                       return ForumCard(forum: pub as Forum);
-                    default:
+                    case Publication _:
                       return PublicationCard(pub: pub);
                   }
                 }));
