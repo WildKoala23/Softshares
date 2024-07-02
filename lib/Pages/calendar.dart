@@ -21,11 +21,22 @@ class _CalendarState extends State<Calendar> {
   Map<DateTime, List<Event>> events = {};
   final API api = API();
   bool loading = true;
+  List<Event>? _selectedEvents = [];
 
   @override
   void initState() {
     super.initState();
     _loadEvents();
+  }
+
+  void _onDaySelected(selectedDay, focusedDay) {
+    setState(() {
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+      _selectedEvents = events[
+              DateTime(selectedDay.year, selectedDay.month, selectedDay.day)] ??
+          [];
+    });
   }
 
   Future<void> _loadEvents() async {
@@ -78,12 +89,7 @@ class _CalendarState extends State<Calendar> {
               onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
               },
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
+              onDaySelected: _onDaySelected,
               eventLoader: (day) {
                 return _getEventsForDay(day);
               },
@@ -101,13 +107,86 @@ class _CalendarState extends State<Calendar> {
                 },
               ),
             ),
-          )
+          ),
+          _selectedEvents != null
+              ? SingleChildScrollView(
+                  child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _selectedEvents?.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            
+                          },
+                          child: (Card(
+                              child: Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    userCircle(colorScheme, index),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${_selectedEvents![index].user.firstname} ${_selectedEvents![index].user.lastName}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(_selectedEvents![index].title)
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                _selectedEvents![index].img != null
+                                    ? Image.network(
+                                        'https://backendpint-w3vz.onrender.com/uploads/${_selectedEvents![index].img!.path}',
+                                        //Handles images not existing
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                        return Container();
+                                      })
+                                    : const SizedBox()
+                              ],
+                            ),
+                          ))),
+                        );
+                      }),
+                ))
+              : const SizedBox()
         ],
       ),
       drawer: myDrawer(
         areas: widget.areas,
       ),
       bottomNavigationBar: MyBottomBar(),
+    );
+  }
+
+  Container userCircle(ColorScheme colorScheme, int index) {
+    return Container(
+      margin: const EdgeInsets.only(right: 6.0),
+      height: 40,
+      width: 40,
+      decoration: BoxDecoration(
+          color: colorScheme.secondary,
+          border: Border.all(width: 3, color: Colors.transparent),
+          borderRadius: BorderRadius.circular(95)),
+      child: Center(
+          //If user does not have Profile Pic, print first letter of first name
+          child: _selectedEvents![index].user.profileImg == null
+              ? Text(
+                  _selectedEvents![index].user.firstname[0],
+                  style: TextStyle(fontSize: 20, color: colorScheme.onPrimary),
+                )
+              : const Text('I')),
     );
   }
 }

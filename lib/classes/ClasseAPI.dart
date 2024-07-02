@@ -110,6 +110,12 @@ class API {
     var jsonData = jsonDecode(response.body);
 
     for (var eachPub in jsonData[type]) {
+      var file;
+      if (eachPub['filepath'] != null) {
+        file = File(eachPub['filepath']);
+      } else {
+        file = null;
+      }
       int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
       if (roundedAreaId == areaId) {
         User publisherUser = await getUser(eachPub['publisher_id']);
@@ -122,7 +128,7 @@ class API {
             eachPub['validated'],
             eachPub['sub_area_id'],
             DateTime.parse(eachPub['creation_date']),
-            eachPub['filepath'],
+            file,
             eachPub['p_location'],
           );
           await publication.getSubAreaName();
@@ -147,7 +153,7 @@ class API {
               eachPub['validated'],
               eachPub['sub_area_id'],
               DateTime.parse(eachPub['creation_date']),
-              eachPub['filepath'],
+              file,
               eachPub['eventLocation'],
               DateTime.parse(eachPub['event_date']),
               eachPub['recurring']);
@@ -172,6 +178,12 @@ class API {
     var jsonData = jsonDecode(response.body);
 
     for (var eachPub in jsonData['posts']) {
+      var file;
+      if (eachPub['filepath'] != null) {
+        file = File(eachPub['filepath']);
+      } else {
+        file = null;
+      }
       if (eachPub['type'] == 'P') {
         User publisherUser = await getUser(eachPub['publisher_id']);
         final publication = POI(
@@ -182,7 +194,7 @@ class API {
           eachPub['validated'],
           eachPub['sub_area_id'],
           DateTime.parse(eachPub['creation_date']),
-          eachPub['filepath'],
+          file,
           eachPub['p_location'],
           3,
         );
