@@ -6,7 +6,6 @@ import '../classes/publication.dart';
 class Event extends Publication {
   DateTime eventDate;
   bool recurring;
-
   Event(
       User user,
       User? admin,
@@ -20,4 +19,5 @@ class Event extends Publication {
       this.eventDate,
       this.recurring)
       : super(user, admin, desc, title, validated, subCategory, postDate, imgPath, location);
+    
 }

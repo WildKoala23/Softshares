@@ -65,6 +65,10 @@ class _EventCardState extends State<EventCard> {
             )
           ],
         ),
+        Text(
+          '${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
+          style: TextStyle(color: colorScheme.primary, fontSize: 20),
+        )
       ],
     );
   }
