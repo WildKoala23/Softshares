@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:softshares/Pages/area.dart';
 import 'package:softshares/Pages/createPub.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -100,8 +101,12 @@ class _myDrawerState extends State<myDrawer> {
             itemBuilder: (context, index) {
               return ListTile(
                 onTap: () {
-                  Navigator.pushNamed(
-                      context, '/${widget.areas[index].areaName}');
+                  Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Area(areas: widget.areas, title: widget.areas.elementAt(index).areaName,),
+          ),
+        );
                 },
                 leading: Icon(
                   widget.areas[index].icon,

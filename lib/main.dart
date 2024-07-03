@@ -31,12 +31,7 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
-      child: MaterialApp(
-        title: 'SoftShares',
-        theme: ThemeNotifier().themeData,
-        debugShowCheckedModeBanner: false,
-        home: LoadingScreen(),
-      ),
+      child: MyApp(),
     ),
   );
 }
@@ -67,7 +62,7 @@ class LoadingScreen extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasData) {
-          return MyApp(areas: snapshot.data!);
+          return MyAppWithAreas(areas: snapshot.data!);
         } else {
           return Scaffold(
             body: Center(
@@ -80,8 +75,8 @@ class LoadingScreen extends StatelessWidget {
   }
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.areas});
+class MyAppWithAreas extends StatelessWidget {
+  MyAppWithAreas({super.key, required this.areas});
   final List<AreaClass> areas;
   final box = GetStorage();
 
@@ -93,8 +88,13 @@ class MyApp extends StatelessWidget {
 
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
-        Map<String, WidgetBuilder> routes = {
-          '/home': (context) => MyHomePage(
+        return MaterialApp(
+          title: 'SoftShares',
+          theme: themeNotifier.themeData,
+          debugShowCheckedModeBanner: false,
+          initialRoute: userId != null ? '/home' : '/SignIn',
+          routes: {
+            '/home': (context) => MyHomePage(
                 areas: areas,
               ),
           '/PointOfInterest': (context) => PointsOfInterest(
@@ -121,23 +121,18 @@ class MyApp extends StatelessWidget {
           '/settings': (context) => SettingsPage(),
           '/chooseCity': (context) => ChooseCityPage(),
           '/test': (context) => test(),
-        };
-
-        for (var area in areas) {
-          routes['/${area.areaName}'] = (context) => Area(
-                title: area.areaName,
-                areas: areas,
-              );
-        }
-
-        return MaterialApp(
-          title: 'SoftShares',
-          theme: themeNotifier.themeData,
-          debugShowCheckedModeBanner: false,
-          initialRoute: '/home', //userId != null ? '/Login' : '/SignIn',
-          routes: routes,
+          },
         );
       },
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: LoadingScreen(),
     );
   }
 }
