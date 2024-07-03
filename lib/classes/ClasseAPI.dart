@@ -34,6 +34,7 @@ class API {
 
     var jsonData = jsonDecode(response.body);
 
+    //Get all Posts
     for (var eachPub in jsonData['posts']) {
       User publisherUser = await getUser(eachPub['publisher_id']);
       var file;
@@ -56,6 +57,7 @@ class API {
       await publication.getSubAreaName();
       publications.add(publication);
     }
+    //Get all forums
     for (var eachPub in jsonData['forums']) {
       if (eachPub['event_id'] == null) {
         User publisherUser = await getUser(eachPub['publisher_id']);
@@ -72,6 +74,7 @@ class API {
         publications.add(publication);
       }
     }
+    //Get all events
     for (var eachPub in jsonData['events']) {
       var file;
       if (eachPub['filepath'] != null) {
@@ -89,7 +92,7 @@ class API {
           eachPub['sub_area_id'],
           DateTime.parse(eachPub['creation_date']),
           file,
-          eachPub['eventLocation'],
+          eachPub['event_location'],
           DateTime.parse(eachPub['event_date']),
           eachPub['recurring']);
       await publication.getSubAreaName();
@@ -206,6 +209,7 @@ class API {
     return list;
   }
 
+  //This fucntion is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
     String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
 
@@ -221,17 +225,13 @@ class API {
       ));
 
       try {
-        // Send the request
         final streamedResponse = await request.send();
 
-        // Get the response
         final response = await http.Response.fromStream(streamedResponse);
 
-        // Check the response status
         if (response.statusCode == 200) {
           print('File uploaded successfully');
           var data = jsonDecode(response.body);
-          print(data['file']);
           return data['file']['filename'];
         } else {
           print('Failed to upload file. Status code: ${response.statusCode}');
@@ -264,12 +264,9 @@ class API {
         'content': pub.desc,
         'filePath': path
       });
-      
     } catch (e) {
       throw e;
     }
-
-    
   }
 
   Future createEvent(Event event) async {
@@ -279,7 +276,6 @@ class API {
 
     if (event.img != null) {
       path = await uploadPhoto(event.img!);
-      print('Path: $path');
     }
 
     var response =
@@ -289,10 +285,10 @@ class API {
       'publisher_id': event.user.id.toString(),
       'name': event.title,
       'description': event.desc,
-      'filepath': path,
+      'filePath': path,
       'eventDate':
           event.eventDate.toIso8601String(), //Convert DateTime to string
-      'location': 'somewhere',
+      'location': event.location,
     });
 
     print(response.statusCode);
@@ -319,7 +315,6 @@ class API {
 
     if (poi.img != null) {
       path = await uploadPhoto(poi.img!);
-      print('Path: $path');
     }
 
     var response =
@@ -330,8 +325,12 @@ class API {
       'title': poi.title,
       'content': poi.desc,
       'type': 'P',
-      'filePath': path
+      'filePath': path,
+      'location': poi.location,
+      'rating': poi.aval
     });
+
+    print(response.statusCode);
   }
 
   Future<List<AreaClass>> getAreas() async {

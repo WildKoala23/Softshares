@@ -18,6 +18,6 @@ class Event extends Publication {
       String? location,
       this.eventDate,
       this.recurring)
-      : super(user, admin, desc, title, validated, subCategory, postDate, imgPath, location);
-    
+      : super(user, admin, desc, title, validated, subCategory, postDate,
+            imgPath, location);
 }

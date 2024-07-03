@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/POI.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -14,10 +15,23 @@ class POIPage extends StatefulWidget {
 
 class _PostPageState extends State<POIPage> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(-23.55557714, -46.6395571);
+  late LatLng local;
+
+  LatLng convertCoord(String location) {
+    List<String> coords = location.split(" ");
+    double lat = double.tryParse(coords[0])!;
+    double lon = double.tryParse(coords[1])!;
+    return LatLng(lat, lon);
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    local = convertCoord(widget.poi.location!);
   }
 
   @override
@@ -52,8 +66,18 @@ class _PostPageState extends State<POIPage> {
                         height: 120,
                       );
                     }),
-              Container(
-                child: Text(widget.poi.desc),
+              Row(
+                children: [
+                  Text(widget.poi.desc),
+                  Row(
+                      children: List.generate(
+                          widget.poi.aval.round(),
+                          (start) => Icon(
+                                Icons.euro,
+                                color: colorScheme.secondary,
+                                size: 25,
+                              )))
+                ],
               ),
               const SizedBox(
                 height: 50,
@@ -75,15 +99,15 @@ class _PostPageState extends State<POIPage> {
                   child: GoogleMap(
                     onMapCreated: _onMapCreated,
                     initialCameraPosition: CameraPosition(
-                      target: _center,
+                      target: local,
                       zoom: 11.0,
                     ),
                     markers: {
-                      const Marker(markerId: MarkerId('São Paulo'), position: LatLng(-23.55557714, -46.6395571))
+                      Marker(markerId: MarkerId('Event'), position: local)
                     },
                   ),
                 ),
-              )
+              ),
             ]),
           ),
         ));

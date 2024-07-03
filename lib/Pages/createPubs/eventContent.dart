@@ -1,24 +1,24 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:search_map_location/widget/search_widget.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class EventCreation extends StatefulWidget {
   EventCreation({super.key, required this.areas});
 
-    List<AreaClass> areas;
-
+  List<AreaClass> areas;
 
   @override
   State<EventCreation> createState() => _EventCreationState();
 }
 
 User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
-
 
 class _EventCreationState extends State<EventCreation> {
   final API api = API();
@@ -38,6 +38,8 @@ class _EventCreationState extends State<EventCreation> {
   late bool nonRating;
   late bool nonPrice;
 
+  late String location;
+
   //Depending on the recurrency, the label for date changes (This variable controls the text)
   String? dateOpt;
 
@@ -48,7 +50,7 @@ class _EventCreationState extends State<EventCreation> {
 
   final _eventKey = GlobalKey<FormState>();
 
-    @override
+  @override
   void initState() {
     super.initState();
     selectedArea = widget.areas[0];
@@ -167,7 +169,22 @@ class _EventCreationState extends State<EventCreation> {
                 ),
                 maxLines: null,
               ),
+              const SizedBox(
+                height: 30,
+              ),
+              const Text(
+                'Location',
+                style: TextStyle(fontSize: 22),
+              ),
+              SearchLocation(
+                apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
+                country: 'PT',
+                onSelected: (place) async {
+                  final geolocation = await place.geolocation;
 
+                  location = '${geolocation?.coordinates.latitude} ${geolocation?.coordinates.longitude}';
+                },
+              ),
               const SizedBox(height: 30),
               Row(
                 children: [
@@ -301,7 +318,7 @@ class _EventCreationState extends State<EventCreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null,
+                        location,
                         DateTime.parse(dateController.text),
                         recurrent);
 

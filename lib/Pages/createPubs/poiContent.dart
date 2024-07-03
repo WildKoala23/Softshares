@@ -23,6 +23,8 @@ class _POICreationState extends State<POICreation> {
   final _poiKey = GlobalKey<FormState>();
   final API api = API();
 
+  late String location;
+
   File? _selectedImage;
 
   TextEditingController titleController = TextEditingController();
@@ -170,8 +172,8 @@ class _POICreationState extends State<POICreation> {
                 country: 'PT',
                 onSelected: (place) async {
                   final geolocation = await place.geolocation;
-                  print(
-                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON}');
+                  location =
+                      '${geolocation?.coordinates.latitude} ${geolocation?.coordinates.longitude}';
                 },
               ),
               const SizedBox(
@@ -231,9 +233,8 @@ class _POICreationState extends State<POICreation> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.id);
                     setState(() {
-                      selectedSubArea = value;
+                      selectedSubArea = value!;
                     });
                   },
                 ),
@@ -274,7 +275,7 @@ class _POICreationState extends State<POICreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null,
+                        location,
                         currentSlideValue);
                     try {
                       await api.createPOI(post);
@@ -312,7 +313,7 @@ class _POICreationState extends State<POICreation> {
     );
   }
 
-    Future _pickImageFromGallery() async {
+  Future _pickImageFromGallery() async {
     final returnedImg =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnedImg != null) {
