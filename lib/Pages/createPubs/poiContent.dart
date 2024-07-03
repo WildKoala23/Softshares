@@ -4,24 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/POI.dart';
 import 'package:softshares/classes/areaClass.dart';
-import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
-class PostCreation extends StatefulWidget {
-  PostCreation({super.key, required this.areas});
+class POICreation extends StatefulWidget {
+  POICreation({super.key, required this.areas});
 
   List<AreaClass> areas;
 
   @override
-  State<PostCreation> createState() => _PostCreationState();
+  State<POICreation> createState() => _POICreationState();
 }
 
-//Change to current user
 User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
-class _PostCreationState extends State<PostCreation> {
-  final _postKey = GlobalKey<FormState>();
+class _POICreationState extends State<POICreation> {
+  final _poiKey = GlobalKey<FormState>();
   final API api = API();
 
   File? _selectedImage;
@@ -63,7 +62,7 @@ class _PostCreationState extends State<PostCreation> {
     final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       child: Form(
-        key: _postKey,
+        key: _poiKey,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -78,8 +77,9 @@ class _PostCreationState extends State<PostCreation> {
               TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please insert title';
+                    return 'Please enter title';
                   }
+                  return null;
                 },
                 controller: titleController,
                 decoration: const InputDecoration(
@@ -171,7 +171,7 @@ class _PostCreationState extends State<PostCreation> {
                 onSelected: (place) async {
                   final geolocation = await place.geolocation;
                   print(
-                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON} \n $geolocation');
+                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON}');
                 },
               ),
               const SizedBox(
@@ -182,11 +182,11 @@ class _PostCreationState extends State<PostCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 5, bottom: 5),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
@@ -199,9 +199,8 @@ class _PostCreationState extends State<PostCreation> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.subareas!.length);
                     setState(() {
-                      selectedArea = value;
+                      selectedArea = value!;
                       selectedSubArea = selectedArea.subareas![0];
                     });
                   },
@@ -215,15 +214,15 @@ class _PostCreationState extends State<PostCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 5, bottom: 5),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Sub Area'),
-                  underline: const SizedBox.shrink(),
+                  underline: SizedBox.shrink(),
                   value: selectedSubArea,
                   items: selectedArea.subareas!.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
@@ -242,65 +241,22 @@ class _PostCreationState extends State<PostCreation> {
               const SizedBox(
                 height: 30,
               ),
-              Row(
-                children: [
-                  const Text(
-                    'Rating',
-                    style: TextStyle(fontSize: 22),
-                  ),
-                  Checkbox(
-                      value: nonRating,
-                      onChanged: (value) {
-                        setState(() {
-                          nonRating = value!;
-                        });
-                      })
-                ],
+              Text(
+                'Rating',
+                style: TextStyle(fontSize: 22),
               ),
-              if (nonRating)
-                Slider(
-                  min: 1,
-                  max: 5,
-                  value: currentSlideValue,
-                  onChanged: (double value) {
-                    setState(() {
-                      currentSlideValue = value;
-                    });
-                  },
-                  divisions: 4,
-                  label: currentSlideValue.toString(),
-                ),
-              const SizedBox(
-                height: 30,
+              Slider(
+                min: 1,
+                max: 5,
+                value: currentSlideValue,
+                onChanged: (double value) {
+                  setState(() {
+                    currentSlideValue = value;
+                  });
+                },
+                divisions: 4,
+                label: currentSlideValue.toString(),
               ),
-              Row(
-                children: [
-                  const Text(
-                    'Price',
-                    style: TextStyle(fontSize: 22),
-                  ),
-                  Checkbox(
-                      value: nonPrice,
-                      onChanged: (value) {
-                        setState(() {
-                          nonPrice = value!;
-                        });
-                      })
-                ],
-              ),
-              if (nonPrice)
-                Slider(
-                  min: 1,
-                  max: 4,
-                  value: currentPriceValue,
-                  onChanged: (double value) {
-                    setState(() {
-                      currentPriceValue = value;
-                    });
-                  },
-                  divisions: 3,
-                  label: currentPriceValue.toString(),
-                ),
               const SizedBox(
                 height: 30,
               ),
@@ -308,9 +264,8 @@ class _PostCreationState extends State<PostCreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_postKey.currentState!.validate()) {
-                    //Change when images and google api are working
-                    var post = Publication(
+                  if (_poiKey.currentState!.validate()) {
+                    POI post = POI(
                         user1,
                         null,
                         descController.text,
@@ -319,17 +274,17 @@ class _PostCreationState extends State<PostCreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null);
-
+                        null,
+                        currentSlideValue);
                     try {
-                      await api.createPost(post);
+                      await api.createPOI(post);
                     } catch (e) {
                       await showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text('Error creating post'),
-                          content:
-                              Text('An error occurred while creating the Post'),
+                          content: Text(
+                              'An error occurred while creating the Point of Interest'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -345,8 +300,10 @@ class _PostCreationState extends State<PostCreation> {
                     Navigator.pushNamed(context, '/home');
                   }
                 },
-                child: Text('Advance',
-                    style: TextStyle(color: colorScheme.onPrimary)),
+                child: Text(
+                  'Advance',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
               ),
             ],
           ),
@@ -355,7 +312,7 @@ class _PostCreationState extends State<PostCreation> {
     );
   }
 
-  Future _pickImageFromGallery() async {
+    Future _pickImageFromGallery() async {
     final returnedImg =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnedImg != null) {

@@ -2,31 +2,31 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
-import 'package:softshares/classes/publication.dart';
+import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
 
-class PostCreation extends StatefulWidget {
-  PostCreation({super.key, required this.areas});
+class EventCreation extends StatefulWidget {
+  EventCreation({super.key, required this.areas});
 
-  List<AreaClass> areas;
+    List<AreaClass> areas;
+
 
   @override
-  State<PostCreation> createState() => _PostCreationState();
+  State<EventCreation> createState() => _EventCreationState();
 }
 
-//Change to current user
 User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
-class _PostCreationState extends State<PostCreation> {
-  final _postKey = GlobalKey<FormState>();
+
+class _EventCreationState extends State<EventCreation> {
   final API api = API();
 
   File? _selectedImage;
 
   TextEditingController titleController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
   TextEditingController descController = TextEditingController();
 
   late AreaClass selectedArea;
@@ -38,15 +38,25 @@ class _PostCreationState extends State<PostCreation> {
   late bool nonRating;
   late bool nonPrice;
 
-  List<AreaClass> subAreas = [];
+  //Depending on the recurrency, the label for date changes (This variable controls the text)
+  String? dateOpt;
 
-  @override
+  //Variables to help checking if the event is recurrent or not
+  List<String> recurrentOpt = ["Weekly", "Monthly"];
+  bool recurrent = false;
+  late String recurrentValue;
+
+  final _eventKey = GlobalKey<FormState>();
+
+    @override
   void initState() {
     super.initState();
     selectedArea = widget.areas[0];
     selectedSubArea = selectedArea.subareas![0];
     currentSlideValue = 3;
+    recurrentValue = recurrentOpt.first;
     currentPriceValue = 3;
+    dateOpt = 'Date';
     nonPrice = true;
     nonRating = true;
   }
@@ -55,31 +65,32 @@ class _PostCreationState extends State<PostCreation> {
   void dispose() {
     super.dispose();
     titleController.dispose();
+    dateController.dispose();
     descController.dispose();
   }
 
+  List<AreaClass> subAreas = [];
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       child: Form(
-        key: _postKey,
+        key: _eventKey,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(
-                child: Text(
-                  'Title',
-                  style: TextStyle(fontSize: 22),
-                ),
+              const Text(
+                'Title',
+                style: TextStyle(fontSize: 22),
               ),
               TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please insert title';
+                    return 'Please enter title';
                   }
+                  return null;
                 },
                 controller: titleController,
                 decoration: const InputDecoration(
@@ -91,9 +102,7 @@ class _PostCreationState extends State<PostCreation> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               _selectedImage == null
                   ? GestureDetector(
                       onTap: () {
@@ -158,35 +167,74 @@ class _PostCreationState extends State<PostCreation> {
                 ),
                 maxLines: null,
               ),
-              const SizedBox(
-                height: 30,
+
+              const SizedBox(height: 30),
+              Row(
+                children: [
+                  const Text(
+                    'Recurrent (weekly/monthly):',
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  const SizedBox(height: 30),
+                  Checkbox(
+                      value: recurrent,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          recurrent = value!;
+                          if (recurrent == true) {
+                            dateOpt = 'Start Date';
+                          } else {
+                            dateOpt = 'Date';
+                          }
+                        });
+                      }),
+                ],
               ),
-              const Text(
-                'Location',
+              //If the event is recurrent
+              //Add a dropdown to select type
+              if (recurrent)
+                Container(
+                  padding:
+                      EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: colorScheme.onPrimary),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                  child: DropdownButton<String>(
+                    underline: SizedBox.shrink(),
+                    isExpanded: true,
+                    value: recurrentValue,
+                    onChanged: (String? value) {
+                      // This is called when the user selects an item.
+                      setState(() {
+                        recurrentValue = value!;
+                      });
+                    },
+                    items: recurrentOpt
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              const SizedBox(height: 30),
+              Text(
+                dateOpt!,
                 style: TextStyle(fontSize: 22),
               ),
-              SearchLocation(
-                apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
-                country: 'PT',
-                onSelected: (place) async {
-                  final geolocation = await place.geolocation;
-                  print(
-                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON} \n $geolocation');
-                },
-              ),
-              const SizedBox(
-                height: 30,
-              ),
+              dateContent(colorScheme, _eventKey),
+              const SizedBox(height: 30),
               const Text(
                 'Area',
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 5, bottom: 5),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Area'),
@@ -198,10 +246,10 @@ class _PostCreationState extends State<PostCreation> {
                       child: Text(area.areaName),
                     );
                   }).toList(),
-                  onChanged: (AreaClass? value) {
-                    print(value!.subareas!.length);
+                  onChanged: (AreaClass? value) async {
+                    print(selectedArea.subareas!.length);
                     setState(() {
-                      selectedArea = value;
+                      selectedArea = value!;
                       selectedSubArea = selectedArea.subareas![0];
                     });
                   },
@@ -215,15 +263,15 @@ class _PostCreationState extends State<PostCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 5, bottom: 5),
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
-                    borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
                 child: DropdownButton<AreaClass>(
                   isExpanded: true,
                   hint: const Text('Select Sub Area'),
-                  underline: const SizedBox.shrink(),
+                  underline: SizedBox.shrink(),
                   value: selectedSubArea,
                   items: selectedArea.subareas!.map((AreaClass area) {
                     return DropdownMenuItem<AreaClass>(
@@ -232,85 +280,19 @@ class _PostCreationState extends State<PostCreation> {
                     );
                   }).toList(),
                   onChanged: (AreaClass? value) {
-                    print(value!.id);
                     setState(() {
-                      selectedSubArea = value;
+                      selectedSubArea = value!;
                     });
                   },
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              Row(
-                children: [
-                  const Text(
-                    'Rating',
-                    style: TextStyle(fontSize: 22),
-                  ),
-                  Checkbox(
-                      value: nonRating,
-                      onChanged: (value) {
-                        setState(() {
-                          nonRating = value!;
-                        });
-                      })
-                ],
-              ),
-              if (nonRating)
-                Slider(
-                  min: 1,
-                  max: 5,
-                  value: currentSlideValue,
-                  onChanged: (double value) {
-                    setState(() {
-                      currentSlideValue = value;
-                    });
-                  },
-                  divisions: 4,
-                  label: currentSlideValue.toString(),
-                ),
-              const SizedBox(
-                height: 30,
-              ),
-              Row(
-                children: [
-                  const Text(
-                    'Price',
-                    style: TextStyle(fontSize: 22),
-                  ),
-                  Checkbox(
-                      value: nonPrice,
-                      onChanged: (value) {
-                        setState(() {
-                          nonPrice = value!;
-                        });
-                      })
-                ],
-              ),
-              if (nonPrice)
-                Slider(
-                  min: 1,
-                  max: 4,
-                  value: currentPriceValue,
-                  onChanged: (double value) {
-                    setState(() {
-                      currentPriceValue = value;
-                    });
-                  },
-                  divisions: 3,
-                  label: currentPriceValue.toString(),
-                ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 50),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_postKey.currentState!.validate()) {
-                    //Change when images and google api are working
-                    var post = Publication(
+                  if (_eventKey.currentState!.validate()) {
+                    Event post = Event(
                         user1,
                         null,
                         descController.text,
@@ -319,17 +301,20 @@ class _PostCreationState extends State<PostCreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null);
+                        null,
+                        DateTime.parse(dateController.text),
+                        recurrent);
 
                     try {
-                      await api.createPost(post);
+                      await api.createEvent(post);
+                      Navigator.pushNamed(context, '/home');
                     } catch (e) {
-                      await showDialog(
+                      showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text('Error creating post'),
-                          content:
-                              Text('An error occurred while creating the Post'),
+                          content: Text(
+                              'An error occurred while creating the Event'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -353,6 +338,45 @@ class _PostCreationState extends State<PostCreation> {
         ),
       ),
     );
+  }
+
+  Container dateContent(ColorScheme colorScheme, GlobalKey key) {
+    return Container(
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please insert date';
+          }
+          return null;
+        },
+        controller: dateController,
+        onTap: () {
+          _selectDate();
+        },
+        readOnly: true,
+        decoration: InputDecoration(
+            suffixIcon: const Icon(Icons.calendar_today),
+            label: Text(
+              "Date",
+              style: TextStyle(color: colorScheme.onTertiary),
+            ),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: colorScheme.primary))),
+      ),
+    );
+  }
+
+  Future<void> _selectDate() async {
+    DateTime? _picked = await showDatePicker(
+        context: context,
+        firstDate: DateTime(1970),
+        lastDate: DateTime(2026),
+        initialDate: DateTime.now());
+    if (_picked != null) {
+      setState(() {
+        dateController.text = _picked.toString().split(" ")[0];
+      });
+    }
   }
 
   Future _pickImageFromGallery() async {
