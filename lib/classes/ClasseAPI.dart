@@ -98,6 +98,7 @@ class API {
 
     //Sort for most recent first
     publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
     return publications;
   }
 

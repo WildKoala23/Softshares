@@ -1,9 +1,14 @@
+import 'package:softshares/Pages/area.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/utils.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart';
 
 class SQLHelper {
   // Singleton instance
   static final SQLHelper instance = SQLHelper._init();
+  static final API api = API();
 
   // Private constructor
   SQLHelper._init();
@@ -14,7 +19,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('softsharesDB.db');
+    _database = await _initDB('softshares.db');
     return _database!;
   }
 
@@ -30,17 +35,35 @@ class SQLHelper {
 
   // Create tables
   Future _createDB(sql.Database db, int version) async {
-    const sqlText = """
+    const createCities = """
       CREATE TABLE cities(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         city NVARCHAR(100) NOT NULL
       )
     """;
-    await db.execute(sqlText);
+
+    const createAreas = """
+      CREATE TABLE areas(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        area NVARCHAR(100) NOT NULL 
+      )""";
+
+    const createSubAreas = """
+      CREATE TABLE subAreas(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subArea NVARCHAR(100) NOT NULL,
+        areaID INTEGER NOT NULL,
+        FOREIGN KEY (areaID) REFERENCES areas(id)
+      )""";
+
+    await db.execute(createCities);
+    await db.execute(createAreas);
+    await db.execute(createSubAreas);
     await _insertCities(db);
+    await _insertAreas(db);
   }
 
-  // Insert initial cities
+  // Insert cities
   Future<void> _insertCities(sql.Database db) async {
     List<Map<String, dynamic>> cities = [
       {'city': 'Tomar'},
@@ -56,6 +79,47 @@ class SQLHelper {
     }
   }
 
+  // Insert Areas
+  Future<void> _insertAreas(sql.Database db) async {
+    List<AreaClass> areas = await api.getAreas();
+
+    for (var area in areas) {
+      await db.rawInsert(
+        'INSERT INTO areas (id, area) VALUES (?, ?)',
+        [area.id, area.areaName],
+      );
+      for (var subArea in area.subareas!) {
+        await db.rawInsert(
+          'INSERT INTO subAreas (id, subarea, areaID) VALUES (?, ?, ?)',
+          [subArea.id, subArea.areaName, area.id],
+        );
+      }
+    }
+  }
+
+  Future<List<AreaClass>> getAreas() async {
+    final db = await instance.database;
+
+    List<AreaClass> list = [];
+    final List<Map<String, dynamic>> areaMaps = await db.query('areas');
+    final List<Map<String, dynamic>> subAreaMaps = await db.query('subAreas');
+
+    for (var area in areaMaps) {
+      AreaClass aux = AreaClass(id: area['id'], areaName: area['area'], icon: iconMap[area['area']]);
+      aux.subareas = [];
+      for (var subArea in subAreaMaps) {
+        AreaClass subAux =
+            AreaClass(id: subArea['id'], areaName: subArea['subArea']);
+        if (subArea['areaID'] == area['id']) {
+          aux.subareas!.add(subAux);
+        }
+      }
+      list.add(aux);
+    }
+
+    return list;
+  }
+
   // Check table contents
   Future<void> checkTable() async {
     final db = await instance.database;
@@ -63,17 +127,10 @@ class SQLHelper {
     print('Cities table contents: $result');
   }
 
-  // Get city by id
-  Future<List<Map<String, dynamic>>> getCity(int id) async {
+  // Get all cities
+  Future<List<Map<String, dynamic>>> getCities() async {
     final db = await instance.database;
-    return await db.query('cities', where: 'id = ?', whereArgs: [id]);
-  }
-
-  // Update city by id
-  Future<int> updateCity(int id, String city) async {
-    final db = await instance.database;
-    final data = {'city': city};
-    return await db.update('cities', data, where: 'id = ?', whereArgs: [id]);
+    return await db.query('cities', orderBy: 'city');
   }
 
   Future<String?> getCityName(int id) async {

@@ -8,5 +8,5 @@ final Map<String, IconData> iconMap = {
   "Housing": Icons.house,
   "Leisure": Icons.live_tv,
   "Sports": Icons.sports,
-  "Transports": Icons.train,
+  "Transportation": Icons.train,
 };

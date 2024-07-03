@@ -73,6 +73,7 @@ class _CreatePostState extends State<createPost> {
   @override
   void initState() {
     super.initState();
+    print(widget.areas[0]);
     selectedArea = widget.areas[0];
     selectedSubArea = selectedArea.subareas![0];
     currentSlideValue = 3;
@@ -344,9 +345,29 @@ class _CreatePostState extends State<createPost> {
                         DateTime.now(),
                         _selectedImage,
                         null,
-                        currentSlideValue
-                        );
-                    await api.createPOI(post);
+                        currentSlideValue);
+                    try {
+                      await api.createPOI(post);
+                      Navigator.pushNamed(context, '/home');
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error creating post'),
+                          content: Text(
+                              'An error occurred while creating the Point of Interest'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/home'); // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     Navigator.pushNamed(context, '/home');
                   }
                 },
@@ -486,8 +507,28 @@ class _CreatePostState extends State<createPost> {
                         false,
                         selectedSubArea.id,
                         DateTime.now());
-                    await api.createForum(post);
-                    Navigator.pushNamed(context, '/home');
+                    try {
+                      await api.createForum(post);
+                      Navigator.pushNamed(context, '/home');
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error creating post'),
+                          content: Text(
+                              'An error occurred while creating the Forum'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/home'); // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   }
                 },
                 child: Text('Create Forum',
@@ -718,7 +759,7 @@ class _CreatePostState extends State<createPost> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
-               onPressed: () async {
+                onPressed: () async {
                   if (_poiKey.currentState!.validate()) {
                     Event post = Event(
                         user1,
@@ -731,9 +772,30 @@ class _CreatePostState extends State<createPost> {
                         _selectedImage,
                         null,
                         DateTime.parse(dateController.text),
-                        recurrent
-                        );
-                    await api.createEvent(post);
+                        recurrent);
+
+                    try {
+                      await api.createEvent(post);
+                      Navigator.pushNamed(context, '/home');
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error creating post'),
+                          content: Text(
+                              'An error occurred while creating the Event'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/home'); // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     Navigator.pushNamed(context, '/home');
                   }
                 },
@@ -1008,8 +1070,29 @@ class _CreatePostState extends State<createPost> {
                         DateTime.now(),
                         _selectedImage,
                         null);
-                    // await api.createPost(post);
-                    await api.createPost(post);
+
+                    try {
+                      await api.createPost(post);
+                      Navigator.pushNamed(context, '/home');
+                    } catch (e) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error creating post'),
+                          content: Text(
+                              'An error occurred while creating the Post'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/home'); // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     Navigator.pushNamed(context, '/home');
                   }
                 },

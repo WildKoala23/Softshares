@@ -27,14 +27,19 @@ class _MyWidgetState extends State<Area> {
   String type = 'forums';
 
   Future getPubs(String type) async {
-    pubs = [];
-    //Get specific area
-    AreaClass area =
-        widget.areas.firstWhere((area) => area.areaName == widget.title);
-    //Get type of publications from specific area
-    var data = await api.getAllPubsByArea(area.id, type);
-    pubs = data;
-    print(pubs.length);
+    try {
+      pubs = [];
+      //Get specific area
+      AreaClass area =
+          widget.areas.firstWhere((area) => area.areaName == widget.title);
+      //Get type of publications from specific area
+      var data = await api.getAllPubsByArea(area.id, type);
+      pubs = data;
+
+      return true;
+    } catch (e) {
+      pubs = [];
+    }
   }
 
   @override
@@ -79,7 +84,7 @@ class _MyWidgetState extends State<Area> {
         iconL: const Icon(Icons.filter_alt),
       ),
       body: DefaultTabController(
-        length: 3, 
+        length: 3,
         child: Column(
           children: [
             TabBar(
@@ -122,17 +127,36 @@ class _MyWidgetState extends State<Area> {
     return FutureBuilder(
       future: getPubs(type),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print(snapshot);
+          if (snapshot.hasError) {
+            return (Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.cloud_off),
+                  const Text(
+                      'Failed connection to server. Please check your connection'),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        setState(() {});
+                      },
+                      child: const Text('Connect'))
+                ],
+              ),
+            ));
+          }
           return ListView.builder(
             itemCount: pubs.length,
             itemBuilder: (context, index) {
               return ForumCard(forum: pubs[index] as Forum);
             },
           );
+        } else {
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
@@ -142,17 +166,36 @@ class _MyWidgetState extends State<Area> {
     return FutureBuilder(
       future: getPubs(type),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print(snapshot);
+          if (snapshot.hasError) {
+            return (Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.cloud_off),
+                  const Text(
+                      'Failed connection to server. Please check your connection'),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        setState(() {});
+                      },
+                      child: const Text('Connect'))
+                ],
+              ),
+            ));
+          }
           return ListView.builder(
             itemCount: pubs.length,
             itemBuilder: (context, index) {
               return EventCard(event: pubs[index] as Event);
             },
           );
+        } else {
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
@@ -162,17 +205,38 @@ class _MyWidgetState extends State<Area> {
     return FutureBuilder(
       future: getPubs(type),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print(snapshot);
+          if (snapshot.hasError) {
+            return (Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.cloud_off),
+                  const Text(
+                      'Failed connection to server. Please check your connection'),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        setState(() {});
+                      },
+                      child: const Text('Connect'))
+                ],
+              ),
+            ));
+          }
           return ListView.builder(
             itemCount: pubs.length,
             itemBuilder: (context, index) {
               return PublicationCard(pub: pubs[index]);
             },
           );
+        } else {
+          return (const Center(
+            child: CircularProgressIndicator(),
+          ));
         }
       },
     );

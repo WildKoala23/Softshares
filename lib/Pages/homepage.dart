@@ -30,9 +30,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Publication> posts = [];
   final API api = API();
+  final ScrollController _scrollController =
+      ScrollController(); // Scroll controller
+  int initialPostsIndex = 0;
 
-  Future<void> getPosts() async {
-    posts = await api.getAllPosts();
+  Future getPosts() async {
+    try {
+      posts = await api.getAllPosts();
+      return true;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> refreshPosts() async {
+    await getPosts();
+    setState(() {});
   }
 
   void leftCallback(context) {
@@ -46,8 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getPosts();
-    print(posts.length);
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == 0) {
+        refreshPosts();
+      }
+    });
   }
 
   @override
@@ -64,19 +80,43 @@ class _MyHomePageState extends State<MyHomePage> {
         future: getPosts(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return (ListView.builder(
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  final pub = posts[index];
-                  switch (pub) {
-                    case Event _:
-                      return EventCard(event: pub as Event);
-                    case Forum _:
-                      return ForumCard(forum: pub as Forum);
-                    case Publication _:
-                      return PublicationCard(pub: pub);
-                  }
-                }));
+            print(snapshot);
+            if (snapshot.hasError) {
+              return (Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.cloud_off),
+                    const Text(
+                        'Failed connection to server. Please check your connection'),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        onPressed: () async {
+                          setState(() {});
+                        },
+                        child: const Text('Connect'))
+                  ],
+                ),
+              ));
+            }
+            return RefreshIndicator(
+              onRefresh: getPosts,
+              child: (ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final pub = posts[index];
+                    switch (pub) {
+                      case Event _:
+                        return EventCard(event: pub);
+                      case Forum _:
+                        return ForumCard(forum: pub);
+                      case Publication _:
+                        return PublicationCard(pub: pub);
+                    }
+                  })),
+            );
           } else {
             return const Center(
               child: CircularProgressIndicator(),

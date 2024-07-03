@@ -5,9 +5,9 @@ import 'package:softshares/Pages/postsPage.dart';
 import 'package:softshares/Pages/settings.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import 'classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
-import 'Pages/area.dart';
 import 'Pages/MyProfile.dart';
 import 'Pages/calendar.dart';
 import 'Pages/createCheckboxForm.dart';
@@ -27,56 +27,22 @@ import 'package:get_storage/get_storage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  SQLHelper db = SQLHelper.instance;
+
+  List<AreaClass> areas = await db.getAreas();
 
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
-      child: MyApp(),
+      child: MyApp(
+        areas: areas,
+      ),
     ),
   );
 }
 
-class LoadingScreen extends StatelessWidget {
-  final API api = API();
-
-  Future<List<AreaClass>> _getAreas() async {
-    var data = await api.getAreas();
-    return data;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<AreaClass>>(
-      future: _getAreas(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Text('Error: ${snapshot.error}'),
-            ),
-          );
-        } else if (snapshot.hasData) {
-          return MyAppWithAreas(areas: snapshot.data!);
-        } else {
-          return Scaffold(
-            body: Center(
-              child: Text('Unexpected error'),
-            ),
-          );
-        }
-      },
-    );
-  }
-}
-
-class MyAppWithAreas extends StatelessWidget {
-  MyAppWithAreas({super.key, required this.areas});
+class MyApp extends StatelessWidget {
+  MyApp({super.key, required this.areas});
   final List<AreaClass> areas;
   final box = GetStorage();
 
@@ -92,47 +58,42 @@ class MyAppWithAreas extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: userId != null ? '/home' : '/SignIn',
+          initialRoute: '/home', //userId != null ? '/home' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(
-                areas: areas,
-              ),
-          '/PointOfInterest': (context) => PointsOfInterest(
-                areas: areas,
-              ),
-          '/Calendar': (context) => Calendar(
-                areas: areas,
-              ),
-          '/Profile': (context) => MyProfile(
-                areas: areas,
-              ),
-          '/Editprofile': (context) => EditProfile(
-                areas: areas,
-              ),
-          '/Login': (context) => MyLoginIn(userID: userId!),
-          '/SignIn': (context) => const SignIn(),
-          '/SignUp': (context) => const SignUp(),
-          '/createPost': (context) => createPost(areas: areas,),
-          '/createForm': (context) => createForm(),
-          '/createRadioBtnForm': (context) => customRadioBtnForm(),
-          '/createFieldTextForm': (context) => customFieldtextForm(),
-          '/createCheckboxForm': (context) => customCheckboxForm(),
-          '/notifications': (context) => Notifications(areas: areas,),
-          '/settings': (context) => SettingsPage(),
-          '/chooseCity': (context) => ChooseCityPage(),
-          '/test': (context) => test(),
+                  areas: areas,
+                ),
+            '/PointOfInterest': (context) => PointsOfInterest(
+                  areas: areas,
+                ),
+            '/Calendar': (context) => Calendar(
+                  areas: areas,
+                ),
+            '/Profile': (context) => MyProfile(
+                  areas: areas,
+                ),
+            '/Editprofile': (context) => EditProfile(
+                  areas: areas,
+                ),
+            '/Login': (context) => MyLoginIn(userID: userId!),
+            '/SignIn': (context) => const SignIn(),
+            '/SignUp': (context) => const SignUp(),
+            '/createPost': (context) => createPost(
+                  areas: areas,
+                ),
+            '/createForm': (context) => createForm(),
+            '/createRadioBtnForm': (context) => customRadioBtnForm(),
+            '/createFieldTextForm': (context) => customFieldtextForm(),
+            '/createCheckboxForm': (context) => customCheckboxForm(),
+            '/notifications': (context) => Notifications(
+                  areas: areas,
+                ),
+            '/settings': (context) => SettingsPage(),
+            '/chooseCity': (context) => ChooseCityPage(),
+            '/test': (context) => test(),
           },
         );
       },
-    );
-  }
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoadingScreen(),
     );
   }
 }
