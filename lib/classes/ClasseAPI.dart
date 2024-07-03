@@ -254,15 +254,22 @@ class API {
       print('Path: $path');
     }
 
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-      'subAreaId': pub.subCategory.toString(),
-      'officeId': office.toString(),
-      'publisher_id': pub.user.id.toString(),
-      'title': pub.title,
-      'content': pub.desc,
-      'filePath': path
-    });
+    try {
+      var response =
+          await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
+        'subAreaId': pub.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': pub.user.id.toString(),
+        'title': pub.title,
+        'content': pub.desc,
+        'filePath': path
+      });
+      
+    } catch (e) {
+      throw e;
+    }
+
+    
   }
 
   Future createEvent(Event event) async {

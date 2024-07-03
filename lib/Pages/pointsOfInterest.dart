@@ -21,6 +21,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
   List<POI> listPoi = [];
   final API api = API();
   bool failedLoading = false;
+  late Future futurePosts;
 
   void rightCallback(context) {
     print('search');
@@ -40,6 +41,12 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    futurePosts = getPoI();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
@@ -53,12 +60,9 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
         areas: widget.areas,
       ),
       body: FutureBuilder(
-        future: getPoI(),
+        future: futurePosts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            print('CONNECTION POI');
-            print(listPoi.length);
-            print(snapshot.hasError);
             if (snapshot.hasError) {
               print('OOHO :(');
               return (Center(
@@ -73,9 +77,11 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
                     ),
                     ElevatedButton(
                         onPressed: () async {
-                          setState(() {});
+                          setState(() {
+                            futurePosts = getPoI();
+                          });
                         },
-                        child: const Text('Connect'))
+                        child: const Text('Try Again'))
                   ],
                 ),
               ));

@@ -32,15 +32,10 @@ class _MyHomePageState extends State<MyHomePage> {
   final API api = API();
   final ScrollController _scrollController =
       ScrollController(); // Scroll controller
-  int initialPostsIndex = 0;
+  late Future<void> futurePosts;
 
-  Future getPosts() async {
-    try {
-      posts = await api.getAllPosts();
-      return true;
-    } catch (e) {
-      throw e;
-    }
+  Future<void> getPosts() async {
+    posts = await api.getAllPosts();
   }
 
   Future<void> refreshPosts() async {
@@ -59,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    futurePosts = getPosts();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == 0) {
         refreshPosts();
@@ -77,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: 'Homepage',
       ), //homeAppBar(),
       body: FutureBuilder(
-        future: getPosts(),
+        future: futurePosts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             print(snapshot);
@@ -94,9 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                         onPressed: () async {
-                          setState(() {});
+                          setState(() {
+                            futurePosts = getPosts();
+                          });
                         },
-                        child: const Text('Connect'))
+                        child: const Text('Try again'))
                   ],
                 ),
               ));

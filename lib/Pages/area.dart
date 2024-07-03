@@ -38,7 +38,25 @@ class _MyWidgetState extends State<Area> {
 
       return true;
     } catch (e) {
-      pubs = [];
+      print(e);
+      await Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.cloud_off),
+                    const Text(
+                        'Failed connection to server. Please check your connection'),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        onPressed: () async {
+                          setState(() {});
+                        },
+                        child: const Text('Connect'))
+                  ],
+                ),
+              );
     }
   }
 
@@ -128,27 +146,6 @@ class _MyWidgetState extends State<Area> {
       future: getPubs(type),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          print(snapshot);
-          if (snapshot.hasError) {
-            return (Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.cloud_off),
-                  const Text(
-                      'Failed connection to server. Please check your connection'),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        setState(() {});
-                      },
-                      child: const Text('Connect'))
-                ],
-              ),
-            ));
-          }
           return ListView.builder(
             itemCount: pubs.length,
             itemBuilder: (context, index) {
