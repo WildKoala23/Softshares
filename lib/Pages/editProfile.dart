@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import '../classes/user.dart';
 
 class EditProfile extends StatefulWidget {
@@ -10,34 +13,57 @@ class EditProfile extends StatefulWidget {
 
   List<AreaClass> areas;
 
-  Map<String, bool> checkBoxSelected = {
-    'Education': false,
-    'Gastronomy': false,
-    'Health': false,
-    'Housing': false,
-    'Leisure': false,
-    'Sports': false,
-    'Transports': false
-  };
-
   @override
   State<EditProfile> createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
+  SQLHelper bd = SQLHelper.instance;
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  Map<AreaClass, bool> checkBoxSelected = {};
+  bool isLoading = true;
+  User user = User(
+      1,
+      'John',
+      'Doe',
+      'Software Engineer'
+          'john.doe@example.com');
 
-  User user = User(1, 'John', 'Doe', 'Software Engineer'
-    'john.doe@example.com');
+  //Get user prefences from database
+  Future getPrefs() async {
+    List<AreaClass> prefs = await bd.getPrefs();
+
+    for (var area in widget.areas) {
+      for (var subarea in area.subareas!) {
+        if (prefs.any((pref) => pref.id == subarea.id)) {
+          setState(() {
+            checkBoxSelected[subarea] = true;
+          });
+        } else {
+          setState(() {
+            checkBoxSelected[subarea] = false;
+          });
+        }
+      }
+    }
+    isLoading = false;
+  }
 
   @override
   void initState() {
     super.initState();
-    nameController.text = "${user.firstname}  ${user.lastName}";
-    emailController.text = user.email;
+    getPrefs();
+  }
+
+  Future savePrefs() async {
+    List<AreaClass> newPrefs = [];
+    checkBoxSelected.forEach((area, checked) {
+      if (checked == true) {
+        newPrefs.add(area);
+      }
+    });
+    await bd.insertPreference(newPrefs);
   }
 
   @override
@@ -45,8 +71,8 @@ class _EditProfileState extends State<EditProfile> {
     super.dispose();
     nameController.dispose();
     emailController.dispose();
-
   }
+
   /*Callback function to exit screen */
   void closeCallback(context) {
     Navigator.pop(context);
@@ -56,8 +82,14 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: MyAppBar(iconR: const Icon(Icons.close), title: 'Edit Profile', rightCallback: closeCallback,),
-      drawer: myDrawer(areas: widget.areas,),
+      appBar: MyAppBar(
+        iconR: const Icon(Icons.close),
+        title: 'Edit Profile',
+        rightCallback: closeCallback,
+      ),
+      drawer: myDrawer(
+        areas: widget.areas,
+      ),
       bottomNavigationBar: MyBottomBar(),
       body: SingleChildScrollView(
         child: Column(
@@ -98,14 +130,17 @@ class _EditProfileState extends State<EditProfile> {
             foregroundColor: colorScheme.onPrimary,
             backgroundColor: colorScheme.primary,
           ),
-          onPressed: () => {Navigator.pop(context)},
+          onPressed: () async {
+            await savePrefs();
+            Navigator.pushNamed(context, '/home');
+          },
           child: const Text('Save changes')),
     );
   }
 
   Container preferencesContent(ColorScheme colorScheme) {
     return Container(
-      height: 200,
+      height: 300,
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       decoration:
@@ -113,24 +148,25 @@ class _EditProfileState extends State<EditProfile> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            ListView.builder(
+            isLoading == false ?ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: widget.checkBoxSelected.length,
+              itemCount: checkBoxSelected.length,
               itemBuilder: (context, index) {
-                String key = widget.checkBoxSelected.keys.elementAt(index);
-                bool value = widget.checkBoxSelected.values.elementAt(index);
+                AreaClass key = checkBoxSelected.keys.elementAt(index);
+                bool value = checkBoxSelected.values.elementAt(index);
                 return CheckboxListTile(
-                  title: Text(key),
+                  title: Text(key.areaName),
                   value: value,
                   onChanged: (newValue) {
+                    print(key.id);
                     setState(() {
-                      widget.checkBoxSelected[key] = newValue!;
+                      checkBoxSelected[key] = newValue!;
                     });
                   },
                 );
               },
-            ),
+            ) : const Center(child: CircularProgressIndicator(),),
           ],
         ),
       ),

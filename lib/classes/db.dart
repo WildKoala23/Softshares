@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:softshares/Pages/area.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -19,7 +21,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('softshares.db');
+    _database = await _initDB('softsharesDB.db');
     return _database!;
   }
 
@@ -56,9 +58,16 @@ class SQLHelper {
         FOREIGN KEY (areaID) REFERENCES areas(id)
       )""";
 
+    const createPreferences = """
+      CREATE TABLE preferences(
+        id INTEGER PRIMARY KEY,
+        subArea NVARCHAR(100) NOT NULL 
+      )""";
+
     await db.execute(createCities);
     await db.execute(createAreas);
     await db.execute(createSubAreas);
+    await db.execute(createPreferences);
     await _insertCities(db);
     await _insertAreas(db);
   }
@@ -105,7 +114,8 @@ class SQLHelper {
     final List<Map<String, dynamic>> subAreaMaps = await db.query('subAreas');
 
     for (var area in areaMaps) {
-      AreaClass aux = AreaClass(id: area['id'], areaName: area['area'], icon: iconMap[area['area']]);
+      AreaClass aux = AreaClass(
+          id: area['id'], areaName: area['area'], icon: iconMap[area['area']]);
       aux.subareas = [];
       for (var subArea in subAreaMaps) {
         AreaClass subAux =
@@ -141,5 +151,38 @@ class SQLHelper {
       return result.first['city'] as String?;
     }
     return null;
+  }
+
+  Future deletePrefs() async {
+    final db = await instance.database;
+    await db.execute("""
+        DELETE FROM preferences
+    """);
+  }
+
+  Future insertPreference(List<AreaClass> prefs) async {
+    final db = await instance.database;
+
+    await deletePrefs();
+    for (var pref in prefs) {
+      await db.rawInsert(
+        'INSERT INTO preferences (id, subarea) VALUES (?, ?)',
+        [pref.id, pref.areaName],
+      );
+    }
+  }
+
+  Future<List<AreaClass>> getPrefs() async {
+    final db = await instance.database;
+    List<AreaClass> prefs = [];
+    final List<Map<String, dynamic>> prefsMap = await db.query('preferences');
+
+    for (var pref in prefsMap) {
+      AreaClass aux = AreaClass(id: pref['id'], areaName: pref['subArea']);
+
+      prefs.add(aux);
+    }
+
+    return prefs;
   }
 }

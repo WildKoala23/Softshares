@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:softshares/classes/areaClass.dart';
@@ -26,38 +27,58 @@ class API {
     return user;
   }
 
-  Future<List<Publication>> getAllPosts() async {
+  Future<List<Publication>> getPosts() async {
     List<Publication> publications = [];
+    int officeId = box.read('selectedCity');
 
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/dynamic/all-content'));
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/posts-by-city/${officeId}'));
 
     var jsonData = jsonDecode(response.body);
 
     //Get all Posts
     for (var eachPub in jsonData['posts']) {
-      User publisherUser = await getUser(eachPub['publisher_id']);
-      var file;
-      if (eachPub['filepath'] != null) {
-        file = File(eachPub['filepath']);
-      } else {
-        file = null;
+      //Check if publication belongs t
+      if (eachPub['office_id'] == officeId) {
+        User publisherUser = await getUser(eachPub['publisher_id']);
+        var file;
+        if (eachPub['filepath'] != null) {
+          file = File(eachPub['filepath']);
+        } else {
+          file = null;
+        }
+        final publication = Publication(
+          publisherUser,
+          null,
+          eachPub['content'],
+          eachPub['title'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']),
+          file,
+          eachPub['p_location'],
+        );
+        await publication.getSubAreaName();
+        publications.add(publication);
       }
-      final publication = Publication(
-        publisherUser,
-        null,
-        eachPub['content'],
-        eachPub['title'],
-        eachPub['validated'],
-        eachPub['sub_area_id'],
-        DateTime.parse(eachPub['creation_date']),
-        file,
-        eachPub['p_location'],
-      );
-      await publication.getSubAreaName();
-      publications.add(publication);
     }
-    //Get all forums
+
+    //Sort for most recent first
+    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+    return publications;
+  }
+
+  Future<List<Forum>> getForums() async {
+    List<Forum> publications = [];
+    int officeId = box.read('selectedCity');
+
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'));
+
+
+    var jsonData = jsonDecode(response.body);
+
     for (var eachPub in jsonData['forums']) {
       if (eachPub['event_id'] == null) {
         User publisherUser = await getUser(eachPub['publisher_id']);
@@ -74,6 +95,22 @@ class API {
         publications.add(publication);
       }
     }
+
+    //Sort for most recent first
+    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+    return publications;
+  }
+
+  Future<List<Event>> getEvents() async {
+    List<Event> publications = [];
+    int officeId = box.read('selectedCity');
+
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/events-by-city/${officeId}'));
+
+    var jsonData = jsonDecode(response.body);
+
     //Get all events
     for (var eachPub in jsonData['events']) {
       var file;
@@ -171,6 +208,30 @@ class API {
     publications.sort((a, b) => b.datePost.compareTo(a.datePost));
 
     return publications;
+  }
+
+  Future<List<Publication>> getAllPosts() async {
+    List<Publication> pubs = [];
+    List<Publication> posts = [];
+    List<Event> events = [];
+    List<Forum> forums = [];
+
+    try {
+      posts = await getPosts();
+      print(posts.length);
+      events = await getEvents();
+      forums = await getForums();
+      pubs.addAll(posts);
+      pubs.addAll(events);
+      pubs.addAll(forums);
+    } catch (e) {
+      throw e;
+    }
+
+    //Sort for most recent first
+    pubs.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+    return pubs;
   }
 
   Future<List<POI>> getAllPoI() async {
