@@ -48,13 +48,15 @@ class _PostPageState extends State<PostPage> {
                       height: 250,
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
-                        child: Image.network(
-                            fit: BoxFit.cover,
-                            'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.img!.path}',
-                            //Handles images not existing
-                            errorBuilder: (context, error, stackTrace) {
-                          return Container();
-                        }),
+                        child: widget.publication.img != null
+                            ? Image.network(
+                                fit: BoxFit.cover,
+                                'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.img!.path}',
+                                //Handles images not existing
+                                errorBuilder: (context, error, stackTrace) {
+                                return Container();
+                              })
+                            : Container(),
                       ),
                     ),
                   ),

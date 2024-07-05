@@ -498,13 +498,33 @@ class API {
     return events;
   }
 
-  Future getComents(String type, int id) async {
+  Future getComents(
+    Publication pub,
+  ) async {
+    Map<User, String> comments = {};
+
+    late String type;
+    switch (pub) {
+      case Forum _:
+        type = 'forum';
+        break;
+      case Event _:
+        type = 'event';
+        break;
+      default:
+        type = 'post';
+    }
     var response = await http.get(Uri.https(
-        baseUrl, '/api/comment/get-comment-tree/content/$type/id/$id'));
+        baseUrl, '/api/comment/get-comment-tree/content/$type/id/${pub.id}'));
 
     var jsonData = jsonDecode(response.body);
 
-    print(jsonData);
+    for (var comment in jsonData['data']) {
+      User user = await getUser(comment['publisher_id']);
+      comments[user] = comment['content'];
+    }
+
+    return comments;
   }
 
   Future createComment(Publication pub, String comment) async {
@@ -512,13 +532,13 @@ class API {
 
     switch (pub) {
       case Forum _:
-        type = 'forums';
+        type = 'forum';
         break;
       case Event _:
-        type = 'events';
+        type = 'event';
         break;
       default:
-        type = 'posts';
+        type = 'post';
     }
 
     var response =

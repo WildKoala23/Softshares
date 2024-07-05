@@ -18,11 +18,13 @@ class _POIState extends State<POICard> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => POIPage(poi: widget.pointOfInterest,),
+            builder: (context) => POIPage(
+              poi: widget.pointOfInterest,
+            ),
           ),
         );
       },
@@ -112,7 +114,7 @@ class _POIState extends State<POICard> {
                   borderRadius: BorderRadius.circular(95)),
               child: Center(
                   //If user does not have Profile Pic, print first letter of first name
-                  child: widget.pointOfInterest.user.profileImg != null
+                  child: widget.pointOfInterest.user.profileImg == null
                       ? Text(
                           widget.pointOfInterest.user.firstname[0],
                           style: TextStyle(

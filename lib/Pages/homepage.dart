@@ -3,8 +3,6 @@ import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/eventCard.dart';
 import 'package:softshares/Components/publicationCard.dart';
-import 'package:softshares/Pages/createPub.dart';
-import 'package:softshares/classes/POI.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/publication.dart';

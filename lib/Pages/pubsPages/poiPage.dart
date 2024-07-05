@@ -43,7 +43,7 @@ class _PostPageState extends State<POIPage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         appBar: formAppbar(title: widget.poi.title),
-        body:  Padding(
+        body: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,24 +61,46 @@ class _PostPageState extends State<POIPage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 250,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        child: Image.network(
-                            fit: BoxFit.cover,
-                            'https://backendpint-w3vz.onrender.com/uploads/${widget.poi.img!.path}',
-                            //Handles images not existing
-                            errorBuilder: (context, error, stackTrace) {
-                          return Container();
-                        }),
+                  widget.poi.img != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 250,
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                              child: Image.network(
+                                  fit: BoxFit.cover,
+                                  'https://backendpint-w3vz.onrender.com/uploads/${widget.poi.img!.path}',
+                                  //Handles images not existing
+                                  errorBuilder: (context, error, stackTrace) {
+                                return Container();
+                              }),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                  Container(
+                    width: double.infinity,
+                    height: 250,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: GoogleMap(
+                        onMapCreated: _onMapCreated,
+                        initialCameraPosition: CameraPosition(
+                          target: local,
+                          zoom: 11.0,
+                        ),
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId('Event'),
+                            position: local,
+                          ),
+                        },
                       ),
                     ),
                   ),
-                  SingleChildScrollView()
                 ],
               ),
               Form(
@@ -97,8 +119,7 @@ class _PostPageState extends State<POIPage> {
                     suffixIcon: IconButton(
                         onPressed: () async {
                           if (_commentKey.currentState!.validate()) {
-                            await api.createComment(
-                                widget.poi, commentCx.text);
+                            await api.createComment(widget.poi, commentCx.text);
                           }
                         },
                         icon: const Icon(Icons.send)),
