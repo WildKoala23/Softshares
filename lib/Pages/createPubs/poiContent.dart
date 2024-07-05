@@ -267,6 +267,7 @@ class _POICreationState extends State<POICreation> {
                 onPressed: () async {
                   if (_poiKey.currentState!.validate()) {
                     POI post = POI(
+                      null,
                         user1,
                         null,
                         descController.text,

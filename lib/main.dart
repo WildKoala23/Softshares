@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:softshares/Pages/chooseCityPage.dart';
-import 'package:softshares/Pages/postsPage.dart';
+import 'package:softshares/Pages/pubsPages/postsPage.dart';
 import 'package:softshares/Pages/settings.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: '/Editprofile', //userId != null ? '/home' : '/SignIn',
+          initialRoute: '/home', //userId != null ? '/home' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(
                   areas: areas,

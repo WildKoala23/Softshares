@@ -3,8 +3,8 @@ import 'package:softshares/classes/user.dart';
 
 class Forum extends Publication{
 
-  Forum(User user, User? admin, String desc, String title,
+  Forum(int? id, User user, User? admin, String desc, String title,
       bool validated, int subCategory, DateTime postDate)
-      : super(user, admin, desc, title, validated, subCategory, postDate, null, null);
+      : super(id, user, admin, desc, title, validated, subCategory, postDate, null, null);
 }
 

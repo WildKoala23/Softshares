@@ -6,9 +6,9 @@ import 'package:softshares/classes/user.dart';
 class POI extends Publication {
   double _aval;
 
-  POI(User user, User? admin, String desc, String title, bool validated,
+  POI(int? id, User user, User? admin, String desc, String title, bool validated,
       int subCategory, DateTime postDate,  File? imgPath, String? location, this._aval,)
-      : super(user, admin, desc, title, validated, subCategory, postDate, imgPath, location);
+      : super(id, user, admin, desc, title, validated, subCategory, postDate, imgPath, location);
 
   double get aval => _aval;
 

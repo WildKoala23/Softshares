@@ -169,6 +169,7 @@ class _ForumCreationState extends State<ForumCreation> {
                 onPressed: () async {
                   if (_forumKey.currentState!.validate()) {
                     Forum post = Forum(
+                        null,
                         user1,
                         null,
                         descController.text,

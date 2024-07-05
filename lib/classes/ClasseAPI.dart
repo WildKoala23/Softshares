@@ -32,35 +32,35 @@ class API {
     int officeId = box.read('selectedCity');
 
     var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/posts-by-city/${officeId}'));
+        .get(Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'));
+
+    print(response.statusCode);
 
     var jsonData = jsonDecode(response.body);
 
     //Get all Posts
-    for (var eachPub in jsonData['posts']) {
-      //Check if publication belongs t
-      if (eachPub['office_id'] == officeId) {
-        User publisherUser = await getUser(eachPub['publisher_id']);
-        var file;
-        if (eachPub['filepath'] != null) {
-          file = File(eachPub['filepath']);
-        } else {
-          file = null;
-        }
-        final publication = Publication(
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']),
-          file,
-          eachPub['p_location'],
-        );
-        await publication.getSubAreaName();
-        publications.add(publication);
+    for (var eachPub in jsonData['data']) {
+      User publisherUser = await getUser(eachPub['publisher_id']);
+      var file;
+      if (eachPub['filepath'] != null) {
+        file = File(eachPub['filepath']);
+      } else {
+        file = null;
       }
+      final publication = Publication(
+        eachPub['post_id'],
+        publisherUser,
+        null,
+        eachPub['content'],
+        eachPub['title'],
+        eachPub['validated'],
+        eachPub['sub_area_id'],
+        DateTime.parse(eachPub['creation_date']),
+        file,
+        eachPub['p_location'],
+      );
+      await publication.getSubAreaName();
+      publications.add(publication);
     }
 
     //Sort for most recent first
@@ -76,13 +76,13 @@ class API {
     var response = await http
         .get(Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'));
 
-
     var jsonData = jsonDecode(response.body);
 
-    for (var eachPub in jsonData['forums']) {
+    for (var eachPub in jsonData['data']) {
       if (eachPub['event_id'] == null) {
         User publisherUser = await getUser(eachPub['publisher_id']);
         final publication = Forum(
+          eachPub['forum_id'],
           publisherUser,
           null,
           eachPub['content'],
@@ -107,12 +107,12 @@ class API {
     int officeId = box.read('selectedCity');
 
     var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/events-by-city/${officeId}'));
+        .get(Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'));
 
     var jsonData = jsonDecode(response.body);
 
     //Get all events
-    for (var eachPub in jsonData['events']) {
+    for (var eachPub in jsonData['data']) {
       var file;
       if (eachPub['filepath'] != null) {
         file = File(eachPub['filepath']);
@@ -121,6 +121,7 @@ class API {
       }
       User publisherUser = await getUser(eachPub['publisher_id']);
       final publication = Event(
+        eachPub['event_id'],
           publisherUser,
           null,
           eachPub['description'],
@@ -162,6 +163,7 @@ class API {
         User publisherUser = await getUser(eachPub['publisher_id']);
         if (type == 'posts') {
           final publication = Publication(
+            eachPub['post_id'],
             publisherUser,
             null,
             eachPub['content'],
@@ -176,6 +178,7 @@ class API {
           publications.add(publication);
         } else if (type == 'forums') {
           final publication = Forum(
+            eachPub['forum_id'],
               publisherUser,
               null,
               eachPub['content'],
@@ -187,6 +190,7 @@ class API {
           publications.add(publication);
         } else {
           final publication = Event(
+            eachPub['event_id'],
               publisherUser,
               null,
               eachPub['description'],
@@ -218,7 +222,6 @@ class API {
 
     try {
       posts = await getPosts();
-      print(posts.length);
       events = await getEvents();
       forums = await getForums();
       pubs.addAll(posts);
@@ -252,6 +255,7 @@ class API {
       if (eachPub['type'] == 'P') {
         User publisherUser = await getUser(eachPub['publisher_id']);
         final publication = POI(
+          eachPub['post_id'],
           publisherUser,
           null,
           eachPub['content'],
@@ -269,8 +273,8 @@ class API {
     }
     return list;
   }
-
-  //This fucntion is used everytime a user creates something with an image
+  
+  //This function is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
     String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
 
@@ -462,6 +466,7 @@ class API {
 
         // Create Event object
         final publication = Event(
+          eachPub['event_id'],
             publisherUser,
             null,
             eachPub['description'],

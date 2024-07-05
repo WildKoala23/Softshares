@@ -311,6 +311,7 @@ class _PostCreationState extends State<PostCreation> {
                   if (_postKey.currentState!.validate()) {
                     //Change when images and google api are working
                     var post = Publication(
+                        null,
                         user1,
                         null,
                         descController.text,

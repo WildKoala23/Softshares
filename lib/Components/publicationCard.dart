@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/postsPage.dart';
+import 'package:softshares/Pages/pubsPages/postsPage.dart';
 import 'package:softshares/classes/publication.dart';
 
 class PublicationCard extends StatefulWidget {

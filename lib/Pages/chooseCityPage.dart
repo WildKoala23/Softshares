@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ChooseCityPage extends StatefulWidget {
   const ChooseCityPage({super.key});
@@ -17,6 +18,7 @@ Map<String, String> cities = {
 
 class _ChooseCityPageState extends State<ChooseCityPage> {
   late String city;
+  final box = GetStorage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,8 +39,11 @@ class _ChooseCityPageState extends State<ChooseCityPage> {
               return GestureDetector(
                 onTap: () {
                   city = key;
-                  print('Choosen city: ${key}');
-                  Navigator.pop(context, {'index': index + 1});
+                  setState(() {
+                    box.write('selectedCity', index + 1);
+                    print(box.read('selectedCity'));
+                  });
+                  Navigator.pushNamed(context, '/home');
                 },
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 50, 10, 50),

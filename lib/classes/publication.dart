@@ -5,6 +5,7 @@ import 'package:softshares/classes/user.dart';
 
 class Publication {
   final API api = API();
+  int? _id;
   User _user;
   User? _admin;
   String _desc, _title;
@@ -15,7 +16,7 @@ class Publication {
   String? location;
   File? img;
 
-  Publication(this._user, this._admin, this._desc, this._title, this._validated,
+  Publication(this._id, this._user, this._admin, this._desc, this._title, this._validated,
       this._subCategory, this._postDate, this.img, this.location);
 
   User get user => _user;
@@ -23,6 +24,7 @@ class Publication {
   String get desc => _desc;
   String get title => _title;
   int get subCategory => _subCategory;
+  int get id => _id!;
   bool get validated => _validated;
 
   DateTime get datePost => _postDate;

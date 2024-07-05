@@ -7,6 +7,7 @@ class Event extends Publication {
   DateTime eventDate;
   bool recurring;
   Event(
+      int? id,
       User user,
       User? admin,
       String desc,
@@ -18,6 +19,6 @@ class Event extends Publication {
       String? location,
       this.eventDate,
       this.recurring)
-      : super(user, admin, desc, title, validated, subCategory, postDate,
+      : super(id, user, admin, desc, title, validated, subCategory, postDate,
             imgPath, location);
 }

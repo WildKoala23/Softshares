@@ -310,6 +310,7 @@ class _EventCreationState extends State<EventCreation> {
                 onPressed: () async {
                   if (_eventKey.currentState!.validate()) {
                     Event post = Event(
+                        null,
                         user1,
                         null,
                         descController.text,

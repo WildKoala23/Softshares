@@ -97,9 +97,6 @@ class _EditProfileState extends State<EditProfile> {
           children: [
             profilePicture(colorScheme),
             //Name
-            nameContent(colorScheme),
-            //Email
-            emailContent(colorScheme),
             Container(
               height: 30,
               margin: const EdgeInsets.only(left: 20, right: 20),
@@ -148,25 +145,29 @@ class _EditProfileState extends State<EditProfile> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            isLoading == false ?ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: checkBoxSelected.length,
-              itemBuilder: (context, index) {
-                AreaClass key = checkBoxSelected.keys.elementAt(index);
-                bool value = checkBoxSelected.values.elementAt(index);
-                return CheckboxListTile(
-                  title: Text(key.areaName),
-                  value: value,
-                  onChanged: (newValue) {
-                    print(key.id);
-                    setState(() {
-                      checkBoxSelected[key] = newValue!;
-                    });
-                  },
-                );
-              },
-            ) : const Center(child: CircularProgressIndicator(),),
+            isLoading == false
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: checkBoxSelected.length,
+                    itemBuilder: (context, index) {
+                      AreaClass key = checkBoxSelected.keys.elementAt(index);
+                      bool value = checkBoxSelected.values.elementAt(index);
+                      return CheckboxListTile(
+                        title: Text(key.areaName),
+                        value: value,
+                        onChanged: (newValue) {
+                          print(key.id);
+                          setState(() {
+                            checkBoxSelected[key] = newValue!;
+                          });
+                        },
+                      );
+                    },
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(),
+                  ),
           ],
         ),
       ),

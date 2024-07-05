@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/poiPage.dart';
+import 'package:softshares/Pages/pubsPages/poiPage.dart';
 import 'package:softshares/classes/POI.dart';
 
 class POICard extends StatefulWidget {

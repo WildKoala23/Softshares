@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:softshares/Pages/eventsPage.dart';
+import 'package:softshares/Pages/pubsPages/eventsPage.dart';
 import 'package:softshares/classes/event.dart';
 
 class EventCard extends StatefulWidget {

@@ -35,12 +35,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<void> futurePosts;
 
   Future<void> getPosts() async {
-    posts = await api.getAllPosts();
-  }
-
-  Future<void> refreshPosts() async {
-    await getPosts();
-    setState(() {});
+    var data = await api.getAllPosts();
+    posts = data;
   }
 
   void leftCallback(context) {
@@ -57,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     futurePosts = getPosts();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == 0) {
-        refreshPosts();
+        getPosts();
       }
     });
   }

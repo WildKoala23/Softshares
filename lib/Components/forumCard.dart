@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Pages/pubsPages/forumPage.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/publication.dart';
 
@@ -24,30 +25,40 @@ class _POIState extends State<ForumCard> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      margin: const EdgeInsets.fromLTRB(26, 26, 20, 0),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
-            child: cardHeader(colorScheme),
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ForumPage(forum: widget.forum,),
           ),
-          Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: textContent(colorScheme),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 20.0, bottom: 50.0, left: 14, right: 14),
-            child: Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                widget.forum.desc,
-                textAlign: TextAlign.start,
-              ),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.fromLTRB(26, 26, 20, 0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
+              child: cardHeader(colorScheme),
             ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: textContent(colorScheme),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 20.0, bottom: 50.0, left: 14, right: 14),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  widget.forum.desc,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
