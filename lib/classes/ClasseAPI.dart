@@ -40,27 +40,30 @@ class API {
 
     //Get all Posts
     for (var eachPub in jsonData['data']) {
-      User publisherUser = await getUser(eachPub['publisher_id']);
-      var file;
-      if (eachPub['filepath'] != null) {
-        file = File(eachPub['filepath']);
-      } else {
-        file = null;
+      //Filter posts with poi's
+      if (eachPub['type'] == 'N') {
+        User publisherUser = await getUser(eachPub['publisher_id']);
+        var file;
+        if (eachPub['filepath'] != null) {
+          file = File(eachPub['filepath']);
+        } else {
+          file = null;
+        }
+        final publication = Publication(
+          eachPub['post_id'],
+          publisherUser,
+          null,
+          eachPub['content'],
+          eachPub['title'],
+          eachPub['validated'],
+          eachPub['sub_area_id'],
+          DateTime.parse(eachPub['creation_date']),
+          file,
+          eachPub['p_location'],
+        );
+        await publication.getSubAreaName();
+        publications.add(publication);
       }
-      final publication = Publication(
-        eachPub['post_id'],
-        publisherUser,
-        null,
-        eachPub['content'],
-        eachPub['title'],
-        eachPub['validated'],
-        eachPub['sub_area_id'],
-        DateTime.parse(eachPub['creation_date']),
-        file,
-        eachPub['p_location'],
-      );
-      await publication.getSubAreaName();
-      publications.add(publication);
     }
 
     //Sort for most recent first

@@ -46,7 +46,10 @@ class _POIState extends State<POICard> {
                     'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.img!.path}',
                     //Handles images not existing
                     errorBuilder: (context, error, stackTrace) {
-                    return Container();
+                    return Container(
+                      color: Color.fromARGB(255, 159, 255, 150),
+                      height: 120,
+                    );
                   }),
             Padding(
               padding: const EdgeInsets.all(14.0),
