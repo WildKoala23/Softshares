@@ -76,6 +76,7 @@ class _PostCreationState extends State<PostCreation> {
                 ),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please insert title';
@@ -146,6 +147,7 @@ class _PostCreationState extends State<PostCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: descController,
                 decoration: const InputDecoration(
                   labelText: 'Description',
@@ -330,7 +332,7 @@ class _PostCreationState extends State<PostCreation> {
                         builder: (context) => AlertDialog(
                           title: Text('Error creating post'),
                           content:
-                              Text('An error occurred while creating the Post'),
+                              Text('An error occurred while creating the Post: $e'),
                           actions: [
                             TextButton(
                               onPressed: () {

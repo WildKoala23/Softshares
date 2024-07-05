@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/event.dart';
 
 class EventPage extends StatefulWidget {
@@ -15,6 +16,9 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   late GoogleMapController mapController;
   late LatLng local;
+  API api = API();
+  TextEditingController commentCx = TextEditingController();
+  final _commentKey = GlobalKey<FormState>();
 
   LatLng convertCoord(String location) {
     List<String> coords = location.split(" ");
@@ -136,9 +140,7 @@ class _EventPageState extends State<EventPage> {
                     zoom: 11.0,
                   ),
                   markers: {
-                    Marker(
-                        markerId: const MarkerId('Event'),
-                        position: local)
+                    Marker(markerId: const MarkerId('Event'), position: local)
                   },
                 ),
               ),

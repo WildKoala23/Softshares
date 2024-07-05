@@ -77,6 +77,7 @@ class _POICreationState extends State<POICreation> {
                 ),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter title';
@@ -148,6 +149,7 @@ class _POICreationState extends State<POICreation> {
                 style: TextStyle(fontSize: 22),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: descController,
                 decoration: const InputDecoration(
                   labelText: 'Description',
@@ -265,7 +267,7 @@ class _POICreationState extends State<POICreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_poiKey.currentState!.validate()) {
+                  if (_poiKey.currentState!.validate() && _selectedImage != null && location.isNotEmpty) {
                     POI post = POI(
                       null,
                         user1,
@@ -300,6 +302,24 @@ class _POICreationState extends State<POICreation> {
                       );
                     }
                     Navigator.pushNamed(context, '/home');
+                  }else {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Non valid inputs'),
+                          content: Text(
+                              'Please check if all inputs are valid (image/location)'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/home'); // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
                   }
                 },
                 child: Text(

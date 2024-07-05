@@ -94,6 +94,7 @@ class _EventCreationState extends State<EventCreation> {
                   }
                   return null;
                 },
+                textCapitalization: TextCapitalization.sentences,
                 controller: titleController,
                 decoration: const InputDecoration(
                   labelText: 'Title',
@@ -157,6 +158,7 @@ class _EventCreationState extends State<EventCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: descController,
                 decoration: const InputDecoration(
                   labelText: 'Description',
@@ -308,7 +310,7 @@ class _EventCreationState extends State<EventCreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_eventKey.currentState!.validate()) {
+                  if (_eventKey.currentState!.validate() && _selectedImage != null && location.isNotEmpty) {
                     Event post = Event(
                         null,
                         user1,
@@ -347,6 +349,23 @@ class _EventCreationState extends State<EventCreation> {
                     }
                     Navigator.pushNamed(context, '/home');
                   }
+                  showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Non valid inputs'),
+                          content: Text(
+                              'Please check if all inputs are valid (image/location)'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/home'); // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
                 },
                 child: Text('Advance',
                     style: TextStyle(color: colorScheme.onPrimary)),
@@ -361,6 +380,7 @@ class _EventCreationState extends State<EventCreation> {
   Container dateContent(ColorScheme colorScheme, GlobalKey key) {
     return Container(
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please insert date';

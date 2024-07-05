@@ -39,6 +39,7 @@ class _CustomTextFieldState extends State<customTextField> {
     return Container(
       padding: EdgeInsets.only(left: 25, top: 20, right: 25),
       child: TextField(
+        textCapitalization: TextCapitalization.sentences,
         controller: controller,
         keyboardType:
             widget.numericInput ? TextInputType.number : TextInputType.name,

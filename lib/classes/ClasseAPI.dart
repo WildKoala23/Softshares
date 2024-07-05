@@ -121,7 +121,7 @@ class API {
       }
       User publisherUser = await getUser(eachPub['publisher_id']);
       final publication = Event(
-        eachPub['event_id'],
+          eachPub['event_id'],
           publisherUser,
           null,
           eachPub['description'],
@@ -178,7 +178,7 @@ class API {
           publications.add(publication);
         } else if (type == 'forums') {
           final publication = Forum(
-            eachPub['forum_id'],
+              eachPub['forum_id'],
               publisherUser,
               null,
               eachPub['content'],
@@ -190,7 +190,7 @@ class API {
           publications.add(publication);
         } else {
           final publication = Event(
-            eachPub['event_id'],
+              eachPub['event_id'],
               publisherUser,
               null,
               eachPub['description'],
@@ -273,7 +273,7 @@ class API {
     }
     return list;
   }
-  
+
   //This function is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
     String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
@@ -319,19 +319,19 @@ class API {
       print('Path: $path');
     }
 
-    try {
-      var response =
-          await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-        'subAreaId': pub.subCategory.toString(),
-        'officeId': office.toString(),
-        'publisher_id': pub.user.id.toString(),
-        'title': pub.title,
-        'content': pub.desc,
-        'filePath': path
-      });
-    } catch (e) {
-      throw e;
-    }
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
+      'subAreaId': pub.subCategory.toString(),
+      'officeId': office.toString(),
+      'publisher_id': pub.user.id.toString(),
+      'title': pub.title,
+      'content': pub.desc,
+      'filePath': path.toString(),
+      'pLocation': pub.location.toString(),
+    });
+
+    print(response.body);
+    print(response.statusCode);
   }
 
   Future createEvent(Event event) async {
@@ -350,13 +350,11 @@ class API {
       'publisher_id': event.user.id.toString(),
       'name': event.title,
       'description': event.desc,
-      'filePath': path,
+      'filePath': path.toString(),
       'eventDate':
           event.eventDate.toIso8601String(), //Convert DateTime to string
-      'location': event.location,
+      'location': event.location.toString(),
     });
-
-    print(response.statusCode);
   }
 
   Future createForum(Forum forum) async {
@@ -390,12 +388,13 @@ class API {
       'title': poi.title,
       'content': poi.desc,
       'type': 'P',
-      'filePath': path,
-      'location': poi.location,
-      'rating': poi.aval
+      'filePath': path.toString(),
+      'pLocation': poi.location.toString(),
+      'rating': poi.aval.round().toString()
     });
 
     print(response.statusCode);
+    print(response.body);
   }
 
   Future<List<AreaClass>> getAreas() async {
@@ -466,7 +465,7 @@ class API {
 
         // Create Event object
         final publication = Event(
-          eachPub['event_id'],
+            eachPub['event_id'],
             publisherUser,
             null,
             eachPub['description'],
@@ -497,5 +496,45 @@ class API {
     }
 
     return events;
+  }
+
+  Future getComents(String type, int id) async {
+    var response = await http.get(Uri.https(
+        baseUrl, '/api/comment/get-comment-tree/content/$type/id/$id'));
+
+    var jsonData = jsonDecode(response.body);
+
+    print(jsonData);
+  }
+
+  Future createComment(Publication pub, String comment) async {
+    late String type;
+
+    switch (pub) {
+      case Forum _:
+        type = 'forums';
+        break;
+      case Event _:
+        type = 'events';
+        break;
+      default:
+        type = 'posts';
+    }
+
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/comment/add-comment'), body: {
+      'contentID': pub.id.toString(),
+      'contentType': type,
+      'userID': pub.user.id.toString(),
+      'commentText': comment
+    });
+
+    if (response.statusCode == 200) {
+      // Handle successful response
+      print('Comment created successfully');
+    } else {
+      // Handle error response
+      print('Failed to create comment: ${response.body}');
+    }
   }
 }

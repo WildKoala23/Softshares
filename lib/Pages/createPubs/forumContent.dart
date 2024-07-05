@@ -67,6 +67,7 @@ class _ForumCreationState extends State<ForumCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please insert title';
@@ -89,6 +90,7 @@ class _ForumCreationState extends State<ForumCreation> {
                 style: TextStyle(fontSize: 22),
               ),
               TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: descController,
                 decoration: const InputDecoration(
                   labelText: 'Description',
