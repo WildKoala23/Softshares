@@ -43,111 +43,71 @@ class _PostPageState extends State<POIPage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         appBar: formAppbar(title: widget.poi.title),
-        body: Stack(
-          children: [SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                cardHeader(colorScheme),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  widget.poi.title,
-                  style: const TextStyle(fontSize: 26),
-                ),
-                widget.poi.img == null
-                    ? Container(
-                        color: Color.fromARGB(255, 159, 255, 150),
-                        height: 120,
-                      )
-                    : Image.network(
-                        'https://backendpint-w3vz.onrender.com/uploads/${widget.poi.img!.path}',
-                        //Handles images not existing
-                        errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Color.fromARGB(255, 159, 255, 150),
-                          height: 120,
-                        );
-                      }),
-                Row(
-                  children: [
-                    Text(widget.poi.desc),
-                    Row(
-                        children: List.generate(
-                            widget.poi.aval.round(),
-                            (start) => Icon(
-                                  Icons.euro,
-                                  color: colorScheme.secondary,
-                                  size: 25,
-                                )))
-                  ],
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                const Divider(
-                  height: 0,
-                  thickness: 2,
-                  indent: 25,
-                  endIndent: 25,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 250,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                        target: local,
-                        zoom: 11.0,
+        body:  Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  cardHeader(colorScheme),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 5.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.poi.title,
+                        style: TextStyle(fontSize: 22),
                       ),
-                      markers: {
-                        Marker(markerId: MarkerId('Event'), position: local)
-                      },
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Form(
-                      key: _commentKey,
-                      child: TextFormField(
-                        textCapitalization: TextCapitalization.sentences,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter comment';
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 250,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        child: Image.network(
+                            fit: BoxFit.cover,
+                            'https://backendpint-w3vz.onrender.com/uploads/${widget.poi.img!.path}',
+                            //Handles images not existing
+                            errorBuilder: (context, error, stackTrace) {
+                          return Container();
+                        }),
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView()
+                ],
+              ),
+              Form(
+                key: _commentKey,
+                child: TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter comment';
+                    }
+                    return null;
+                  },
+                  controller: commentCx,
+                  decoration: InputDecoration(
+                    label: const Text('Add comment'),
+                    suffixIcon: IconButton(
+                        onPressed: () async {
+                          if (_commentKey.currentState!.validate()) {
+                            await api.createComment(
+                                widget.poi, commentCx.text);
                           }
-                          return null;
                         },
-                        controller: commentCx,
-                        decoration: InputDecoration(
-                          label: const Text('Add comment'),
-                          suffixIcon: IconButton(
-                              onPressed: () async {
-                                if (_commentKey.currentState!.validate()) {
-                                  await api.createComment(
-                                      widget.poi, commentCx.text);
-                                }
-                              },
-                              icon: const Icon(Icons.send)),
-                          border:
-                              const OutlineInputBorder(borderSide: BorderSide()),
-                        ),
-                      ),
-                    ),
+                        icon: const Icon(Icons.send)),
+                    border: const OutlineInputBorder(borderSide: BorderSide()),
                   ),
                 ),
-              ]),
-            ),
-          ),]
+              ),
+            ],
+          ),
         ));
   }
 

@@ -27,47 +27,29 @@ class _PostPageState extends State<ForumPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: formAppbar(title: widget.forum.title),
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        appBar: formAppbar(title: widget.forum.title),
+        body: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 children: [
                   cardHeader(colorScheme),
-                  const SizedBox(
-                    height: 20,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 5.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.forum.title,
+                        style: TextStyle(fontSize: 22),
+                      ),
+                    ),
                   ),
-                  Text(
-                    widget.forum.title,
-                    style: const TextStyle(fontSize: 26),
-                  ),
-                  Container(
-                    child: Text(widget.forum.desc),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  const Divider(
-                    height: 0,
-                    thickness: 2,
-                    indent: 25,
-                    endIndent: 25,
-                  ),
-                  const SizedBox(
-                    height: 80,
-                  ),
+                  SingleChildScrollView()
                 ],
               ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Form(
+              Form(
                 key: _commentKey,
                 child: TextFormField(
                   textCapitalization: TextCapitalization.sentences,
@@ -92,11 +74,9 @@ class _PostPageState extends State<ForumPage> {
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Row cardHeader(ColorScheme colorScheme) {

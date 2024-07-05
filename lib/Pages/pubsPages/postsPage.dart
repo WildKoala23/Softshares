@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/publication.dart';
 
 class PostPage extends StatefulWidget {
@@ -13,45 +15,78 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
+  API api = API();
+  TextEditingController commentCx = TextEditingController();
+  final _commentKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         appBar: formAppbar(title: widget.publication.title),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              cardHeader(colorScheme),
-              const SizedBox(
-                height: 20,
+        body: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  cardHeader(colorScheme),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 5.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.publication.title,
+                        style: TextStyle(fontSize: 22),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 250,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        child: Image.network(
+                            fit: BoxFit.cover,
+                            'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.img!.path}',
+                            //Handles images not existing
+                            errorBuilder: (context, error, stackTrace) {
+                          return Container();
+                        }),
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView()
+                ],
               ),
-              Text(
-                widget.publication.title,
-                style: const TextStyle(fontSize: 26),
+              Form(
+                key: _commentKey,
+                child: TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter comment';
+                    }
+                    return null;
+                  },
+                  controller: commentCx,
+                  decoration: InputDecoration(
+                    label: const Text('Add comment'),
+                    suffixIcon: IconButton(
+                        onPressed: () async {
+                          if (_commentKey.currentState!.validate()) {
+                            await api.createComment(
+                                widget.publication, commentCx.text);
+                          }
+                        },
+                        icon: const Icon(Icons.send)),
+                    border: const OutlineInputBorder(borderSide: BorderSide()),
+                  ),
+                ),
               ),
-              widget.publication.img == null
-                  ? Container()
-                  : Image.network(
-                      'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.img!.path}',
-                      //Handles images not existing
-                      errorBuilder: (context, error, stackTrace) {
-                      return Container();
-                    }),
-              Container(
-                child: Text(widget.publication.desc),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              const Divider(
-                height: 0,
-                thickness: 2,
-                indent: 25,
-                endIndent: 25,
-              ),
-            ]),
+            ],
           ),
         ));
   }
