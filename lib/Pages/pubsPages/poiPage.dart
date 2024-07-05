@@ -107,7 +107,10 @@ class _POIPageState extends State<POIPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(widget.poi.desc),
+                            Flexible(
+                              child: Text(widget
+                                  .poi.desc), // Used Flexible to wrap text
+                            ),
                             Column(
                               children: [],
                             )

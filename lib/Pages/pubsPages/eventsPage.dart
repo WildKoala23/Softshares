@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -118,9 +119,11 @@ class _EventPageState extends State<EventPage> {
                     ),
                   ),
             const SizedBox(height: 20),
-            Text(
-              widget.event.desc,
-              style: const TextStyle(fontSize: 18),
+            Flexible(
+              child: Text(
+                widget.event.desc,
+                style: const TextStyle(fontSize: 18),
+              ),
             ),
             const SizedBox(height: 20),
             Text(

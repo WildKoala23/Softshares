@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/forums.dart';
@@ -61,9 +62,11 @@ class _ForumPageState extends State<ForumPage> {
                         ),
                       ),
                     ),
-                    Text(
-                      widget.forum.desc,
-                      style: TextStyle(fontSize: 18),
+                    Flexible(
+                      child: Text(
+                        widget.forum.desc,
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
                     const Divider(
                       color: Colors.black,

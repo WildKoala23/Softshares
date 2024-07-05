@@ -548,7 +548,7 @@ class API {
         await http.post(Uri.https(baseUrl, '/api/comment/add-comment'), body: {
       'contentID': pub.id.toString(),
       'contentType': type,
-      'userID': pub.user.id.toString(),
+      'userID': 1, //Change with loggin
       'commentText': comment
     });
 
