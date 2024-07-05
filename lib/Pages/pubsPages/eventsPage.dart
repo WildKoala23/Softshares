@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
@@ -86,17 +87,19 @@ class _EventPageState extends State<EventPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             cardHeader(colorScheme),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                widget.event.title,
+                style: const TextStyle(fontSize: 26),
+              ),
             ),
-            Text(
-              widget.event.title,
-              style: const TextStyle(fontSize: 26),
-            ),
+            const SizedBox(height: 10),
             widget.event.img == null
                 ? Container(
                     height: 120,
-                    color: Color.fromARGB(255, 255, 204, 150),
+                    color: const Color.fromARGB(255, 255, 204, 150),
                   )
                 : Center(
                     child: Container(
@@ -107,27 +110,24 @@ class _EventPageState extends State<EventPage> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: Color.fromARGB(255, 255, 204, 150),
+                            color: const Color.fromARGB(255, 255, 204, 150),
                             height: 120,
                           );
                         },
                       ),
                     ),
                   ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Text(
               widget.event.desc,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Text(
               'Date: ${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
+            const SizedBox(height: 20),
             Container(
               width: double.infinity,
               height: 250,
@@ -140,11 +140,28 @@ class _EventPageState extends State<EventPage> {
                     zoom: 11.0,
                   ),
                   markers: {
-                    Marker(markerId: const MarkerId('Event'), position: local)
+                    Marker(
+                      markerId: const MarkerId('Event'),
+                      position: local,
+                    ),
                   },
                 ),
               ),
-            )
+            ),
+            const SizedBox(height: 50),
+            Align(
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                ),
+                child: Text(
+                  'Register for Event',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -162,25 +179,32 @@ class _EventPageState extends State<EventPage> {
               height: 40,
               width: 40,
               decoration: BoxDecoration(
-                  color: colorScheme.secondary,
-                  border: Border.all(width: 3, color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(95)),
+                color: colorScheme.secondary,
+                border: Border.all(width: 3, color: Colors.transparent),
+                borderRadius: BorderRadius.circular(95),
+              ),
               child: Center(
-                  //If user does not have Profile Pic, print first letter of first name
-                  child: widget.event.user.profileImg == null
-                      ? Text(
-                          widget.event.user.firstname[0],
-                          style: TextStyle(
-                              fontSize: 20, color: colorScheme.onPrimary),
-                        )
-                      : const Text('I')),
+                // If user does not have Profile Pic, print first letter of first name
+                child: widget.event.user.profileImg == null
+                    ? Text(
+                        widget.event.user.firstname[0],
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: colorScheme.onPrimary,
+                        ),
+                      )
+                    : const Text('I'),
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "${widget.event.user.firstname} ${widget.event.user.lastName}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),

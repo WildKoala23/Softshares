@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyProfile> {
                     ),
                   ),
                   Tab(
-                    child: Text('Saved Posts',
+                    child: Text('Registered Events',
                         style: TextStyle(color: colorScheme.onSecondary)),
                   )
                 ],

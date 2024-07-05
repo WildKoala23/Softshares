@@ -21,7 +21,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('softsharesDB.db');
+    _database = await _initDB('pdm.db');
     return _database!;
   }
 
