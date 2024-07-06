@@ -184,7 +184,8 @@ class _EventCreationState extends State<EventCreation> {
                 onSelected: (place) async {
                   final geolocation = await place.geolocation;
 
-                  location = '${geolocation?.coordinates.latitude} ${geolocation?.coordinates.longitude}';
+                  location =
+                      '${geolocation?.coordinates.latitude} ${geolocation?.coordinates.longitude}';
                 },
               ),
               const SizedBox(height: 30),
@@ -310,7 +311,9 @@ class _EventCreationState extends State<EventCreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_eventKey.currentState!.validate() && _selectedImage != null && location.isNotEmpty) {
+                  if (_eventKey.currentState!.validate() &&
+                      _selectedImage != null &&
+                      location.isNotEmpty) {
                     Event post = Event(
                         null,
                         user1,
@@ -348,24 +351,25 @@ class _EventCreationState extends State<EventCreation> {
                       );
                     }
                     Navigator.pushNamed(context, '/home');
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Non valid inputs'),
+                        content: Text(
+                            'Please check if all inputs are valid (image/location)'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, '/home'); 
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
                   }
-                  showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Non valid inputs'),
-                          content: Text(
-                              'Please check if all inputs are valid (image/location)'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/home'); // Close the dialog
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
                 },
                 child: Text('Advance',
                     style: TextStyle(color: colorScheme.onPrimary)),

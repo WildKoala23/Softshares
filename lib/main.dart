@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: '/home', //userId != null ? '/home' : '/SignIn',
+          initialRoute: userId != null ? '/Login' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(
                   areas: areas,

@@ -12,11 +12,6 @@ import '../Components/forumCard.dart';
 import '../classes/ClasseAPI.dart';
 import '../classes/areaClass.dart';
 
-//Test dummies
-User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
-User user2 = User(2, 'Jane', 'Smith', 'jane.smith@example.com');
-User user3 = User(3, 'Emily', 'Johnson', 'emily.johnson@example.com');
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.areas});
   List<AreaClass> areas;
@@ -28,10 +23,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Publication> posts = [];
   final API api = API();
-  final ScrollController _scrollController =
-      ScrollController(); // Scroll controller
+  final ScrollController _scrollController = ScrollController();
+  //Variable to store future function
   late Future<void> futurePosts;
 
+  //Fetch posts from server
   Future<void> getPosts() async {
     var data = await api.getAllPosts();
     posts = data;
@@ -50,6 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     futurePosts = getPosts();
     _scrollController.addListener(() {
+      //If user tries to scroll up when on top of lastest post
+      //try to refresh posts
       if (_scrollController.position.pixels == 0) {
         getPosts();
       }
@@ -65,12 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
         iconR: const Icon(Icons.search),
         rightCallback: rightCallback,
         title: 'Homepage',
-      ), //homeAppBar(),
+      ),
       body: FutureBuilder(
         future: futurePosts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            print(snapshot);
+            //Handles fetching posts errors
             if (snapshot.hasError) {
               return (Center(
                 child: Column(

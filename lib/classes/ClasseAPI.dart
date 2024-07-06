@@ -164,7 +164,7 @@ class API {
       int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
       if (roundedAreaId == areaId) {
         User publisherUser = await getUser(eachPub['publisher_id']);
-        if (type == 'posts') {
+        if (type == 'posts' && eachPub['type'] == 'N') {
           final publication = Publication(
             eachPub['post_id'],
             publisherUser,
@@ -191,7 +191,7 @@ class API {
               DateTime.parse(eachPub['creation_date']));
           await publication.getSubAreaName();
           publications.add(publication);
-        } else {
+        } else if(type == 'events'){
           final publication = Event(
               eachPub['event_id'],
               publisherUser,

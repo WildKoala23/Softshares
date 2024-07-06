@@ -18,46 +18,23 @@ class Area extends StatefulWidget {
   Area({super.key, required this.title, required this.areas});
 
   @override
-  State<Area> createState() => _MyWidgetState();
+  State<Area> createState() => _MyAreaState();
 }
 
-class _MyWidgetState extends State<Area> {
+class _MyAreaState extends State<Area> {
   List<Publication> pubs = [];
   final API api = API();
   String type = 'forums';
 
   Future getPubs(String type) async {
-    try {
-      pubs = [];
-      //Get specific area
-      AreaClass area =
-          widget.areas.firstWhere((area) => area.areaName == widget.title);
-      //Get type of publications from specific area
-      var data = await api.getAllPubsByArea(area.id, type);
-      pubs = data;
+    pubs = [];
+    //Get specific area
+    AreaClass area =
+        widget.areas.firstWhere((area) => area.areaName == widget.title);
+    //Get type of publications from specific area
+    var data = await api.getAllPubsByArea(area.id, type);
+    pubs = data;
 
-      return true;
-    } catch (e) {
-      print(e);
-      await Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.cloud_off),
-                    const Text(
-                        'Failed connection to server. Please check your connection'),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          setState(() {});
-                        },
-                        child: const Text('Connect'))
-                  ],
-                ),
-              );
-    }
   }
 
   @override

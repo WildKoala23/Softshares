@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/formAppBar.dart';
@@ -22,7 +23,7 @@ class _ForumPageState extends State<ForumPage> {
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.forum);
-    setState(() {}); // Ensure the UI updates after fetching comments
+    setState(() {});
   }
 
   @override
@@ -62,11 +63,9 @@ class _ForumPageState extends State<ForumPage> {
                         ),
                       ),
                     ),
-                    Flexible(
-                      child: Text(
-                        widget.forum.desc,
-                        style: TextStyle(fontSize: 18),
-                      ),
+                    Text(
+                      widget.forum.desc,
+                      style: TextStyle(fontSize: 18),
                     ),
                     const Divider(
                       color: Colors.black,
