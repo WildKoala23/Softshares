@@ -33,47 +33,50 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      appBar: myAppBar(colorScheme),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formkey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const Text(
-                'Log In',
-                style: TextStyle(fontSize: 32),
-              ),
-              Column(
-                children: [
-                  facebookBtn(colorScheme),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  googleBtn(colorScheme),
-                  myDivider(colorScheme),
-                  userTextfield(colorScheme),
-                  passwordFieldtext(colorScheme),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: colorScheme.onPrimary,
-                        ),
-                        child: Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline),
-                        )),
-                  )
-                ],
-              ),
-              continueBtn(context, colorScheme)
-            ],
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        appBar: myAppBar(colorScheme),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formkey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const Text(
+                  'Log In',
+                  style: TextStyle(fontSize: 32),
+                ),
+                Column(
+                  children: [
+                    facebookBtn(colorScheme),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    googleBtn(colorScheme),
+                    myDivider(colorScheme),
+                    userTextfield(colorScheme),
+                    passwordFieldtext(colorScheme),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: colorScheme.onPrimary,
+                          ),
+                          child: Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                                color: Colors.black,
+                                decoration: TextDecoration.underline),
+                          )),
+                    )
+                  ],
+                ),
+                continueBtn(context, colorScheme)
+              ],
+            ),
           ),
         ),
       ),
@@ -265,12 +268,6 @@ class _SignInState extends State<SignIn> {
   AppBar myAppBar(ColorScheme colorScheme) {
     return AppBar(
       centerTitle: true,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
       title: RichText(
         text: TextSpan(
             text: 'Soft',

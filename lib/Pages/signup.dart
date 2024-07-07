@@ -34,7 +34,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     selectedCity = cities[0];
   }
@@ -218,7 +217,7 @@ class _SignUpState extends State<SignUp> {
         ),
         SizedBox(width: 2),
         Text(
-          'OR ',
+          'Or',
           style: TextStyle(fontSize: 18),
         ),
         SizedBox(width: 2), // Add space between dividers
