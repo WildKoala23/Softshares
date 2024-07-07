@@ -1,5 +1,7 @@
 import 'package:dev_icons/dev_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/db.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -8,9 +10,10 @@ class SignUp extends StatefulWidget {
   State<SignUp> createState() => _SignUpState();
 }
 
-List<String> cities = ['Viseu', 'Tomar', 'Portoalegre', 'Fundão', 'Vilareal'];
-
 class _SignUpState extends State<SignUp> {
+  API api = API();
+  SQLHelper bd = SQLHelper.instance;
+  Map<String, int> citiesMap = {};
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -18,9 +21,11 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
 
+  bool _isLoading = false; // To track the loading state
+
   final _formKey = GlobalKey<FormState>();
 
-  late String selectedCity;
+  late int selectedCity;
 
   @override
   void dispose() {
@@ -32,10 +37,19 @@ class _SignUpState extends State<SignUp> {
     lastNameController.dispose();
   }
 
+  Future getCities() async {
+    citiesMap = await bd.getCities();
+  }
+
   @override
   void initState() {
     super.initState();
-    selectedCity = cities[0];
+    getCities();
+    setState(() {
+      if (citiesMap.isNotEmpty) {
+        selectedCity = citiesMap.entries.first.value;
+      }
+    });
   }
 
   @override
@@ -43,66 +57,132 @@ class _SignUpState extends State<SignUp> {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: myAppBar(context, colorScheme),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30.0, top: 15.0),
-                child: const Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 32),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30.0, top: 10.0),
-                child: Column(
-                  children: [
-                    facebookBtn(colorScheme),
-                    const SizedBox(
-                      height: 25,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 30.0, top: 15.0),
+                    child: Text(
+                      'Sign In',
+                      style: TextStyle(fontSize: 32),
                     ),
-                    googleBtn(colorScheme),
-                    myDivider(colorScheme),
-                    firstNameField(colorScheme),
-                    lastNameField(colorScheme),
-                    emailField(colorScheme),
-                    cityField(colorScheme)
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 30.0, top: 10.0),
+                    child: Column(
+                      children: [
+                        facebookBtn(colorScheme),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        googleBtn(colorScheme),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        appleBtn(colorScheme),
+                        myDivider(colorScheme),
+                        firstNameField(colorScheme),
+                        lastNameField(colorScheme),
+                        emailField(colorScheme),
+                        cityField(colorScheme)
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: continueBtn(
+                      colorScheme: Theme.of(context).colorScheme,
+                      onContinue: () async {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            _isLoading = true; // Show loading indicator
+                          });
+
+                          try {
+                            // If the form is valid, continue to homepage
+                            // Later, implement verification with DB
+                            var response = await api.registerUser(
+                              emailController.text,
+                              firstNameController.text,
+                              lastNameController.text,
+                              selectedCity,
+                            );
+
+                            // Ensure response is not null
+                            if (response != null) {
+                              // Check if the widget is still mounted before navigating
+                              if (mounted) {
+                                Navigator.pushNamed(context, '/SignIn');
+                              }
+                            } else {
+                              // Handle null response here
+                              _showErrorDialog(
+                                  'Registration failed. Please try again.');
+                            }
+                          } catch (e) {
+                            // Handle any exceptions
+                            _showErrorDialog('An error occurred: $e');
+                          } finally {
+                            setState(() {
+                              _isLoading = false; // Hide loading indicator
+                            });
+                          }
+                        }
+                      },
+                    ),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: continueBtn(context, colorScheme),
-              )
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }
 
-  Container continueBtn(BuildContext context, ColorScheme colorScheme) {
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container continueBtn({
+    required ColorScheme colorScheme,
+    required VoidCallback onContinue,
+  }) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 45,
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: colorScheme.onPrimary,
-            backgroundColor: colorScheme.primary,
-          ),
-          onPressed: () {
-            // Validate returns true if the form is valid, or false otherwise.
-            if (_formKey.currentState!.validate()) {
-              // If the form is valid, continue to homepage
-              //Later, implement verification with DB
-              Navigator.pushNamed(context, '/home');
-            }
-          },
-          child: const Text('Continue')),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
+        ),
+        onPressed: onContinue,
+        child: const Text('Continue'),
+      ),
     );
   }
 
@@ -122,7 +202,7 @@ class _SignUpState extends State<SignUp> {
               'Email',
               style: TextStyle(color: colorScheme.onTertiary),
             ),
-            prefixIcon: Icon(
+            prefixIcon: const Icon(
               Icons.account_circle,
               color: Color(0xFF49454F),
               size: 32,
@@ -180,18 +260,18 @@ class _SignUpState extends State<SignUp> {
   Container cityField(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
           border: Border.all(), borderRadius: BorderRadius.circular(7)),
-      child: DropdownButton<String>(
+      child: DropdownButton<int>(
         isExpanded: true,
         hint: const Text('Select Area'),
-        underline: SizedBox.shrink(),
+        underline: const SizedBox.shrink(),
         value: selectedCity,
-        items: cities.map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
+        items: citiesMap.entries.map((entry) {
+          return DropdownMenuItem<int>(
+            value: entry.value,
+            child: Text(entry.key),
           );
         }).toList(),
         onChanged: (value) {
@@ -215,12 +295,12 @@ class _SignUpState extends State<SignUp> {
             color: colorScheme.onTertiary,
           ),
         ),
-        SizedBox(width: 2),
-        Text(
-          'Or',
+        const SizedBox(width: 2),
+        const Text(
+          'OR ',
           style: TextStyle(fontSize: 18),
         ),
-        SizedBox(width: 2), // Add space between dividers
+        const SizedBox(width: 2), // Add space between dividers
         Expanded(
           child: Divider(
             height: 50,
@@ -286,6 +366,35 @@ class _SignUpState extends State<SignUp> {
               ),
               Text(
                 'Continue with Facebook',
+                textAlign: TextAlign.center,
+              )
+            ],
+          )),
+    );
+  }
+
+  Container appleBtn(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20),
+      height: 55,
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: colorScheme.onSecondary,
+              side: BorderSide(color: colorScheme.onTertiary),
+              elevation: 0),
+          onPressed: () /*async */ {},
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.apple,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text(
+                'Continue with Apple',
                 textAlign: TextAlign.center,
               )
             ],

@@ -137,10 +137,16 @@ class SQLHelper {
     print('Cities table contents: $result');
   }
 
-  // Get all cities
-  Future<List<Map<String, dynamic>>> getCities() async {
+  Future getCities() async {
     final db = await instance.database;
-    return await db.query('cities', orderBy: 'city');
+    Map<String, int> cities = {};
+    final List<Map<String, dynamic>> cityMaps = await db.query('areas');
+
+    for (var city in cityMaps) {
+      cities[city['city']] = city['id'];
+    }
+
+    return cities;
   }
 
   Future<String?> getCityName(int id) async {

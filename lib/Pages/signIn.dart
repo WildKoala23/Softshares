@@ -54,6 +54,10 @@ class _SignInState extends State<SignIn> {
                       height: 25,
                     ),
                     googleBtn(colorScheme),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    appleBtn(colorScheme),
                     myDivider(colorScheme),
                     userTextfield(colorScheme),
                     passwordFieldtext(colorScheme),
@@ -65,7 +69,7 @@ class _SignInState extends State<SignIn> {
                             elevation: 0,
                             backgroundColor: colorScheme.onPrimary,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Forgot password?',
                             style: TextStyle(
                                 color: Colors.black,
@@ -189,7 +193,7 @@ class _SignInState extends State<SignIn> {
         ),
         const SizedBox(width: 2),
         const Text(
-          'Or',
+          'OR',
           style: TextStyle(fontSize: 18),
         ),
         const SizedBox(width: 2), // Add space between dividers
@@ -258,6 +262,36 @@ class _SignInState extends State<SignIn> {
               ),
               Text(
                 'Continue with Facebook',
+                textAlign: TextAlign.center,
+              )
+            ],
+          )),
+    );
+  }
+
+  Container appleBtn(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20),
+      height: 55,
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              foregroundColor: colorScheme.onSecondary,
+              backgroundColor: Colors.transparent,
+              side: BorderSide(color: colorScheme.onTertiary),
+              elevation: 0),
+          onPressed: () {},
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                DevIcons.appleOriginal,
+                size: 20,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text(
+                'Continue with Apple',
                 textAlign: TextAlign.center,
               )
             ],

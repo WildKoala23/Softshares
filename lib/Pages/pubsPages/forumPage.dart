@@ -223,7 +223,8 @@ class _ForumPageState extends State<ForumPage> {
               children: [
                 Text(
                   "${widget.forum.user.firstname} ${widget.forum.user.lastName}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),

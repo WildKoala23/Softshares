@@ -191,7 +191,7 @@ class API {
               DateTime.parse(eachPub['creation_date']));
           await publication.getSubAreaName();
           publications.add(publication);
-        } else if(type == 'events'){
+        } else if (type == 'events') {
           final publication = Event(
               eachPub['event_id'],
               publisherUser,
@@ -558,6 +558,25 @@ class API {
     } else {
       // Handle error response
       print('Failed to create comment: ${response.body}');
+    }
+  }
+
+  Future registerUser(
+      String email, String fName, String lName, int city) async {
+    var response = await http.post(Uri.https(baseUrl, '/api/auth/register'),
+        body: {
+          'email': email,
+          'firstName': fName,
+          'lastName': lName,
+          'centerId': city
+        });
+
+    if (response.statusCode == 200) {
+      // Handle successful response
+      print('User registered successfully');
+    } else {
+      // Handle error response
+      print('Failed to register new user: ${response.body}');
     }
   }
 }
