@@ -218,7 +218,7 @@ class _SignUpState extends State<SignUp> {
         ),
         SizedBox(width: 2),
         Text(
-          'Or',
+          'OR ',
           style: TextStyle(fontSize: 18),
         ),
         SizedBox(width: 2), // Add space between dividers

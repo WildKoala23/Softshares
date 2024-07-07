@@ -9,7 +9,7 @@ User user = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class MyProfile extends StatefulWidget {
   MyProfile({super.key, required this.areas});
-List<AreaClass> areas;
+  List<AreaClass> areas;
 
   @override
   State<MyProfile> createState() => _MyHomePageState();
@@ -66,7 +66,9 @@ class _MyHomePageState extends State<MyProfile> {
               ))
         ],
       ),
-      drawer: myDrawer(areas: widget.areas,),
+      drawer: myDrawer(
+        areas: widget.areas,
+      ),
       bottomNavigationBar: const MyBottomBar(),
     );
   }
@@ -90,7 +92,7 @@ class _MyHomePageState extends State<MyProfile> {
             child: const Text('Edit Profile')),
         ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/Login');
+              Navigator.pushNamed(context, '/SignIn');
             },
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
