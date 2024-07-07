@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/classes/areaClass.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
@@ -92,7 +93,8 @@ class _MyHomePageState extends State<MyProfile> {
             child: const Text('Edit Profile')),
         ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/SignIn');
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const SignIn()));
             },
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
