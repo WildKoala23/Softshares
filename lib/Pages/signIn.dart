@@ -268,12 +268,6 @@ class _SignInState extends State<SignIn> {
   AppBar myAppBar(ColorScheme colorScheme) {
     return AppBar(
       centerTitle: true,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
       title: RichText(
         text: TextSpan(
             text: 'Soft',
