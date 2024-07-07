@@ -101,9 +101,32 @@ class _ForumPageState extends State<ForumPage> {
                                 leading: commentCircle(colorScheme),
                                 title: Text(
                                   "${user.firstname} ${user.lastName}",
-                                  style: TextStyle(fontSize: 22),
+                                  style: const TextStyle(fontSize: 22),
                                 ),
-                                subtitle: Text(comment),
+                                subtitle: Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.thumb_up_alt),
+                                      onPressed: () {},
+                                    ),
+                                    Expanded(child: Text(comment)),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  //join to the title
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                          Icons.report_problem_rounded),
+                                      onPressed: () {},
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.chat_bubble),
+                                      onPressed: () {},
+                                    )
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -147,8 +170,8 @@ class _ForumPageState extends State<ForumPage> {
   Container commentCircle(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.only(right: 6.0),
-      height: 40,
-      width: 40,
+      height: 25,
+      width: 25,
       decoration: BoxDecoration(
         color: colorScheme.secondary,
         border: Border.all(width: 3, color: Colors.transparent),
@@ -159,7 +182,7 @@ class _ForumPageState extends State<ForumPage> {
         child: widget.forum.user.profileImg == null
             ? Text(
                 widget.forum.user.firstname[0],
-                style: TextStyle(fontSize: 20, color: colorScheme.onPrimary),
+                style: TextStyle(fontSize: 13, color: colorScheme.onPrimary),
               )
             : const Text('I'),
       ),
@@ -186,7 +209,8 @@ class _ForumPageState extends State<ForumPage> {
                 child: widget.forum.user.profileImg == null
                     ? Text(
                         widget.forum.user.firstname[0],
-                        style: TextStyle(fontSize: 20, color: colorScheme.onPrimary),
+                        style: TextStyle(
+                            fontSize: 20, color: colorScheme.onPrimary),
                       )
                     : Text(
                         widget.forum.user.firstname[0],
