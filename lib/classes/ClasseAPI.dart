@@ -537,9 +537,6 @@ class API {
       case Forum _:
         type = 'forum';
         break;
-      case Event _:
-        type = 'event';
-        break;
       default:
         type = 'post';
     }
@@ -563,17 +560,18 @@ class API {
 
   Future registerUser(
       String email, String fName, String lName, int city) async {
-    var response = await http.post(Uri.https(baseUrl, '/api/auth/register'),
-        body: {
-          'email': email,
-          'firstName': fName,
-          'lastName': lName,
-          'centerId': city
-        });
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/auth/register'), body: {
+      'email': email,
+      'firstName': fName,
+      'lastName': lName,
+      'centerId': city.toString()
+    });
 
     if (response.statusCode == 201) {
       // Handle successful response
       print('User registered successfully');
+      return true;
     } else {
       // Handle error response
       print('Failed to register new user: ${response.body}');
@@ -586,9 +584,11 @@ class API {
       'email': email,
       'password': password,
     });
+
     if (response.statusCode == 200) {
       // Handle successful response
       print('User login successfull');
+      return true;
     } else {
       // Handle error response
       print('Failed to log in: ${response.body}');

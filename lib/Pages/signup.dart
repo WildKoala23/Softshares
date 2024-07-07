@@ -103,7 +103,7 @@ class _SignUpState extends State<SignUp> {
                               lastNameController.text,
                               1,
                             );
-
+                            //print(response);
                             // Ensure response is not null
                             if (response != null) {
                               // Check if the widget is still mounted before navigating

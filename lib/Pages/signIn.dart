@@ -93,17 +93,16 @@ class _SignInState extends State<SignIn> {
                         // Later, implement verification with DB
                         var response = await api.logInDb(
                             usernameController.text, passwordController.text);
-
+                        //print(response);
                         // Ensure response is not null
                         if (response != null) {
                           // Check if the widget is still mounted before navigating
                           if (mounted) {
-                            Navigator.pushNamed(context, '/SignIn');
+                            Navigator.pushNamed(context, '/home');
                           }
                         } else {
                           // Handle null response here
-                          _showErrorDialog(
-                              'Registration failed. Please try again.');
+                          _showErrorDialog('Login failed. Please try again.');
                         }
                       } catch (e) {
                         // Handle any exceptions
