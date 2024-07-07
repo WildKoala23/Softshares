@@ -571,12 +571,27 @@ class API {
           'centerId': city
         });
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       // Handle successful response
       print('User registered successfully');
     } else {
       // Handle error response
       print('Failed to register new user: ${response.body}');
+    }
+  }
+
+  Future logInDb(String email, String password) async {
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/auth/login_mobile'), body: {
+      'email': email,
+      'password': password,
+    });
+    if (response.statusCode == 200) {
+      // Handle successful response
+      print('User login successfull');
+    } else {
+      // Handle error response
+      print('Failed to log in: ${response.body}');
     }
   }
 }

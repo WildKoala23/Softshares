@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:dev_icons/dev_icons.dart";
+import 'package:softshares/classes/ClasseAPI.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -9,11 +10,12 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  API api = API();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
-
+  bool _isLoading = false;
   bool hidePassword = true;
 
   bool validInput() {
@@ -78,7 +80,42 @@ class _SignInState extends State<SignIn> {
                     )
                   ],
                 ),
-                continueBtn(context, colorScheme)
+                continueBtn(
+                  colorScheme: Theme.of(context).colorScheme,
+                  onContinue: () async {
+                    if (_formkey.currentState!.validate()) {
+                      setState(() {
+                        _isLoading = true; // Show loading indicator
+                      });
+
+                      try {
+                        // If the form is valid, continue to homepage
+                        // Later, implement verification with DB
+                        var response = await api.logInDb(
+                            usernameController.text, passwordController.text);
+
+                        // Ensure response is not null
+                        if (response != null) {
+                          // Check if the widget is still mounted before navigating
+                          if (mounted) {
+                            Navigator.pushNamed(context, '/SignIn');
+                          }
+                        } else {
+                          // Handle null response here
+                          _showErrorDialog(
+                              'Registration failed. Please try again.');
+                        }
+                      } catch (e) {
+                        // Handle any exceptions
+                        _showErrorDialog('An error occurred: $e');
+                      } finally {
+                        setState(() {
+                          _isLoading = false; // Hide loading indicator
+                        });
+                      }
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -87,7 +124,28 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Container continueBtn(BuildContext context, ColorScheme colorScheme) {
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container continueBtn({
+    required ColorScheme colorScheme,
+    required VoidCallback onContinue,
+  }) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(left: 20, right: 20),
@@ -97,14 +155,7 @@ class _SignInState extends State<SignIn> {
             foregroundColor: colorScheme.onPrimary,
             backgroundColor: colorScheme.primary,
           ),
-          onPressed: () {
-            // Validate returns true if the form is valid, or false otherwise.
-            if (_formkey.currentState!.validate()) {
-              // If the form is valid, continue to homepage
-              //Later, implement verification with DB
-              Navigator.pushNamed(context, '/home');
-            }
-          },
+          onPressed: onContinue,
           child: const Text('Continue')),
     );
   }
