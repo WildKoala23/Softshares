@@ -30,20 +30,23 @@ void main() async {
   SQLHelper db = SQLHelper.instance;
 
   List<AreaClass> areas = await db.getAreas();
+  Map<String, int> cities = await db.getCities();
 
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
       child: MyApp(
         areas: areas,
+        cities: cities,
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.areas});
+  MyApp({super.key, required this.areas, required this.cities});
   final List<AreaClass> areas;
+  final Map<String, int> cities;
   final box = GetStorage();
 
   int? get userId => box.read('userId');
@@ -77,7 +80,7 @@ class MyApp extends StatelessWidget {
                 ),
             '/Login': (context) => MyLoginIn(userID: userId!),
             '/SignIn': (context) => const SignIn(),
-            '/SignUp': (context) => const SignUp(),
+            '/SignUp': (context) => SignUp(cities: cities,),
             '/createPost': (context) => createPost(
                   areas: areas,
                 ),

@@ -4,7 +4,9 @@ import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/db.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  SignUp({super.key, required this.cities});
+
+  Map<String, int> cities;
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -13,7 +15,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   API api = API();
   SQLHelper bd = SQLHelper.instance;
-  Map<String, int> citiesMap = {};
+  Map<int, String> citiesMap = {};
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -21,11 +23,10 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
 
-  bool _isLoading = false; // To track the loading state
+  bool _isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
-
-  late int selectedCity;
+  int? _selectedCity;
 
   @override
   void dispose() {
@@ -37,19 +38,9 @@ class _SignUpState extends State<SignUp> {
     lastNameController.dispose();
   }
 
-  Future getCities() async {
-    citiesMap = await bd.getCities();
-  }
-
   @override
   void initState() {
     super.initState();
-    getCities();
-    setState(() {
-      if (citiesMap.isNotEmpty) {
-        selectedCity = citiesMap.entries.first.value;
-      }
-    });
   }
 
   @override
@@ -110,7 +101,7 @@ class _SignUpState extends State<SignUp> {
                               emailController.text,
                               firstNameController.text,
                               lastNameController.text,
-                              selectedCity,
+                              1,
                             );
 
                             // Ensure response is not null
@@ -262,13 +253,15 @@ class _SignUpState extends State<SignUp> {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-          border: Border.all(), borderRadius: BorderRadius.circular(7)),
+        border: Border.all(color: colorScheme.primary),
+        borderRadius: BorderRadius.circular(7),
+      ),
       child: DropdownButton<int>(
         isExpanded: true,
-        hint: const Text('Select Area'),
+        hint: const Text('Select City'),
         underline: const SizedBox.shrink(),
-        value: selectedCity,
-        items: citiesMap.entries.map((entry) {
+        value: _selectedCity,
+        items: widget.cities.entries.map((entry) {
           return DropdownMenuItem<int>(
             value: entry.value,
             child: Text(entry.key),
@@ -276,7 +269,8 @@ class _SignUpState extends State<SignUp> {
         }).toList(),
         onChanged: (value) {
           setState(() {
-            selectedCity = value!;
+            _selectedCity = value!;
+            print(value);
           });
         },
       ),

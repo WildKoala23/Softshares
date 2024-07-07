@@ -140,7 +140,7 @@ class SQLHelper {
   Future getCities() async {
     final db = await instance.database;
     Map<String, int> cities = {};
-    final List<Map<String, dynamic>> cityMaps = await db.query('areas');
+    final List<Map<String, dynamic>> cityMaps = await db.query('cities');
 
     for (var city in cityMaps) {
       cities[city['city']] = city['id'];
