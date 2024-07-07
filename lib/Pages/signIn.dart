@@ -97,6 +97,7 @@ class _SignInState extends State<SignIn> {
                         // Ensure response is not null
                         if (response != null) {
                           // Check if the widget is still mounted before navigating
+                          print(response);
                           if (mounted) {
                             Navigator.pushNamed(context, '/home');
                           }

@@ -588,7 +588,11 @@ class API {
     if (response.statusCode == 200) {
       // Handle successful response
       print('User login successfull');
-      return true;
+
+      var jsonData = jsonDecode(response.body);
+      var tk = jsonData['token'];
+
+      return tk;
     } else {
       // Handle error response
       print('Failed to log in: ${response.body}');
