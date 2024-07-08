@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/forums.dart';
@@ -92,43 +93,58 @@ class _ForumPageState extends State<ForumPage> {
                           )
                         : ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               User user = comments.keys.elementAt(index);
                               String comment = comments[user]!;
-                              return ListTile(
-                                leading: commentCircle(colorScheme),
-                                title: Text(
-                                  "${user.firstname} ${user.lastName}",
-                                  style: const TextStyle(fontSize: 22),
-                                ),
-                                subtitle: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.thumb_up_alt),
-                                      onPressed: () {},
-                                    ),
-                                    Expanded(child: Text(comment)),
-                                  ],
-                                ),
-                                trailing: Row(
-                                  //join to the title
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                          Icons.report_problem_rounded),
-                                      onPressed: () {},
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.chat_bubble),
-                                      onPressed: () {},
-                                    )
-                                  ],
-                                ),
+                              return CommentWidget(
+                                userFirstName: user.firstname,
+                                userLastName: user.lastName,
+                                comment: comment,
+                                colorScheme: colorScheme,
                               );
                             },
+
+                            // shrinkWrap: true,
+                            // physics: NeverScrollableScrollPhysics(),
+                            // itemCount: comments.length,
+                            // itemBuilder: (context, index) {
+                            //   User user = comments.keys.elementAt(index);
+                            //   String comment = comments[user]!;
+                            //   return ListTile(
+
+                            //     leading: commentCircle(colorScheme),
+                            //     title: Text(
+                            //       "${user.firstname} ${user.lastName}",
+                            //       style: const TextStyle(fontSize: 22),
+                            //     ),
+                            //     subtitle: Row(
+                            //       children: [
+                            //         IconButton(
+                            //           icon: const Icon(Icons.thumb_up_alt),
+                            //           onPressed: () {},
+                            //         ),
+                            //         Expanded(child: Text(comment)),
+                            //       ],
+                            //     ),
+                            //     trailing: Row(
+                            //       //join to the title
+                            //       mainAxisSize: MainAxisSize.min,
+                            //       children: [
+                            //         IconButton(
+                            //           icon: const Icon(
+                            //               Icons.report_problem_rounded),
+                            //           onPressed: () {},
+                            //         ),
+                            //         IconButton(
+                            //           icon: const Icon(Icons.chat_bubble),
+                            //           onPressed: () {},
+                            //         )
+                            //       ],
+                            //     ),
+                            //   );
+                            // },
                           ),
                   ],
                 ),

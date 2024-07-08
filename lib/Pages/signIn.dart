@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import "package:dev_icons/dev_icons.dart";
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -39,86 +40,103 @@ class _SignInState extends State<SignIn> {
       canPop: false,
       child: Scaffold(
         appBar: myAppBar(colorScheme),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formkey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const Text(
-                  'Log In',
-                  style: TextStyle(fontSize: 32),
-                ),
-                Column(
-                  children: [
-                    facebookBtn(colorScheme),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    googleBtn(colorScheme),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    appleBtn(colorScheme),
-                    myDivider(colorScheme),
-                    userTextfield(colorScheme),
-                    passwordFieldtext(colorScheme),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: colorScheme.onPrimary,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formkey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Text(
+                        'Log In',
+                        style: TextStyle(fontSize: 32),
+                      ),
+                      Column(
+                        children: [
+                          facebookBtn(colorScheme),
+                          const SizedBox(
+                            height: 25,
                           ),
-                          child: const Text(
-                            'Forgot password?',
-                            style: TextStyle(
-                                color: Colors.black,
-                                decoration: TextDecoration.underline),
-                          )),
-                    )
-                  ],
-                ),
-                continueBtn(
-                  colorScheme: Theme.of(context).colorScheme,
-                  onContinue: () async {
-                    if (_formkey.currentState!.validate()) {
-                      setState(() {
-                        _isLoading = true; // Show loading indicator
-                      });
+                          googleBtn(colorScheme),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          appleBtn(colorScheme),
+                          myDivider(colorScheme),
+                          userTextfield(colorScheme),
+                          passwordFieldtext(colorScheme),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: colorScheme.onPrimary,
+                                ),
+                                child: const Text(
+                                  'Forgot password?',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      decoration: TextDecoration.underline),
+                                )),
+                          )
+                        ],
+                      ),
+                      continueBtn(
+                        colorScheme: Theme.of(context).colorScheme,
+                        onContinue: () async {
+                          if (_formkey.currentState!.validate()) {
+                            setState(() {
+                              _isLoading = true; // Show loading indicator
+                            });
 
-                      try {
-                        // If the form is valid, continue to homepage
-                        // Later, implement verification with DB
-                        var response = await api.logInDb(
-                            usernameController.text, passwordController.text);
-                        //print(response);
-                        // Ensure response is not null
-                        if (response != null) {
-                          // Check if the widget is still mounted before navigating
-                          print(response);
-                          if (mounted) {
-                            Navigator.pushNamed(context, '/home');
+                            try {
+                              // If the form is valid, continue to homepage
+                              // Later, implement verification with DB
+                              var jwtToken = await api.logInDb(
+                                  usernameController.text,
+                                  passwordController.text);
+                              //print(response);
+                              // Ensure response is not null
+                              if (jwtToken != null) {
+                                print(jwtToken);
+                                // {
+                                //   storage.write(key: "jwt", value: jwt);
+                                //   Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //           builder: (context) =>
+                                //               HomePage.fromBase64(jwt)));
+                                // }
+                                // Check if the widget is still mounted before navigating
+                                if (mounted) {
+                                  Navigator.pushNamed(context, '/home');
+                                }
+                              } else {
+                                // Handle null response here
+                                _showErrorDialog(
+                                    'Login failed. Please try again.');
+                              }
+                            } catch (e) {
+                              // Handle any exceptions
+                              _showErrorDialog('An error occurred: $e');
+                            } finally {
+                              setState(() {
+                                _isLoading = false; // Hide loading indicator
+                              });
+                            }
                           }
-                        } else {
-                          // Handle null response here
-                          _showErrorDialog('Login failed. Please try again.');
-                        }
-                      } catch (e) {
-                        // Handle any exceptions
-                        _showErrorDialog('An error occurred: $e');
-                      } finally {
-                        setState(() {
-                          _isLoading = false; // Hide loading indicator
-                        });
-                      }
-                    }
-                  },
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

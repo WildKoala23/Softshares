@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
 import 'utils.dart';
@@ -8,16 +9,22 @@ import '../classes/POI.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../env.dart';
 
 class API {
-  var baseUrl = 'backendpint-w3vz.onrender.com';
+  //var baseUrl = Env.apiUrl;
+  var baseUrl = 'localhost:8000';
   final box = GetStorage();
+  final storage = const FlutterSecureStorage();
 
   Future<User> getUser(int id) async {
     var response =
-        await http.get(Uri.https(baseUrl, '/api/dynamic//user-info/$id'));
+        await http.get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'));
 
     var jsonData = jsonDecode(response.body);
 
@@ -31,45 +38,61 @@ class API {
     List<Publication> publications = [];
     int officeId = box.read('selectedCity');
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'));
-
-    print(response.statusCode);
-
-    var jsonData = jsonDecode(response.body);
-
-    //Get all Posts
-    for (var eachPub in jsonData['data']) {
-      //Filter posts with poi's
-      if (eachPub['type'] == 'N') {
-        User publisherUser = await getUser(eachPub['publisher_id']);
-        var file;
-        if (eachPub['filepath'] != null) {
-          file = File(eachPub['filepath']);
-        } else {
-          file = null;
-        }
-        final publication = Publication(
-          eachPub['post_id'],
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']),
-          file,
-          eachPub['p_location'],
-        );
-        await publication.getSubAreaName();
-        publications.add(publication);
+    try {
+      String? jwtToken = await getToken();
+      // Check if the token is not null before proceeding
+      if (jwtToken == null) {
+        print('Failed to retrieve JWT token');
+        throw Exception('Failed to retrieve JWT Token');
       }
+      var response = await sendRequest(
+        method: 'GET',
+        url: baseUrl,
+        jwtToken: jwtToken,
+      );
+
+      // var response = await http
+      //     .get(Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'));
+      // autentication header 'Bearer' +
+      print(response.statusCode);
+
+      var jsonData = jsonDecode(response.body);
+
+      //Get all Posts
+      for (var eachPub in jsonData['data']) {
+        //Filter posts with poi's
+        if (eachPub['type'] == 'N') {
+          User publisherUser = await getUser(eachPub['publisher_id']);
+          var file;
+          if (eachPub['filepath'] != null) {
+            file = File(eachPub['filepath']);
+          } else {
+            file = null;
+          }
+          final publication = Publication(
+            eachPub['post_id'],
+            publisherUser,
+            null,
+            eachPub['content'],
+            eachPub['title'],
+            eachPub['validated'],
+            eachPub['sub_area_id'],
+            DateTime.parse(eachPub['creation_date']),
+            file,
+            eachPub['p_location'],
+          );
+          await publication.getSubAreaName();
+          publications.add(publication);
+        }
+      }
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    } catch (err) {
+      print(err);
+      rethrow; // rethrow the error if needed or handle it accordingly
     }
-
-    //Sort for most recent first
-    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-    return publications;
   }
 
   Future<List<Forum>> getForums() async {
@@ -225,13 +248,13 @@ class API {
 
     try {
       posts = await getPosts();
-      events = await getEvents();
-      forums = await getForums();
+      // events = await getEvents();
+      // forums = await getForums();
       pubs.addAll(posts);
       pubs.addAll(events);
       pubs.addAll(forums);
     } catch (e) {
-      throw e;
+      print(e);
     }
 
     //Sort for most recent first
@@ -590,12 +613,70 @@ class API {
       print('User login successfull');
 
       var jsonData = jsonDecode(response.body);
-      var tk = jsonData['token'];
-
-      return tk;
+      var token = jsonData['token'];
+      // Store the JWT token
+      await storage.write(key: 'jwt_token', value: token);
+      return token;
     } else {
       // Handle error response
       print('Failed to log in: ${response.body}');
     }
+  }
+
+  Future<String?> getToken() async {
+    return await storage.read(key: 'jwt_token');
+  }
+
+  Future<void> logout() async {
+    await storage.delete(key: 'jwt_token');
+  }
+}
+
+Future<http.Response> sendRequest({
+  required String method,
+  required String url,
+  required String jwtToken,
+  Map<String, String>? headers,
+  dynamic body,
+}) async {
+  // Add the Authorization header with the JWT token
+  headers = headers ?? {};
+  headers['Content-Type'] = 'application/json';
+  headers['Authorization'] = 'Bearer $jwtToken';
+
+  // Encode the body if it's provided
+  dynamic encodedBody = body != null ? jsonEncode(body) : null;
+
+  http.Response response;
+
+  // Choose the correct method
+  switch (method.toUpperCase()) {
+    case 'POST':
+      response =
+          await http.post(Uri.parse(url), headers: headers, body: encodedBody);
+      break;
+    case 'PUT':
+      response =
+          await http.put(Uri.parse(url), headers: headers, body: encodedBody);
+      break;
+    case 'PATCH':
+      response =
+          await http.patch(Uri.parse(url), headers: headers, body: encodedBody);
+      break;
+    case 'GET':
+    default:
+      response = await http.get(Uri.parse(url), headers: headers);
+  }
+
+  // Handle the response
+  if (response.statusCode >= 200 && response.statusCode < 300) {
+    // Request was successful
+    print('Response data: ${response.body}');
+    return response;
+  } else {
+    // Request failed
+    print('Failed to load data: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    throw Exception('No response from server');
   }
 }
