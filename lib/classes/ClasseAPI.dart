@@ -40,6 +40,22 @@ class API {
     var jsonData = jsonDecode(response.body);
     var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
         jsonData['data']['last_name'], jsonData['data']['email']);
+
+    return user;
+  }
+
+  Future<User> getUserLogged(int id) async {
+    String? jwtToken = await getToken();
+
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
+
+    var jsonData = jsonDecode(response.body);
+    var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
+        jsonData['data']['last_name'], jsonData['data']['email']);
     box.write('selectedCity', jsonData['data']['OfficeWorker']['office_id']);
 
     return user;
@@ -745,6 +761,8 @@ class API {
       print('Decoded TOKEN: ${payload}');
       //get the user id from the payload
       final _id = payload['id'];
+      //Get city
+      await getUserLogged(_id);
       //print('USER ID: $_id');
       // Store the JWT token
       await storage.write(key: 'jwt_token', value: jsonEncode(token));
