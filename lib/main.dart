@@ -73,7 +73,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    box.write('selectedCity', 1);
 
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {

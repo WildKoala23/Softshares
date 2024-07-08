@@ -38,16 +38,15 @@ class API {
     });
 
     var jsonData = jsonDecode(response.body);
-    print('inside getUser $jsonData');
     var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
         jsonData['data']['last_name'], jsonData['data']['email']);
+    box.write('selectedCity', jsonData['data']['OfficeWorker']['office_id']);
 
     return user;
   }
 
   Future<List<Publication>> getPosts() async {
     List<Publication> publications = [];
-    //print('bbbbbbbbbbbbbbbbbbbb');
     int officeId = box.read('selectedCity');
 
     try {
