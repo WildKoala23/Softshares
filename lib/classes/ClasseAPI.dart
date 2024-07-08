@@ -1,33 +1,44 @@
+// import libraries
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
+import 'package:http/http.dart' as http;
+import 'package:get_storage/get_storage.dart';
+// jwt libraries
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:crypto/crypto.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../env.dart';
+
+//import files
 import 'utils.dart';
 import '../classes/POI.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:get_storage/get_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-//import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../env.dart';
-
 class API {
-  //var baseUrl = Env.apiUrl;
-  var baseUrl = 'localhost:8000';
+  var baseUrl = 'backendpint-w3vz.onrender.com';
+  // var baseUrl = 'http://10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
 
   Future<User> getUser(int id) async {
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'));
+    String? jwtToken = await getToken();
+
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
 
     var jsonData = jsonDecode(response.body);
-
+    print('inside getUser $jsonData');
     var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
         jsonData['data']['last_name'], jsonData['data']['email']);
 
@@ -36,6 +47,7 @@ class API {
 
   Future<List<Publication>> getPosts() async {
     List<Publication> publications = [];
+    //print('bbbbbbbbbbbbbbbbbbbb');
     int officeId = box.read('selectedCity');
 
     try {
@@ -45,24 +57,30 @@ class API {
         print('Failed to retrieve JWT token');
         throw Exception('Failed to retrieve JWT Token');
       }
-      var response = await sendRequest(
-        method: 'GET',
-        url: baseUrl,
-        jwtToken: jwtToken,
-      );
+      // var response = await sendRequest(
+      //   method: 'GET',
+      //   url: baseUrl,
+      //   jwtToken: jwtToken,
+      // );
+      // print('ccccccccccc');
 
-      // var response = await http
-      //     .get(Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'));
-      // autentication header 'Bearer' +
+      var response = await http.get(
+          Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+
       print(response.statusCode);
 
       var jsonData = jsonDecode(response.body);
-
+      print(jsonData);
       //Get all Posts
       for (var eachPub in jsonData['data']) {
         //Filter posts with poi's
         if (eachPub['type'] == 'N') {
           User publisherUser = await getUser(eachPub['publisher_id']);
+          print('ID: ${publisherUser.id} ');
           var file;
           if (eachPub['filepath'] != null) {
             file = File(eachPub['filepath']);
@@ -81,6 +99,7 @@ class API {
             file,
             eachPub['p_location'],
           );
+          print('Publication ${publication.id}');
           await publication.getSubAreaName();
           publications.add(publication);
         }
@@ -98,9 +117,14 @@ class API {
   Future<List<Forum>> getForums() async {
     List<Forum> publications = [];
     int officeId = box.read('selectedCity');
+    String? jwtToken = await getToken();
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'));
+    var response = await http.get(
+        Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
 
     var jsonData = jsonDecode(response.body);
 
@@ -132,8 +156,14 @@ class API {
     List<Event> publications = [];
     int officeId = box.read('selectedCity');
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'));
+    String? jwtToken = await getToken();
+
+    var response = await http.get(
+        Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
 
     var jsonData = jsonDecode(response.body);
 
@@ -171,9 +201,13 @@ class API {
 
   Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
     List<Publication> publications = [];
+    String? jwtToken = await getToken();
 
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/dynamic/all-content'));
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
 
     var jsonData = jsonDecode(response.body);
 
@@ -266,8 +300,13 @@ class API {
   Future<List<POI>> getAllPoI() async {
     List<POI> list = [];
 
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/dynamic/all-content'));
+    String? jwtToken = await getToken();
+
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
 
     var jsonData = jsonDecode(response.body);
 
@@ -303,6 +342,15 @@ class API {
   //This function is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
     String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
+
+    //FOR YOU TO FIX
+    // String? jwtToken = await getToken();
+
+    // var response = await http
+    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer $jwtToken'
+    // });
 
     // Check if the file exists
     if (await img.exists()) {
@@ -345,6 +393,14 @@ class API {
       print('Path: $path');
     }
 
+    // String? jwtToken = await getToken();
+
+    // var response = await http
+    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer $jwtToken'
+    // });
+
     var response =
         await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
       'subAreaId': pub.subCategory.toString(),
@@ -369,6 +425,14 @@ class API {
       path = await uploadPhoto(event.img!);
     }
 
+    // String? jwtToken = await getToken();
+
+    // var response = await http
+    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer $jwtToken'
+    // });
+
     var response =
         await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
       'subAreaId': event.subCategory.toString(),
@@ -385,6 +449,14 @@ class API {
 
   Future createForum(Forum forum) async {
     var office = box.read('selectedCity');
+
+    // String? jwtToken = await getToken();
+
+    // var response = await http
+    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer $jwtToken'
+    // });
 
     var response =
         await http.post(Uri.https(baseUrl, '/api/forum/create'), body: {
@@ -406,6 +478,14 @@ class API {
       path = await uploadPhoto(poi.img!);
     }
 
+    // String? jwtToken = await getToken();
+
+    // var response = await http
+    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer $jwtToken'
+    // });
+
     var response =
         await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
       'subAreaId': poi.subCategory.toString(),
@@ -425,10 +505,20 @@ class API {
 
   Future<List<AreaClass>> getAreas() async {
     List<AreaClass> list = [];
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/categories/get-areas'));
-    var responseSub =
-        await http.get(Uri.https(baseUrl, '/api/categories/get-sub-areas'));
+
+    String? jwtToken = await getToken();
+
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/categories/get-areas'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
+
+    var responseSub = await http
+        .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
 
     var jsonData = jsonDecode(response.body);
     var jsonDataSub = jsonDecode(responseSub.body);
@@ -457,9 +547,13 @@ class API {
 
   Future<String> getSubAreaName(int id) async {
     var result = '';
+    String? jwtToken = await getToken();
 
-    var response =
-        await http.get(Uri.https(baseUrl, '/api/categories/get-sub-areas'));
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
 
     var jsonData = jsonDecode(response.body);
 
@@ -476,8 +570,14 @@ class API {
     Map<DateTime, List<Event>> events = {};
 
     try {
-      var response =
-          await http.get(Uri.https(baseUrl, '/api/dynamic/all-content'));
+      String? jwtToken = await getToken();
+
+      var response = await http
+          .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+
       var jsonData = jsonDecode(response.body);
 
       for (var eachPub in jsonData['events']) {
@@ -540,8 +640,16 @@ class API {
       default:
         type = 'post';
     }
-    var response = await http.get(Uri.https(
-        baseUrl, '/api/comment/get-comment-tree/content/$type/id/${pub.id}'));
+
+    String? jwtToken = await getToken();
+
+    var response = await http.get(
+        Uri.https(baseUrl,
+            '/api/comment/get-comment-tree/content/$type/id/${pub.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
 
     var jsonData = jsonDecode(response.body);
 
@@ -563,14 +671,27 @@ class API {
       default:
         type = 'post';
     }
-
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/comment/add-comment'), body: {
+    String? jwtToken = await getToken();
+    // var _id = await getID();
+    var _id = box.read("user_id");
+    // print('in comments: $_id');
+    // print(_id.runtimeType);
+    var response = await http
+        .post(Uri.https(baseUrl, '/api/comment/add-comment'), headers: {
+      'Authorization': 'Bearer $jwtToken'
+    }, body: {
       'contentID': pub.id.toString(),
       'contentType': type,
-      'userID': "1", //Change with loggin
+      'userID': _id.toString(),
       'commentText': comment
     });
+    // var response =
+    //     await http.post(Uri.https(baseUrl, '/api/comment/add-comment'), body: {
+    //   'contentID': pub.id.toString(),
+    //   'contentType': type,
+    //   'userID': "1", //Change with loggin
+    //   'commentText': comment
+    // });
 
     if (response.statusCode == 200) {
       // Handle successful response
@@ -614,8 +735,22 @@ class API {
 
       var jsonData = jsonDecode(response.body);
       var token = jsonData['token'];
+      print('TOKEN: $token ');
+      //decrypt the recieved token
+      var decryptedToken = await decryptToken(token);
+
+      //print('Decrypted TOKEN: $decryptedToken');
+      //decod decrypted token so the user_id can be accessed
+      final jwt = JWT.decode(decryptedToken);
+      final payload = jwt.payload;
+      print('Decoded TOKEN: ${payload}');
+      //get the user id from the payload
+      final _id = payload['id'];
+      //print('USER ID: $_id');
       // Store the JWT token
-      await storage.write(key: 'jwt_token', value: token);
+      await storage.write(key: 'jwt_token', value: jsonEncode(token));
+      // Store the user_id
+      box.write("user_id", _id);
       return token;
     } else {
       // Handle error response
@@ -626,6 +761,10 @@ class API {
   Future<String?> getToken() async {
     return await storage.read(key: 'jwt_token');
   }
+
+  // Future<String?> getID() async {
+  //   return await storage.read(key: 'user_id');
+  // }
 
   Future<void> logout() async {
     await storage.delete(key: 'jwt_token');
@@ -679,4 +818,31 @@ Future<http.Response> sendRequest({
     print('Response body: ${response.body}');
     throw Exception('No response from server');
   }
+}
+
+Future<String> decryptToken(encryptedToken) async {
+  print('inside decrypt {$encryptedToken}');
+
+  print(encryptedToken['iv']);
+  final String encryptionKey = Env.encryption_key;
+  final key = encrypt.Key.fromBase64(encryptionKey);
+  // Convert the IV from hex to bytes
+  final iv = encrypt.IV.fromBase16(encryptedToken['iv']);
+  final encryptedData = encryptedToken['encryptedData'];
+
+  final encrypter =
+      encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
+
+  // Convert the encrypted data from base64
+  final encryptedBytes = encrypt.Encrypted.fromBase64(encryptedData);
+
+  // Decrypt the data
+  final decrypted = encrypter.decrypt(encryptedBytes, iv: iv);
+
+  // print('Encrypted Data: $encryptedData');
+  // print('IV: ${encryptedToken['iv']}');
+  // print('Decrypted: $decrypted');
+  // print(decrypted.runtimeType);
+
+  return decrypted;
 }

@@ -29,6 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //Fetch posts from server
   Future<void> getPosts() async {
+    print('aaaaaaaaaa');
     var data = await api.getAllPosts();
     posts = data;
   }
@@ -43,7 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    print('initState');
     super.initState();
+    print('aaaaaaaaaa');
     futurePosts = getPosts();
     _scrollController.addListener(() {
       //If user tries to scroll up when on top of lastest post

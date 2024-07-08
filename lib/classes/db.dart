@@ -74,6 +74,7 @@ class SQLHelper {
 
   // Insert cities
   Future<void> _insertCities(sql.Database db) async {
+    print('im here isnertCities');
     List<Map<String, dynamic>> cities = [
       {'city': 'Tomar'},
       {'city': 'Viseu'},
@@ -110,6 +111,7 @@ class SQLHelper {
     final db = await instance.database;
 
     List<AreaClass> list = [];
+    print('im here getAreas');
     final List<Map<String, dynamic>> areaMaps = await db.query('areas');
     final List<Map<String, dynamic>> subAreaMaps = await db.query('subAreas');
 
@@ -132,12 +134,14 @@ class SQLHelper {
 
   // Check table contents
   Future<void> checkTable() async {
+    print('im here checkTable');
     final db = await instance.database;
     final List<Map<String, dynamic>> result = await db.query('cities');
     print('Cities table contents: $result');
   }
 
   Future getCities() async {
+    print('im here getCities');
     final db = await instance.database;
     Map<String, int> cities = {};
     final List<Map<String, dynamic>> cityMaps = await db.query('cities');
@@ -150,6 +154,7 @@ class SQLHelper {
   }
 
   Future<String?> getCityName(int id) async {
+    print('getcityname');
     final db = await instance.database;
     final List<Map<String, dynamic>> result = await db.query('cities',
         columns: ['city'], where: 'id = ?', whereArgs: [id]);
@@ -179,6 +184,7 @@ class SQLHelper {
   }
 
   Future<List<AreaClass>> getPrefs() async {
+    print('im here getPrefs');
     final db = await instance.database;
     List<AreaClass> prefs = [];
     final List<Map<String, dynamic>> prefsMap = await db.query('preferences');

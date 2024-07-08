@@ -106,10 +106,7 @@ class _SignUpState extends State<SignUp> {
                             //print(response);
                             // Ensure response is not null
                             if (response != null) {
-                              // Check if the widget is still mounted before navigating
-                              if (mounted) {
-                                Navigator.pushNamed(context, '/SignIn');
-                              }
+                              Navigator.pushNamed(context, '/SignIn');
                             } else {
                               // Handle null response here
                               _showErrorDialog(

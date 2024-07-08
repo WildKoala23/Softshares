@@ -102,7 +102,7 @@ class _SignInState extends State<SignIn> {
                               //print(response);
                               // Ensure response is not null
                               if (jwtToken != null) {
-                                print(jwtToken);
+                                //print(jwtToken);
                                 // {
                                 //   storage.write(key: "jwt", value: jwt);
                                 //   Navigator.push(
@@ -112,9 +112,8 @@ class _SignInState extends State<SignIn> {
                                 //               HomePage.fromBase64(jwt)));
                                 // }
                                 // Check if the widget is still mounted before navigating
-                                if (mounted) {
-                                  Navigator.pushNamed(context, '/home');
-                                }
+
+                                Navigator.pushNamed(context, '/home');
                               } else {
                                 // Handle null response here
                                 _showErrorDialog(
