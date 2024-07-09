@@ -22,7 +22,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('softsharesv12.db');
+    _database = await _initDB('pdmV4.db');
     return _database!;
   }
 
@@ -72,7 +72,7 @@ class SQLHelper {
     //Keep user id saved in bd to login automatically
     const checkUser = """
       CREATE TABLE user(
-        id INTEGER PRIMARY KEY,
+        id INTEGER,
         fname TEXT,
         lname TEXT,
         email TEXT
@@ -121,15 +121,14 @@ class SQLHelper {
     return null;
   }
 
-  Future insertUser(int id) async {
+  Future insertUser(String fname, int id, String lname, String email) async {
     final db = await instance.database;
-    User user = await api.getUser(id);
 
     var value = {
       'id': id,
-      'fname': user.firstname,
-      'lname': user.lastName,
-      'email': user.email
+      'fname': fname,
+      'lname': lname,
+      'email': email
     };
 
     await db.insert('user', value);

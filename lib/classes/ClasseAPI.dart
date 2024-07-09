@@ -786,8 +786,6 @@ class API {
       //print('USER ID: $_id');
       // Store the JWT token
       await storage.write(key: 'jwt_token', value: jsonEncode(token));
-      // Store the user_id
-      await bd.insertUser(_id);
       return token;
     } else {
       // Handle error response

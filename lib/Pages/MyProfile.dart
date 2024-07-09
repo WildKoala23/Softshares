@@ -4,6 +4,7 @@ import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
+import 'package:softshares/providers/auth_provider.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
@@ -93,7 +94,7 @@ class _MyHomePageState extends State<MyProfile> {
             child: const Text('Edit Profile')),
         ElevatedButton(
             onPressed: () async {
-              await bd.removeUser();
+              bd.removeUser();
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const SignIn()));
             },

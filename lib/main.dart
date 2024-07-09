@@ -36,6 +36,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
+  SQLHelper db = SQLHelper.instance;
+  User? user = await db.getUser();
+
+  bool logged = user != null ? true : false;
 
   runApp(
     MultiProvider(
@@ -45,12 +49,18 @@ void main() async {
           create: (_) => AuthProvider()..checkLoginStatus(),
         ),
       ],
-      child: MyApp(),
+      child: MyApp(
+        logged: logged,
+        user: user,
+      ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  MyApp({super.key, required this.logged, required this.user});
+  bool logged;
+  User? user;
   @override
   Widget build(BuildContext context) {
     return Consumer2<ThemeNotifier, AuthProvider>(
@@ -59,7 +69,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: authProvider.isLoggedIn ? '/home' : '/SignIn',
+          initialRoute: logged == true ? '/Login' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(areas: authProvider.areas),
             '/PointOfInterest': (context) =>
@@ -70,7 +80,7 @@ class MyApp extends StatelessWidget {
                   user: authProvider.user!,
                 ),
             '/Editprofile': (context) => EditProfile(areas: authProvider.areas),
-            '/Login': (context) => MyLoginIn(user: authProvider.user!),
+            '/Login': (context) => MyLoginIn(user:user!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(cities: authProvider.cities),
             '/createPost': (context) => createPost(areas: authProvider.areas),

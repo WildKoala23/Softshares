@@ -98,6 +98,7 @@ class _SignInState extends State<SignIn> {
                                 usernameController.text,
                                 passwordController.text);
                             if (jwtToken != null) {
+                              AuthProvider().login(usernameController.text, passwordController.text);
                               Navigator.pushNamed(context, '/home');
                             } else {
                               // Handle null response here

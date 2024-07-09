@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class MyLoginIn extends StatefulWidget {
   MyLoginIn({super.key, required this.user});
@@ -63,7 +65,10 @@ class _MyLoginInState extends State<MyLoginIn> {
             foregroundColor: colorScheme.onPrimary,
             backgroundColor: colorScheme.primary,
           ),
-          onPressed: () => {Navigator.pushNamed(context, '/home')},
+          onPressed: () async => {
+            //Load areas to provider
+            await context.read<AuthProvider>().loadAreasAndCities(),
+            Navigator.pushNamed(context, '/home')},
           child: const Text('Continue')),
     );
   }
