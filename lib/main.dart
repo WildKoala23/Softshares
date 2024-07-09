@@ -8,6 +8,7 @@ import 'package:softshares/Pages/settings.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
+import 'package:softshares/classes/user.dart';
 import 'classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
 import 'Pages/MyProfile.dart';
@@ -38,7 +39,7 @@ void main() async {
 
   List<AreaClass> areas = await db.getAreas();
   Map<String, int> cities = await db.getCities();
-  int? userId = await db.getUser();
+  User? user = await db.getUser();
 
   try {
     await dotenv.load(fileName: ".env");
@@ -48,7 +49,7 @@ void main() async {
         child: MyApp(
           areas: areas,
           cities: cities,
-          user_id: userId,
+          userLogged: user,
         ),
       ),
     );
@@ -58,10 +59,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.areas, required this.cities, required this.user_id});
+  MyApp({super.key, required this.areas, required this.cities, required this.userLogged});
   final List<AreaClass> areas;
   final Map<String, int> cities;
-  int? user_id;
+  User? userLogged;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: user_id != null ? '/Login' : '/SignIn',
+          initialRoute: userLogged != null ? '/Login' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(
                   areas: areas,
@@ -88,7 +89,7 @@ class MyApp extends StatelessWidget {
             '/Editprofile': (context) => EditProfile(
                   areas: areas,
                 ),
-            '/Login': (context) => MyLoginIn(userID: user_id!),
+            '/Login': (context) => MyLoginIn(user: userLogged!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(
                   cities: cities,

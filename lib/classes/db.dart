@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:softshares/Pages/area.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/user.dart';
 import 'package:softshares/classes/utils.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart';
@@ -21,7 +22,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('pdmDB.db');
+    _database = await _initDB('softshares.db');
     return _database!;
   }
 
@@ -66,7 +67,10 @@ class SQLHelper {
     //Keep user id saved in bd to login automatically
     const checkUser = """
       CREATE TABLE user(
-        id INTEGER PRIMARY KEY
+        id INTEGER PRIMARY KEY,
+        fname TEXT,
+        lname TEXT,
+        email TEXT
       )""";
 
     await db.execute(createCities);
@@ -95,13 +99,15 @@ class SQLHelper {
     }
   }
 
-  Future<int?> getUser() async {
+  Future<User?> getUser() async {
     final db = await instance.database;
 
     final List<Map<String, dynamic>> maps = await db.query('user');
 
     if (maps.isNotEmpty) {
-      return maps.first['id'] as int;
+      User user = User(maps.first['id'], maps.first['fname'],
+          maps.first['lname'], maps.first['email']);
+      return user;
     }
 
     return null;
@@ -109,8 +115,14 @@ class SQLHelper {
 
   Future insertUser(int id) async {
     final db = await instance.database;
+    User user = await api.getUser(id);
 
-    var value = {'id': id};
+    var value = {
+      'id': id,
+      'fname': user.firstname,
+      'lname': user.lastName,
+      'email': user.email
+    };
 
     await db.insert('user', value);
   }

@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:softshares/classes/db.dart';
+import 'package:softshares/classes/user.dart';
 
-class MyLoginIn extends StatelessWidget {
-  final int userID;
+class MyLoginIn extends StatefulWidget {
+  MyLoginIn({super.key, required this.user});
 
-  const MyLoginIn({super.key, required this.userID});
+  final User user;
+
+  @override
+  State<MyLoginIn> createState() => _MyLoginInState();
+}
+
+class _MyLoginInState extends State<MyLoginIn> {
+  int hour = DateTime.now().hour;
+  SQLHelper bd = SQLHelper.instance;
+
+  late String msg;
+
+  void greeting() {
+    if (hour > 6 && hour < 12) {
+      msg = 'Good morning ${widget.user.firstname}';
+    } else {
+      msg = 'Good evening ${widget.user.firstname}';
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    greeting();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +80,7 @@ class MyLoginIn extends StatelessWidget {
           height: 20,
         ),
         Text(
-          'Welcome back, Gui!',
+          msg,
           style: TextStyle(fontSize: 32, color: colorScheme.onSecondary),
           textAlign: TextAlign.center,
         ),
@@ -63,7 +89,10 @@ class MyLoginIn extends StatelessWidget {
         ),
         const Text('Not your account?'),
         ElevatedButton(
-            onPressed: () => {Navigator.pushNamed(context, '/SignIn')},
+            onPressed: () async => {
+              await bd.removeUser(),
+              Navigator.pushNamed(context, '/SignIn')
+              },
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
                 backgroundColor: MaterialStateProperty.all(Colors.transparent),
