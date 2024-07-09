@@ -124,22 +124,15 @@ class SQLHelper {
   Future insertUser(String fname, int id, String lname, String email) async {
     final db = await instance.database;
 
-    var value = {
-      'id': id,
-      'fname': fname,
-      'lname': lname,
-      'email': email
-    };
+    var value = {'id': id, 'fname': fname, 'lname': lname, 'email': email};
 
     await db.insert('user', value);
   }
 
-  Future removeUser() async {
+  Future removeUser(User u) async {
     final db = await instance.database;
 
-    await db.execute("""
-        DELETE FROM user
-    """);
+    await db.delete('user', where: 'id = ?', whereArgs: [u.id]);
   }
 
   // Insert Areas

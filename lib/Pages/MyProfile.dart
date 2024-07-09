@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyProfile> {
             child: const Text('Edit Profile')),
         ElevatedButton(
             onPressed: () async {
-              bd.removeUser();
+              await bd.removeUser(widget.user);
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const SignIn()));
             },

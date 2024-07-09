@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:softshares/Pages/chooseCityPage.dart';
@@ -41,11 +40,17 @@ void main() async {
   bool logged;
   try {
     user = await db.getUser();
-    logged = true;
+    if (user != null) {
+      logged = true;
+    } else {
+      logged = false;
+    }
   } catch (e) {
     print(e);
     logged = false;
   }
+
+  print(logged);
 
   runApp(
     MultiProvider(

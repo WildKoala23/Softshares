@@ -96,7 +96,6 @@ class _MyLoginInState extends State<MyLoginIn> {
         const Text('Not your account?'),
         ElevatedButton(
             onPressed: () async => {
-              await bd.removeUser(),
               Navigator.pushNamed(context, '/SignIn')
               },
             style: ButtonStyle(

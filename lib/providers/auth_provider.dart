@@ -68,7 +68,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future setUser() async {
-    _user = await bd.getUser();
+    try {
+      _user = await bd.getUser();
+    } catch (e) {
+      _user = null;
+    }
   }
 
   Future<void> checkLoginStatus() async {
