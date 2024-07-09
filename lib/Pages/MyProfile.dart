@@ -6,11 +6,10 @@ import 'package:softshares/classes/areaClass.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
-User user = User(1, 'John', 'Doe', 'john.doe@example.com');
-
 class MyProfile extends StatefulWidget {
-  MyProfile({super.key, required this.areas});
+  MyProfile({super.key, required this.areas, required this.user});
   List<AreaClass> areas;
+  User user;
 
   @override
   State<MyProfile> createState() => _MyHomePageState();
@@ -113,7 +112,7 @@ class _MyHomePageState extends State<MyProfile> {
     return Column(
       children: [
         Text(
-          '${user.firstname} ${user.lastName}',
+          '${widget.user.firstname} ${widget.user.lastName}',
           style: TextStyle(fontSize: 24, color: colorScheme.secondary),
         ),
         const SizedBox(
@@ -145,7 +144,7 @@ class _MyHomePageState extends State<MyProfile> {
                     color: colorScheme.secondary),
                 child: Center(
                   child: Text(
-                    user.lastName[0],
+                    widget.user.lastName[0],
                     style:
                         TextStyle(fontSize: 54, color: colorScheme.onPrimary),
                   ),

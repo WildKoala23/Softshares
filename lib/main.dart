@@ -85,6 +85,7 @@ class MyApp extends StatelessWidget {
                 ),
             '/Profile': (context) => MyProfile(
                   areas: areas,
+                  user: userLogged!,
                 ),
             '/Editprofile': (context) => EditProfile(
                   areas: areas,
