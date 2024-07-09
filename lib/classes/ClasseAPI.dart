@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
@@ -27,6 +28,7 @@ class API {
   // var baseUrl = 'http://10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
+  final SQLHelper bd = SQLHelper.instance;
 
   Future<User> getUser(int id) async {
     String? jwtToken = await getToken();
@@ -767,7 +769,7 @@ class API {
       // Store the JWT token
       await storage.write(key: 'jwt_token', value: jsonEncode(token));
       // Store the user_id
-      box.write("user_id", _id);
+      await bd.insertUser(_id);
       return token;
     } else {
       // Handle error response

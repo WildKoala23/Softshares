@@ -38,14 +38,7 @@ void main() async {
 
   List<AreaClass> areas = await db.getAreas();
   Map<String, int> cities = await db.getCities();
-
-  // Print current directory and its contents
-  // Directory currentDir = Directory.current;
-  // print('Current directory: ${currentDir.path}');
-  // List<FileSystemEntity> files = currentDir.listSync();
-  // for (var file in files) {
-  //   print(file.path);
-  // }
+  int? userId = await db.getUser();
 
   try {
     await dotenv.load(fileName: ".env");
@@ -55,6 +48,7 @@ void main() async {
         child: MyApp(
           areas: areas,
           cities: cities,
+          user_id: userId,
         ),
       ),
     );
@@ -64,23 +58,20 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.areas, required this.cities});
+  MyApp({super.key, required this.areas, required this.cities, required this.user_id});
   final List<AreaClass> areas;
   final Map<String, int> cities;
-  final box = GetStorage();
-
-  int? get userId => box.read('userId');
+  int? user_id;
 
   @override
   Widget build(BuildContext context) {
-
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return MaterialApp(
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: userId != null ? '/Login' : '/SignIn',
+          initialRoute: user_id != null ? '/Login' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(
                   areas: areas,
@@ -97,7 +88,7 @@ class MyApp extends StatelessWidget {
             '/Editprofile': (context) => EditProfile(
                   areas: areas,
                 ),
-            '/Login': (context) => MyLoginIn(userID: userId!),
+            '/Login': (context) => MyLoginIn(userID: user_id!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(
                   cities: cities,

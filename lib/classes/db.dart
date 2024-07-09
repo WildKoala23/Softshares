@@ -21,7 +21,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('pdm.db');
+    _database = await _initDB('pdmDB.db');
     return _database!;
   }
 
@@ -63,11 +63,17 @@ class SQLHelper {
         id INTEGER PRIMARY KEY,
         subArea NVARCHAR(100) NOT NULL 
       )""";
+    //Keep user id saved in bd to login automatically
+    const checkUser = """
+      CREATE TABLE user(
+        id INTEGER PRIMARY KEY
+      )""";
 
     await db.execute(createCities);
     await db.execute(createAreas);
     await db.execute(createSubAreas);
     await db.execute(createPreferences);
+    await db.execute(checkUser);
     await _insertCities(db);
     await _insertAreas(db);
   }
@@ -87,6 +93,34 @@ class SQLHelper {
       await db.insert('cities', city,
           conflictAlgorithm: sql.ConflictAlgorithm.ignore);
     }
+  }
+
+  Future<int?> getUser() async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> maps = await db.query('user');
+
+    if (maps.isNotEmpty) {
+      return maps.first['id'] as int;
+    }
+
+    return null;
+  }
+
+  Future insertUser(int id) async {
+    final db = await instance.database;
+
+    var value = {'id': id};
+
+    await db.insert('user', value);
+  }
+
+  Future removeUser() async {
+    final db = await instance.database;
+
+    await db.execute("""
+        DELETE FROM user
+    """);
   }
 
   // Insert Areas
