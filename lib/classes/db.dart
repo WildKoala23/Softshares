@@ -22,18 +22,23 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('softshares.db');
+    _database = await _initDB('softsharesv12.db');
     return _database!;
   }
 
   // Initialize the database
   Future<sql.Database> _initDB(String filePath) async {
-    String path = join(await sql.getDatabasesPath(), filePath);
-    return await sql.openDatabase(
-      path,
-      version: 1,
-      onCreate: _createDB,
-    );
+    try {
+      String path = join(await sql.getDatabasesPath(), filePath);
+      return await sql.openDatabase(
+        path,
+        version: 1,
+        onCreate: _createDB,
+      );
+    } catch (e) {
+      print('Database initialization error: $e');
+      rethrow;
+    }
   }
 
   // Create tables
@@ -84,18 +89,21 @@ class SQLHelper {
 
   // Insert cities
   Future<void> _insertCities(sql.Database db) async {
-    print('im here isnertCities');
-    List<Map<String, dynamic>> cities = [
-      {'city': 'Tomar'},
-      {'city': 'Viseu'},
-      {'city': 'Fundão'},
-      {'city': 'Portoalegre'},
-      {'city': 'Vilareal'},
-    ];
+    try {
+      List<Map<String, dynamic>> cities = [
+        {'city': 'Tomar'},
+        {'city': 'Viseu'},
+        {'city': 'Fundão'},
+        {'city': 'Portoalegre'},
+        {'city': 'Vilareal'},
+      ];
 
-    for (var city in cities) {
-      await db.insert('cities', city,
-          conflictAlgorithm: sql.ConflictAlgorithm.ignore);
+      for (var city in cities) {
+        await db.insert('cities', city,
+            conflictAlgorithm: sql.ConflictAlgorithm.ignore);
+      }
+    } catch (e) {
+      print('Error inserting cities: $e');
     }
   }
 
@@ -161,18 +169,22 @@ class SQLHelper {
     final List<Map<String, dynamic>> areaMaps = await db.query('areas');
     final List<Map<String, dynamic>> subAreaMaps = await db.query('subAreas');
 
-    for (var area in areaMaps) {
-      AreaClass aux = AreaClass(
-          id: area['id'], areaName: area['area'], icon: iconMap[area['area']]);
-      aux.subareas = [];
-      for (var subArea in subAreaMaps) {
-        AreaClass subAux =
-            AreaClass(id: subArea['id'], areaName: subArea['subArea']);
-        if (subArea['areaID'] == area['id']) {
-          aux.subareas!.add(subAux);
+    if (areaMaps.isNotEmpty && subAreaMaps.isNotEmpty) {
+      for (var area in areaMaps) {
+        AreaClass aux = AreaClass(
+            id: area['id'],
+            areaName: area['area'],
+            icon: iconMap[area['area']]);
+        aux.subareas = [];
+        for (var subArea in subAreaMaps) {
+          AreaClass subAux =
+              AreaClass(id: subArea['id'], areaName: subArea['subArea']);
+          if (subArea['areaID'] == area['id']) {
+            aux.subareas!.add(subAux);
+          }
         }
+        list.add(aux);
       }
-      list.add(aux);
     }
 
     return list;
@@ -235,10 +247,11 @@ class SQLHelper {
     List<AreaClass> prefs = [];
     final List<Map<String, dynamic>> prefsMap = await db.query('preferences');
 
-    for (var pref in prefsMap) {
-      AreaClass aux = AreaClass(id: pref['id'], areaName: pref['subArea']);
-
-      prefs.add(aux);
+    if (prefsMap.isNotEmpty) {
+      for (var pref in prefsMap) {
+        AreaClass aux = AreaClass(id: pref['id'], areaName: pref['subArea']);
+        prefs.add(aux);
+      }
     }
 
     return prefs;

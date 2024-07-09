@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import "package:dev_icons/dev_icons.dart";
+import 'package:provider/provider.dart';
+import 'package:dev_icons/dev_icons.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -11,7 +13,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  API api = API();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -36,107 +37,94 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        appBar: myAppBar(colorScheme),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formkey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        'Log In',
-                        style: TextStyle(fontSize: 32),
-                      ),
-                      Column(
-                        children: [
-                          facebookBtn(colorScheme),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          googleBtn(colorScheme),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          appleBtn(colorScheme),
-                          myDivider(colorScheme),
-                          userTextfield(colorScheme),
-                          passwordFieldtext(colorScheme),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: colorScheme.onPrimary,
-                                ),
-                                child: const Text(
-                                  'Forgot password?',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      decoration: TextDecoration.underline),
-                                )),
-                          )
-                        ],
-                      ),
-                      continueBtn(
-                        colorScheme: Theme.of(context).colorScheme,
-                        onContinue: () async {
-                          if (_formkey.currentState!.validate()) {
-                            setState(() {
-                              _isLoading = true; // Show loading indicator
-                            });
+    final authProvider = Provider.of<AuthProvider>(context);
 
-                            try {
-                              // If the form is valid, continue to homepage
-                              // Later, implement verification with DB
-                              var jwtToken = await api.logInDb(
-                                  usernameController.text,
-                                  passwordController.text);
-                              //print(response);
-                              // Ensure response is not null
-                              if (jwtToken != null) {
-                                //print(jwtToken);
-                                // {
-                                //   storage.write(key: "jwt", value: jwt);
-                                //   Navigator.push(
-                                //       context,
-                                //       MaterialPageRoute(
-                                //           builder: (context) =>
-                                //               HomePage.fromBase64(jwt)));
-                                // }
-                                // Check if the widget is still mounted before navigating
+    return Scaffold(
+      appBar: myAppBar(colorScheme),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text(
+                      'Log In',
+                      style: TextStyle(fontSize: 32),
+                    ),
+                    Column(
+                      children: [
+                        facebookBtn(colorScheme),
+                        const SizedBox(height: 25),
+                        googleBtn(colorScheme),
+                        const SizedBox(height: 25),
+                        appleBtn(colorScheme),
+                        myDivider(colorScheme),
+                        userTextfield(colorScheme),
+                        passwordFieldtext(colorScheme),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: colorScheme.onPrimary,
+                            ),
+                            child: const Text(
+                              'Forgot password?',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    continueBtn(
+                      colorScheme: Theme.of(context).colorScheme,
+                      onContinue: () async {
+                        if (_formkey.currentState!.validate()) {
+                          setState(() {
+                            _isLoading = true; // Show loading indicator
+                          });
 
-                                Navigator.pushNamed(context, '/home');
-                              } else {
-                                // Handle null response here
-                                _showErrorDialog(
-                                    'Login failed. Please try again.');
-                              }
-                            } catch (e) {
-                              // Handle any exceptions
-                              _showErrorDialog('An error occurred: $e');
-                            } finally {
-                              setState(() {
-                                _isLoading = false; // Hide loading indicator
-                              });
+                          try {
+                            // If the form is valid, continue to homepage
+
+                            var jwtToken = await authProvider.login(
+                                usernameController.text,
+                                passwordController.text);
+                            if (jwtToken != null) {
+                              Navigator.pushNamed(context, '/home');
+                            } else {
+                              // Handle null response here
+                              _showErrorDialog(
+                                  'Login failed. Please try again.');
                             }
+                          } catch (e) {
+                            // Handle any exceptions
+                            _showErrorDialog('An error occurred: $e');
+                          } finally {
+                            setState(() {
+                              _isLoading = false; // Hide loading indicator
+                            });
                           }
-                        },
-                      ),
-                    ],
-                  ),
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }
@@ -168,12 +156,13 @@ class _SignInState extends State<SignIn> {
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 45,
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: colorScheme.onPrimary,
-            backgroundColor: colorScheme.primary,
-          ),
-          onPressed: onContinue,
-          child: const Text('Continue')),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
+        ),
+        onPressed: onContinue,
+        child: const Text('Continue'),
+      ),
     );
   }
 
@@ -190,32 +179,29 @@ class _SignInState extends State<SignIn> {
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
-            label: Text(
-              'password',
-              style: TextStyle(color: colorScheme.onTertiary),
-            ),
-            prefixIcon: Icon(
-              Icons.password,
-              color: colorScheme.onTertiary,
-              size: 32,
-            ),
-            suffixIcon: IconButton(
-                onPressed: () {
-                  if (hidePassword == true) {
-                    setState(() {
-                      hidePassword = false;
-                    });
-                  } else {
-                    setState(() {
-                      hidePassword = true;
-                    });
-                  }
-                },
-                icon: hidePassword == true
-                    ? const Icon(Icons.visibility)
-                    : const Icon(Icons.visibility_off)),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: colorScheme.onTertiary))),
+          label: Text(
+            'password',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.password,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              setState(() {
+                hidePassword = !hidePassword;
+              });
+            },
+            icon: hidePassword
+                ? const Icon(Icons.visibility)
+                : const Icon(Icons.visibility_off),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
       ),
     );
   }
@@ -232,17 +218,19 @@ class _SignInState extends State<SignIn> {
         },
         controller: usernameController,
         decoration: InputDecoration(
-            label: Text(
-              'Email/phone number',
-              style: TextStyle(color: colorScheme.onTertiary),
-            ),
-            prefixIcon: Icon(
-              Icons.account_circle,
-              color: colorScheme.onTertiary,
-              size: 32,
-            ),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: colorScheme.onTertiary))),
+          label: Text(
+            'Email/phone number',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.account_circle,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
       ),
     );
   }
@@ -283,28 +271,30 @@ class _SignInState extends State<SignIn> {
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              foregroundColor: colorScheme.onSecondary,
-              backgroundColor: Colors.transparent,
-              side: BorderSide(color: colorScheme.onTertiary),
-              elevation: 0),
-          onPressed: () {},
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                DevIcons.googlePlain,
-                size: 20,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text(
-                'Continue with Google',
-                textAlign: TextAlign.center,
-              )
-            ],
-          )),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onSecondary,
+          backgroundColor: Colors.transparent,
+          side: BorderSide(color: colorScheme.onTertiary),
+          elevation: 0,
+        ),
+        onPressed: () {},
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              DevIcons.googlePlain,
+              size: 20,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              'Continue with Google',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -313,27 +303,29 @@ class _SignInState extends State<SignIn> {
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              foregroundColor: colorScheme.onSecondary,
-              side: BorderSide(color: colorScheme.onTertiary),
-              elevation: 0),
-          onPressed: () {},
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.facebook,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text(
-                'Continue with Facebook',
-                textAlign: TextAlign.center,
-              )
-            ],
-          )),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: colorScheme.onSecondary,
+          side: BorderSide(color: colorScheme.onTertiary),
+          elevation: 0,
+        ),
+        onPressed: () {},
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.facebook,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              'Continue with Facebook',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -342,28 +334,30 @@ class _SignInState extends State<SignIn> {
       margin: const EdgeInsets.only(left: 20, right: 20),
       height: 55,
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              foregroundColor: colorScheme.onSecondary,
-              backgroundColor: Colors.transparent,
-              side: BorderSide(color: colorScheme.onTertiary),
-              elevation: 0),
-          onPressed: () {},
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                DevIcons.appleOriginal,
-                size: 20,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text(
-                'Continue with Apple',
-                textAlign: TextAlign.center,
-              )
-            ],
-          )),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onSecondary,
+          backgroundColor: Colors.transparent,
+          side: BorderSide(color: colorScheme.onTertiary),
+          elevation: 0,
+        ),
+        onPressed: () {},
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              DevIcons.appleOriginal,
+              size: 20,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              'Continue with Apple',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -373,22 +367,25 @@ class _SignInState extends State<SignIn> {
       leading: Container(),
       title: RichText(
         text: TextSpan(
-            text: 'Soft',
-            style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
-            children: <TextSpan>[
-              TextSpan(
-                  text: 'Shares',
-                  style: TextStyle(color: colorScheme.secondary, fontSize: 36))
-            ]),
+          text: 'Soft',
+          style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
+          children: <TextSpan>[
+            TextSpan(
+              text: 'Shares',
+              style: TextStyle(color: colorScheme.secondary, fontSize: 36),
+            ),
+          ],
+        ),
       ),
       backgroundColor: Colors.transparent,
       actions: [
         IconButton(
-            onPressed: () => {Navigator.pushNamed(context, '/SignUp')},
-            icon: const Icon(
-              Icons.person_add,
-              size: 32,
-            ))
+          onPressed: () => Navigator.pushNamed(context, '/SignUp'),
+          icon: const Icon(
+            Icons.person_add,
+            size: 32,
+          ),
+        ),
       ],
     );
   }

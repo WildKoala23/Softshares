@@ -28,83 +28,58 @@ import 'test.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 final storage = FlutterSecureStorage();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  await dotenv.load(fileName: ".env");
 
-  SQLHelper db = SQLHelper.instance;
-
-  List<AreaClass> areas = await db.getAreas();
-  Map<String, int> cities = await db.getCities();
-  User? user = await db.getUser();
-
-  try {
-    await dotenv.load(fileName: ".env");
-    runApp(
-      ChangeNotifierProvider(
-        create: (_) => ThemeNotifier(),
-        child: MyApp(
-          areas: areas,
-          cities: cities,
-          userLogged: user,
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider()..checkLoginStatus(),
         ),
-      ),
-    );
-  } catch (e) {
-    print('Error loading .env file: $e');
-  }
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.areas, required this.cities, required this.userLogged});
-  final List<AreaClass> areas;
-  final Map<String, int> cities;
-  User? userLogged;
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeNotifier>(
-      builder: (context, themeNotifier, child) {
+    return Consumer2<ThemeNotifier, AuthProvider>(
+      builder: (context, themeNotifier, authProvider, child) {
         return MaterialApp(
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: userLogged != null ? '/Login' : '/SignIn',
+          initialRoute: authProvider.isLoggedIn ? '/home' : '/SignIn',
           routes: {
-            '/home': (context) => MyHomePage(
-                  areas: areas,
-                ),
-            '/PointOfInterest': (context) => PointsOfInterest(
-                  areas: areas,
-                ),
-            '/Calendar': (context) => Calendar(
-                  areas: areas,
-                ),
+            '/home': (context) => MyHomePage(areas: authProvider.areas),
+            '/PointOfInterest': (context) =>
+                PointsOfInterest(areas: authProvider.areas),
+            '/Calendar': (context) => Calendar(areas: authProvider.areas),
             '/Profile': (context) => MyProfile(
-                  areas: areas,
-                  user: userLogged!,
+                  areas: authProvider.areas,
+                  user: authProvider.user!,
                 ),
-            '/Editprofile': (context) => EditProfile(
-                  areas: areas,
-                ),
-            '/Login': (context) => MyLoginIn(user: userLogged!),
+            '/Editprofile': (context) => EditProfile(areas: authProvider.areas),
+            '/Login': (context) => MyLoginIn(user: authProvider.user!),
             '/SignIn': (context) => const SignIn(),
-            '/SignUp': (context) => SignUp(
-                  cities: cities,
-                ),
-            '/createPost': (context) => createPost(
-                  areas: areas,
-                ),
+            '/SignUp': (context) => SignUp(cities: authProvider.cities),
+            '/createPost': (context) => createPost(areas: authProvider.areas),
             '/createForm': (context) => createForm(),
             '/createRadioBtnForm': (context) => customRadioBtnForm(),
             '/createFieldTextForm': (context) => customFieldtextForm(),
             '/createCheckboxForm': (context) => customCheckboxForm(),
-            '/notifications': (context) => Notifications(
-                  areas: areas,
-                ),
+            '/notifications': (context) =>
+                Notifications(areas: authProvider.areas),
             '/settings': (context) => SettingsPage(),
             '/chooseCity': (context) => ChooseCityPage(),
             '/test': (context) => test(),

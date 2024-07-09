@@ -25,7 +25,7 @@ import '../classes/publication.dart';
 
 class API {
   var baseUrl = 'backendpint-w3vz.onrender.com';
-  // var baseUrl = 'http://10.0.2.2:8000';
+  //var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
   final SQLHelper bd = SQLHelper.instance;
@@ -535,45 +535,49 @@ class API {
   }
 
   Future<List<AreaClass>> getAreas() async {
-    List<AreaClass> list = [];
+    try {
+      List<AreaClass> list = [];
 
-    String? jwtToken = await getToken();
+      String? jwtToken = await getToken();
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/categories/get-areas'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+      var response = await http
+          .get(Uri.https(baseUrl, '/api/categories/get-areas'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
 
-    var responseSub = await http
-        .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+      var responseSub = await http
+          .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
 
-    var jsonData = jsonDecode(response.body);
-    var jsonDataSub = jsonDecode(responseSub.body);
+      var jsonData = jsonDecode(response.body);
+      var jsonDataSub = jsonDecode(responseSub.body);
 
-    for (var area in jsonData['data']) {
-      List<AreaClass> subareas = [];
-      //Get subareas reletated to each area
-      for (var subarea in jsonDataSub['data']) {
-        if (subarea['area_id'] == area['area_id']) {
-          var dummyArea = AreaClass(
-            id: subarea['sub_area_id'],
-            areaName: subarea['title'],
-          );
-          subareas.add(dummyArea);
+      for (var area in jsonData['data']) {
+        List<AreaClass> subareas = [];
+        //Get subareas reletated to each area
+        for (var subarea in jsonDataSub['data']) {
+          if (subarea['area_id'] == area['area_id']) {
+            var dummyArea = AreaClass(
+              id: subarea['sub_area_id'],
+              areaName: subarea['title'],
+            );
+            subareas.add(dummyArea);
+          }
         }
+        var dummyArea = AreaClass(
+            id: area['area_id'],
+            areaName: area['title'],
+            icon: iconMap[area['icon_name']],
+            subareas: subareas);
+        list.add(dummyArea);
       }
-      var dummyArea = AreaClass(
-          id: area['area_id'],
-          areaName: area['title'],
-          icon: iconMap[area['icon_name']],
-          subareas: subareas);
-      list.add(dummyArea);
+      return list;
+    } catch (e) {
+      rethrow;
     }
-    return list;
   }
 
   Future<String> getSubAreaName(int id) async {
@@ -778,7 +782,7 @@ class API {
       //get the user id from the payload
       final _id = payload['id'];
       //Get city
-      await getUserLogged(_id);
+      //await getUserLogged(_id);
       //print('USER ID: $_id');
       // Store the JWT token
       await storage.write(key: 'jwt_token', value: jsonEncode(token));
