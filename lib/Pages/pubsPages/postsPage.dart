@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/publication.dart';
@@ -23,7 +24,19 @@ class _PostPageState extends State<PostPage> {
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.publication);
-    setState(() {}); // Ensure the UI updates after fetching comments
+    setState(() {}); 
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    commentCx.dispose();
   }
 
   @override
@@ -40,6 +53,7 @@ class _PostPageState extends State<PostPage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     cardHeader(colorScheme),
                     Padding(
@@ -52,46 +66,9 @@ class _PostPageState extends State<PostPage> {
                         ),
                       ),
                     ),
-                    widget.publication.img != null
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 250,
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                child: Image.network(
-                                    fit: BoxFit.cover,
-                                    'https://backendpint-w3vz.onrender.com/uploads/${widget.publication.img!.path}',
-                                    //Handles images not existing
-                                    errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Color.fromARGB(255, 159, 255, 150),
-                                  );
-                                }),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 28.0, bottom: 8.0),
-                      child: Container(
-                        width: double.infinity,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Flexible(
-                              child: Text(widget.publication
-                                  .desc), // Used Flexible to wrap text
-                            ),
-                            Column(
-                              children: [],
-                            )
-                          ],
-                        ),
-                      ),
+                    Text(
+                      widget.publication.desc,
+                      style: TextStyle(fontSize: 18),
                     ),
                     const Divider(
                       color: Colors.black,
@@ -118,20 +95,58 @@ class _PostPageState extends State<PostPage> {
                           )
                         : ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               User user = comments.keys.elementAt(index);
                               String comment = comments[user]!;
-                              return ListTile(
-                                leading: commentCircle(colorScheme),
-                                title: Text(
-                                  "${user.firstname} ${user.lastName}",
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                                subtitle: Text(comment),
+                              return CommentWidget(
+                                userFirstName: user.firstname,
+                                userLastName: user.lastName,
+                                comment: comment,
+                                colorScheme: colorScheme,
                               );
                             },
+
+                            // shrinkWrap: true,
+                            // physics: NeverScrollableScrollPhysics(),
+                            // itemCount: comments.length,
+                            // itemBuilder: (context, index) {
+                            //   User user = comments.keys.elementAt(index);
+                            //   String comment = comments[user]!;
+                            //   return ListTile(
+
+                            //     leading: commentCircle(colorScheme),
+                            //     title: Text(
+                            //       "${user.firstname} ${user.lastName}",
+                            //       style: const TextStyle(fontSize: 22),
+                            //     ),
+                            //     subtitle: Row(
+                            //       children: [
+                            //         IconButton(
+                            //           icon: const Icon(Icons.thumb_up_alt),
+                            //           onPressed: () {},
+                            //         ),
+                            //         Expanded(child: Text(comment)),
+                            //       ],
+                            //     ),
+                            //     trailing: Row(
+                            //       //join to the title
+                            //       mainAxisSize: MainAxisSize.min,
+                            //       children: [
+                            //         IconButton(
+                            //           icon: const Icon(
+                            //               Icons.report_problem_rounded),
+                            //           onPressed: () {},
+                            //         ),
+                            //         IconButton(
+                            //           icon: const Icon(Icons.chat_bubble),
+                            //           onPressed: () {},
+                            //         )
+                            //       ],
+                            //     ),
+                            //   );
+                            // },
                           ),
                   ],
                 ),
@@ -156,7 +171,7 @@ class _PostPageState extends State<PostPage> {
                         await api.createComment(
                             widget.publication, commentCx.text);
                         commentCx.clear();
-                        await getComments();
+                        await getComments(); // Fetch comments again
                       }
                     },
                     icon: const Icon(Icons.send),

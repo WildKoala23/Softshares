@@ -361,8 +361,7 @@ class _EventCreationState extends State<EventCreation> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(
-                                  context, '/home'); 
+                              Navigator.pop(context);
                             },
                             child: Text('OK'),
                           ),

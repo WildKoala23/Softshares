@@ -299,8 +299,8 @@ class API {
 
     try {
       posts = await getPosts();
-      // events = await getEvents();
-      // forums = await getForums();
+      events = await getEvents();
+      forums = await getForums();
       pubs.addAll(posts);
       pubs.addAll(events);
       pubs.addAll(forums);
@@ -359,7 +359,7 @@ class API {
   //This function is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
     String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
-
+    String? jwtToken = await getToken();
     //FOR YOU TO FIX
     // String? jwtToken = await getToken();
 
@@ -373,6 +373,8 @@ class API {
     if (await img.exists()) {
       final Uri url = Uri.parse(baseUrl);
       final request = http.MultipartRequest('POST', url);
+
+      request.headers['Authorization'] = 'Bearer $jwtToken';
 
       // Add the file to the request
       request.files.add(await http.MultipartFile.fromPath(
@@ -404,6 +406,7 @@ class API {
   Future createPost(Publication pub) async {
     var office = box.read('selectedCity');
     String? path;
+    String? jwtToken = await getToken();
 
     if (pub.img != null) {
       path = await uploadPhoto(pub.img!);
@@ -427,6 +430,8 @@ class API {
       'content': pub.desc,
       'filePath': path.toString(),
       'pLocation': pub.location.toString(),
+    }, headers: {
+      'Authorization': 'Bearer $jwtToken'
     });
 
     print(response.body);
@@ -435,6 +440,7 @@ class API {
 
   Future createEvent(Event event) async {
     var office = box.read('selectedCity');
+    String? jwtToken = await getToken();
 
     String? path;
 
@@ -461,11 +467,14 @@ class API {
       'eventDate':
           event.eventDate.toIso8601String(), //Convert DateTime to string
       'location': event.location.toString(),
+    }, headers: {
+      'Authorization': 'Bearer $jwtToken'
     });
   }
 
   Future createForum(Forum forum) async {
     var office = box.read('selectedCity');
+    String? jwtToken = await getToken();
 
     // String? jwtToken = await getToken();
 
@@ -482,6 +491,8 @@ class API {
       'title': forum.title,
       'description': forum.desc,
       'publisher_id': forum.user.id.toString(),
+    }, headers: {
+      'Authorization': 'Bearer $jwtToken'
     });
 
     print(response.statusCode);
@@ -490,6 +501,7 @@ class API {
   Future createPOI(POI poi) async {
     var office = box.read('selectedCity');
     String? path;
+    String? jwtToken = await getToken();
 
     if (poi.img != null) {
       path = await uploadPhoto(poi.img!);
@@ -514,6 +526,8 @@ class API {
       'filePath': path.toString(),
       'pLocation': poi.location.toString(),
       'rating': poi.aval.round().toString()
+    }, headers: {
+      'Authorization': 'Bearer $jwtToken'
     });
 
     print(response.statusCode);

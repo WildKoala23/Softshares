@@ -46,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     print('initState');
     super.initState();
-    print('aaaaaaaaaa');
     futurePosts = getPosts();
     _scrollController.addListener(() {
       //If user tries to scroll up when on top of lastest post
