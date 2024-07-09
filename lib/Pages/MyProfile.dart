@@ -3,6 +3,7 @@ import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
@@ -16,7 +17,7 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyProfile> {
-  //Placeholder User for testing
+  SQLHelper bd = SQLHelper.instance;
 
   void rightCallback(context) {
     Navigator.pushNamed(context, '/settings');
@@ -91,7 +92,8 @@ class _MyHomePageState extends State<MyProfile> {
                     side: BorderSide(color: colorScheme.secondary)))),
             child: const Text('Edit Profile')),
         ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              await bd.removeUser();
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => const SignIn()));
             },
