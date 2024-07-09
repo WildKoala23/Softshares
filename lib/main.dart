@@ -37,9 +37,15 @@ void main() async {
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
   SQLHelper db = SQLHelper.instance;
-  User? user = await db.getUser();
-
-  bool logged = user != null ? true : false;
+  User? user;
+  bool logged;
+  try {
+    user = await db.getUser();
+    logged = true;
+  } catch (e) {
+    print(e);
+    logged = false;
+  }
 
   runApp(
     MultiProvider(
@@ -80,7 +86,7 @@ class MyApp extends StatelessWidget {
                   user: authProvider.user!,
                 ),
             '/Editprofile': (context) => EditProfile(areas: authProvider.areas),
-            '/Login': (context) => MyLoginIn(user:user!),
+            '/Login': (context) => MyLoginIn(user: user!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(cities: authProvider.cities),
             '/createPost': (context) => createPost(areas: authProvider.areas),
