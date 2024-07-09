@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -17,12 +18,10 @@ class PostCreation extends StatefulWidget {
   State<PostCreation> createState() => _PostCreationState();
 }
 
-//Change to current user
-User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
-
 class _PostCreationState extends State<PostCreation> {
   final _postKey = GlobalKey<FormState>();
   final API api = API();
+  SQLHelper bd = SQLHelper.instance;
 
   File? _selectedImage;
 
@@ -311,10 +310,11 @@ class _PostCreationState extends State<PostCreation> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_postKey.currentState!.validate()) {
+                    User user = (await bd.getUser())!;
                     //Change when images and google api are working
                     var post = Publication(
                         null,
-                        user1,
+                        user,
                         null,
                         descController.text,
                         titleController.text,
@@ -331,8 +331,8 @@ class _PostCreationState extends State<PostCreation> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text('Error creating post'),
-                          content:
-                              Text('An error occurred while creating the Post: $e'),
+                          content: Text(
+                              'An error occurred while creating the Post: $e'),
                           actions: [
                             TextButton(
                               onPressed: () {

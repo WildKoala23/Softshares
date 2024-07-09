@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/widget/search_widget.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -18,10 +19,9 @@ class EventCreation extends StatefulWidget {
   State<EventCreation> createState() => _EventCreationState();
 }
 
-User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
-
 class _EventCreationState extends State<EventCreation> {
   final API api = API();
+  SQLHelper bd = SQLHelper.instance;
 
   File? _selectedImage;
 
@@ -311,12 +311,13 @@ class _EventCreationState extends State<EventCreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_eventKey.currentState!.validate() &&
-                      _selectedImage != null &&
+                  if (_eventKey.currentState!.validate() ||
+                      _selectedImage != null ||
                       location.isNotEmpty) {
+                    User user = (await bd.getUser())!;
                     Event post = Event(
                         null,
-                        user1,
+                        user,
                         null,
                         descController.text,
                         titleController.text,

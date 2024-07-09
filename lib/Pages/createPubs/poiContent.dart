@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import '../../classes/db.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
@@ -17,11 +17,11 @@ class POICreation extends StatefulWidget {
   State<POICreation> createState() => _POICreationState();
 }
 
-User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class _POICreationState extends State<POICreation> {
   final _poiKey = GlobalKey<FormState>();
   final API api = API();
+  SQLHelper bd = SQLHelper.instance;
 
   late String location;
 
@@ -39,7 +39,13 @@ class _POICreationState extends State<POICreation> {
   late bool nonRating;
   late bool nonPrice;
 
+  late User user;
+
   List<AreaClass> subAreas = [];
+
+  Future getUser() async {
+    user = (await bd.getUser())!;
+  }
 
   @override
   void initState() {
@@ -50,6 +56,7 @@ class _POICreationState extends State<POICreation> {
     currentPriceValue = 3;
     nonPrice = true;
     nonRating = true;
+    getUser();
   }
 
   @override
@@ -267,10 +274,12 @@ class _POICreationState extends State<POICreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_poiKey.currentState!.validate() && _selectedImage != null && location.isNotEmpty) {
+                  if (_poiKey.currentState!.validate() ||
+                      _selectedImage != null ||
+                      location.isNotEmpty) {
                     POI post = POI(
-                      null,
-                        user1,
+                        null,
+                        user,
                         null,
                         descController.text,
                         titleController.text,
@@ -302,24 +311,24 @@ class _POICreationState extends State<POICreation> {
                       );
                     }
                     Navigator.pushNamed(context, '/home');
-                  }else {
+                  } else {
                     showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Non valid inputs'),
-                          content: Text(
-                              'Please check if all inputs are valid (image/location)'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/home'); // Close the dialog
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Non valid inputs'),
+                        content: Text(
+                            'Please check if all inputs are valid (image/location)'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, '/home'); // Close the dialog
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                 },
                 child: Text(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -14,11 +15,10 @@ class ForumCreation extends StatefulWidget {
   State<ForumCreation> createState() => _ForumCreationState();
 }
 
-User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
-
 class _ForumCreationState extends State<ForumCreation> {
   final _forumKey = GlobalKey<FormState>();
   final API api = API();
+  SQLHelper bd = SQLHelper.instance;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
@@ -170,9 +170,10 @@ class _ForumCreationState extends State<ForumCreation> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_forumKey.currentState!.validate()) {
+                    User user = (await bd.getUser())!;
                     Forum post = Forum(
                         null,
-                        user1,
+                        user,
                         null,
                         descController.text,
                         titleController.text,
