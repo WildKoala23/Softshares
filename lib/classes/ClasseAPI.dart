@@ -219,12 +219,15 @@ class API {
   Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
     List<Publication> publications = [];
     String? jwtToken = await getToken();
+    int officeId = box.read('selectedCity');
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+    var response = await http.get(
+        Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
+    print(jsonDecode(response.body));
 
     var jsonData = jsonDecode(response.body);
 
@@ -316,14 +319,15 @@ class API {
 
   Future<List<POI>> getAllPoI() async {
     List<POI> list = [];
-
+    int officeId = box.read('selectedCity');
     String? jwtToken = await getToken();
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+    var response = await http.get(
+        Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
 
     var jsonData = jsonDecode(response.body);
 
