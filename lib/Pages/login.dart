@@ -68,6 +68,7 @@ class _MyLoginInState extends State<MyLoginIn> {
           onPressed: () async => {
             //Load areas to provider
             await context.read<AuthProvider>().loadAreasAndCities(),
+            context.read<AuthProvider>().setUser(), 
             Navigator.pushNamed(context, '/home')},
           child: const Text('Continue')),
     );

@@ -56,7 +56,6 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     return token;
   }
-  
 
   Future<void> logout() async {
     _user = null;
@@ -66,6 +65,10 @@ class AuthProvider with ChangeNotifier {
     await storage.deleteAll();
 
     notifyListeners();
+  }
+
+  Future setUser() async {
+    _user = await bd.getUser();
   }
 
   Future<void> checkLoginStatus() async {
