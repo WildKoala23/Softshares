@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/POI.dart';
@@ -101,20 +102,12 @@ class _POIPageState extends State<POIPage> {
                           )
                         : Container(),
                     Padding(
-                      padding: const EdgeInsets.only(top: 28.0, bottom: 8.0),
-                      child: Container(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Flexible(
-                              child: Text(widget
-                                  .poi.desc), // Used Flexible to wrap text
-                            ),
-                            Column(
-                              children: [],
-                            )
-                          ],
+                      padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          widget.poi.desc,
+                          style: TextStyle(fontSize: 18),
                         ),
                       ),
                     ),
@@ -163,18 +156,16 @@ class _POIPageState extends State<POIPage> {
                           )
                         : ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
                               User user = comments.keys.elementAt(index);
                               String comment = comments[user]!;
-                              return ListTile(
-                                leading: commentCircle(colorScheme),
-                                title: Text(
-                                  "${user.firstname} ${user.lastName}",
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                                subtitle: Text(comment),
+                              return CommentWidget(
+                                userFirstName: user.firstname,
+                                userLastName: user.lastName,
+                                comment: comment,
+                                colorScheme: colorScheme,
                               );
                             },
                           ),

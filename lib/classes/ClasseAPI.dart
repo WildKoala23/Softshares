@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
@@ -12,8 +11,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:crypto/crypto.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../env.dart';
 
 //import files
@@ -607,15 +604,17 @@ class API {
 
   Future<Map<DateTime, List<Event>>> getEventCalendar() async {
     Map<DateTime, List<Event>> events = {};
+    int officeId = box.read('selectedCity');
 
     try {
       String? jwtToken = await getToken();
 
-      var response = await http
-          .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $jwtToken'
-      });
+      var response = await http.get(
+          Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
 
       var jsonData = jsonDecode(response.body);
 
@@ -674,7 +673,7 @@ class API {
         type = 'forum';
         break;
       case Event _:
-        type = 'event';
+        type = 'forum';
         break;
       default:
         type = 'post';
@@ -707,12 +706,15 @@ class API {
       case Forum _:
         type = 'forum';
         break;
+      case Event _:
+        type = 'forum';
+        break;
       default:
         type = 'post';
     }
     String? jwtToken = await getToken();
     // var _id = await getID();
-    var _id = box.read("user_id");
+    User? user = await bd.getUser();
     // print('in comments: $_id');
     // print(_id.runtimeType);
     var response = await http
@@ -721,7 +723,7 @@ class API {
     }, body: {
       'contentID': pub.id.toString(),
       'contentType': type,
-      'userID': _id.toString(),
+      'userID': user!.id.toString(),
       'commentText': comment
     });
     // var response =

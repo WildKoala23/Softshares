@@ -34,7 +34,6 @@ class _MyAreaState extends State<Area> {
     //Get type of publications from specific area
     var data = await api.getAllPubsByArea(area.id, type);
     pubs = data;
-
   }
 
   @override
@@ -204,7 +203,15 @@ class _MyAreaState extends State<Area> {
           return ListView.builder(
             itemCount: pubs.length,
             itemBuilder: (context, index) {
-              return PublicationCard(pub: pubs[index]);
+              if (pubs.isEmpty) {
+                return (
+                  const Center(
+                    child: Text('No posts found')
+                  )
+                );
+              } else {
+                return PublicationCard(pub: pubs[index]);
+              }
             },
           );
         } else {

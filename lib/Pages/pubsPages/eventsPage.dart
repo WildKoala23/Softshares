@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/event.dart';
+import 'package:softshares/classes/user.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key, required this.event});
@@ -33,10 +35,24 @@ class _EventPageState extends State<EventPage> {
     mapController = controller;
   }
 
+  Map<User, String> comments = {};
+
+  Future<void> getComments() async {
+    comments = await api.getComents(widget.event);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    commentCx.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
     local = convertCoord(widget.event.location!);
+    getComments();
   }
 
   @override
@@ -68,8 +84,107 @@ class _EventPageState extends State<EventPage> {
               child: TabBarView(
                 children: [
                   eventOverview(colorScheme),
-                  Container(
-                    color: Colors.amber,
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                cardHeader(colorScheme),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0, bottom: 5.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      widget.event.title,
+                                      style: TextStyle(fontSize: 22),
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  widget.event.desc,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                const Divider(
+                                  color: Colors.black,
+                                  height: 30,
+                                  thickness: 2,
+                                  indent: 10,
+                                  endIndent: 10,
+                                ),
+                                comments.isEmpty
+                                    ? const Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Icon(
+                                              Icons.sentiment_dissatisfied,
+                                              size: 50,
+                                            ),
+                                            Text(
+                                              'So empty',
+                                              style: TextStyle(fontSize: 24),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: comments.length,
+                                        itemBuilder: (context, index) {
+                                          User user =
+                                              comments.keys.elementAt(index);
+                                          String comment = comments[user]!;
+                                          return CommentWidget(
+                                            userFirstName: user.firstname,
+                                            userLastName: user.lastName,
+                                            comment: comment,
+                                            colorScheme: colorScheme,
+                                          );
+                                        },
+                                      ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Form(
+                          key: _commentKey,
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.sentences,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter comment';
+                              }
+                              return null;
+                            },
+                            controller: commentCx,
+                            decoration: InputDecoration(
+                              label: const Text('Add comment'),
+                              suffixIcon: IconButton(
+                                onPressed: () async {
+                                  if (_commentKey.currentState!.validate()) {
+                                    await api.createComment(
+                                        widget.event, commentCx.text);
+                                    commentCx.clear();
+                                    await getComments(); // Fetch comments again
+                                  }
+                                },
+                                icon: const Icon(Icons.send),
+                              ),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide()),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -119,11 +234,9 @@ class _EventPageState extends State<EventPage> {
                     ),
                   ),
             const SizedBox(height: 20),
-            Flexible(
-              child: Text(
-                widget.event.desc,
-                style: const TextStyle(fontSize: 18),
-              ),
+            Text(
+              widget.event.desc,
+              style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),
             Text(

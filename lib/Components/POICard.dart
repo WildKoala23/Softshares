@@ -39,18 +39,25 @@ class _POIState extends State<POICard> {
             //If image == null, put color instead
             widget.pointOfInterest.img == null
                 ? Container(
-                    color: Color.fromARGB(255, 159, 255, 150),
+                    color: Color.fromARGB(255, 150, 255, 190),
                     height: 120,
                   )
-                : Image.network(
-                    'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.img!.path}',
-                    //Handles images not existing
-                    errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Color.fromARGB(255, 159, 255, 150),
-                      height: 120,
-                    );
-                  }),
+                : Container(
+                    height: 120,
+                    width: double
+                        .infinity, // Ensures the image covers the full width
+                    child: Image.network(
+                      'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.img!.path}',
+                      fit: BoxFit.cover,
+                      // Handles images not existing
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Color.fromARGB(255, 150, 216, 255),
+                          height: 120,
+                        );
+                      },
+                    ),
+                  ),
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: textContent(colorScheme),
