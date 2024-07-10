@@ -336,8 +336,7 @@ class _PostCreationState extends State<PostCreation> {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/home'); // Close the dialog
+                                Navigator.pop(context); // Close the dialog
                               },
                               child: Text('OK'),
                             ),

@@ -38,7 +38,7 @@ class _EventCreationState extends State<EventCreation> {
   late bool nonRating;
   late bool nonPrice;
 
-  late String location;
+  String? location;
 
   //Depending on the recurrency, the label for date changes (This variable controls the text)
   String? dateOpt;
@@ -311,9 +311,9 @@ class _EventCreationState extends State<EventCreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_eventKey.currentState!.validate() ||
-                      _selectedImage != null ||
-                      location.isNotEmpty) {
+                  if (_eventKey.currentState!.validate() &&
+                      _selectedImage != null &&
+                      location != null ) {
                     User user = (await bd.getUser())!;
                     Event post = Event(
                         null,

@@ -23,7 +23,7 @@ class _POICreationState extends State<POICreation> {
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
 
-  late String location;
+  String? location;
 
   File? _selectedImage;
 
@@ -274,9 +274,9 @@ class _POICreationState extends State<POICreation> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
-                  if (_poiKey.currentState!.validate() ||
-                      _selectedImage != null ||
-                      location.isNotEmpty) {
+                  if (_poiKey.currentState!.validate() &&
+                      _selectedImage != null &&
+                      location != null) {
                     POI post = POI(
                         null,
                         user,
@@ -321,8 +321,7 @@ class _POICreationState extends State<POICreation> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(
-                                  context, '/home'); // Close the dialog
+                              Navigator.pop(context); // Close the dialog
                             },
                             child: Text('OK'),
                           ),
