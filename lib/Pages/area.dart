@@ -26,12 +26,12 @@ class _MyAreaState extends State<Area> {
   final API api = API();
   String type = 'forums';
 
-  Future getPubs(String type) async {
+  Future<void> getPubs(String type) async {
     pubs = [];
-    //Get specific area
+    // Get specific area
     AreaClass area =
         widget.areas.firstWhere((area) => area.areaName == widget.title);
-    //Get type of publications from specific area
+    // Get type of publications from specific area
     var data = await api.getAllPubsByArea(area.id, type);
     pubs = data;
   }
@@ -55,6 +55,7 @@ class _MyAreaState extends State<Area> {
           type = 'posts';
           break;
       }
+      getPubs(type); // Fetch data when tab changes
     });
   }
 
@@ -101,30 +102,9 @@ class _MyAreaState extends State<Area> {
             Expanded(
               child: TabBarView(
                 children: [
-                  pubs.isEmpty == false
-                      ? forumsContent()
-                      : const Center(
-                          child: Text(
-                            'No posts found',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                  pubs.isEmpty == false
-                      ? eventContent()
-                      : const Center(
-                          child: Text(
-                            'No posts found',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                  pubs.isEmpty == false
-                      ? postContent()
-                      : const Center(
-                          child: Text(
-                            'No posts found',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
+                  forumsContent(),
+                  eventContent(),
+                  postContent(),
                 ],
               ),
             ),
@@ -142,15 +122,24 @@ class _MyAreaState extends State<Area> {
     return FutureBuilder(
       future: getPubs(type),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return ListView.builder(
-            itemCount: pubs.length,
-            itemBuilder: (context, index) {
-              return ForumCard(forum: pubs[index] as Forum);
-            },
-          );
-        } else {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
+        } else {
+          if (pubs.isEmpty) {
+            return const Center(
+              child: Text(
+                'No posts found',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: pubs.length,
+              itemBuilder: (context, index) {
+                return ForumCard(forum: pubs[index] as Forum);
+              },
+            );
+          }
         }
       },
     );
@@ -160,36 +149,24 @@ class _MyAreaState extends State<Area> {
     return FutureBuilder(
       future: getPubs(type),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          print(snapshot);
-          if (snapshot.hasError) {
-            return (Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.cloud_off),
-                  const Text(
-                      'Failed connection to server. Please check your connection'),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        setState(() {});
-                      },
-                      child: const Text('Connect'))
-                ],
-              ),
-            ));
-          }
-          return ListView.builder(
-            itemCount: pubs.length,
-            itemBuilder: (context, index) {
-              return EventCard(event: pubs[index] as Event);
-            },
-          );
-        } else {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
+        } else {
+          if (pubs.isEmpty) {
+            return const Center(
+              child: Text(
+                'No posts found',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: pubs.length,
+              itemBuilder: (context, index) {
+                return EventCard(event: pubs[index] as Event);
+              },
+            );
+          }
         }
       },
     );
@@ -199,42 +176,24 @@ class _MyAreaState extends State<Area> {
     return FutureBuilder(
       future: getPubs(type),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          print(snapshot);
-          if (snapshot.hasError) {
-            return (Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.cloud_off),
-                  const Text(
-                      'Failed connection to server. Please check your connection'),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        setState(() {});
-                      },
-                      child: const Text('Connect'))
-                ],
-              ),
-            ));
-          }
-          return ListView.builder(
-            itemCount: pubs.length,
-            itemBuilder: (context, index) {
-              if (pubs.isEmpty) {
-                return (const Center(child: Text('No posts found')));
-              } else {
-                return PublicationCard(pub: pubs[index]);
-              }
-            },
-          );
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         } else {
-          return (const Center(
-            child: CircularProgressIndicator(),
-          ));
+          if (pubs.isEmpty) {
+            return const Center(
+              child: Text(
+                'No posts found',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: pubs.length,
+              itemBuilder: (context, index) {
+                return PublicationCard(pub: pubs[index]);
+              },
+            );
+          }
         }
       },
     );
