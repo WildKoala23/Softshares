@@ -218,15 +218,16 @@ class API {
     String? jwtToken = await getToken();
     int officeId = box.read('selectedCity');
 
+    print(jwtToken);
+
     var response = await http.get(
         Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
-    print(jsonDecode(response.body));
+        headers: {'Authorization': 'Bearer $jwtToken'});
+
+    print('THIS IS DATA');
 
     var jsonData = jsonDecode(response.body);
+    print(response.body);
 
     for (var eachPub in jsonData[type]) {
       var file;
