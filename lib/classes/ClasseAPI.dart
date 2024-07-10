@@ -618,7 +618,7 @@ class API {
 
       var jsonData = jsonDecode(response.body);
 
-      for (var eachPub in jsonData['events']) {
+      for (var eachPub in jsonData['data']) {
         var file = eachPub['filepath'] != null
             ? File(eachPub['filepath'])
             : null; // Check if event has image
@@ -658,7 +658,7 @@ class API {
       print('Error fetching event data: $e');
       return {};
     }
-
+    print(events.length);
     return events;
   }
 

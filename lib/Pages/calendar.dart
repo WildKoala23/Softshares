@@ -108,59 +108,65 @@ class _CalendarState extends State<Calendar> {
               ),
             ),
           ),
-          _selectedEvents != null
-              ? SingleChildScrollView(
-                  child: Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _selectedEvents?.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            
-                          },
-                          child: (Card(
-                              child: Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    userCircle(colorScheme, index),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+          loading == true
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(
+                  child: _selectedEvents != null
+                      ? SingleChildScrollView(
+                          child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: _selectedEvents?.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: (Card(
+                                      child: Padding(
+                                    padding: const EdgeInsets.all(18.0),
+                                    child: Row(
                                       children: [
-                                        Text(
-                                          '${_selectedEvents![index].user.firstname} ${_selectedEvents![index].user.lastName}',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                        Row(
+                                          children: [
+                                            userCircle(colorScheme, index),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${_selectedEvents![index].user.firstname} ${_selectedEvents![index].user.lastName}',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(_selectedEvents![index]
+                                                    .title)
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        Text(_selectedEvents![index].title)
+                                        _selectedEvents![index].img != null
+                                            ? Image.network(
+                                                'https://backendpint-w3vz.onrender.com/uploads/${_selectedEvents![index].img!.path}',
+                                                //Handles images not existing
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                return Container();
+                                              })
+                                            : const SizedBox()
                                       ],
                                     ),
-                                  ],
-                                ),
-                                _selectedEvents![index].img != null
-                                    ? Image.network(
-                                        'https://backendpint-w3vz.onrender.com/uploads/${_selectedEvents![index].img!.path}',
-                                        //Handles images not existing
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                        return Container();
-                                      })
-                                    : const SizedBox()
-                              ],
-                            ),
-                          ))),
-                        );
-                      }),
-                ))
-              : const SizedBox()
+                                  ))),
+                                );
+                              }),
+                        ))
+                      : const SizedBox(),
+                )
         ],
       ),
       drawer: myDrawer(
