@@ -25,10 +25,8 @@ class _myDrawerState extends State<myDrawer> {
 
   Future<bool> _getCity(int id) async {
     var data = await bd.getCityName(id);
-    setState(() {
-      cityId = box.read('selectedCity');
-      cityName = data!;
-    });
+    cityId = box.read('selectedCity');
+    cityName = data!;
     return true;
   }
 
@@ -102,11 +100,14 @@ class _myDrawerState extends State<myDrawer> {
               return ListTile(
                 onTap: () {
                   Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Area(areas: widget.areas, title: widget.areas.elementAt(index).areaName,),
-          ),
-        );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Area(
+                        areas: widget.areas,
+                        title: widget.areas.elementAt(index).areaName,
+                      ),
+                    ),
+                  );
                 },
                 leading: Icon(
                   widget.areas[index].icon,

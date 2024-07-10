@@ -215,21 +215,24 @@ class API {
 
   Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
     List<Publication> publications = [];
-    String? jwtToken = await getToken();
     int officeId = box.read('selectedCity');
 
-    print(jwtToken);
+    String? jwtToken = await getToken();
 
     var response = await http.get(
-        Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
-        headers: {'Authorization': 'Bearer $jwtToken'});
-
-    print('THIS IS DATA');
+        Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
 
     var jsonData = jsonDecode(response.body);
-    print(response.body);
 
-    for (var eachPub in jsonData[type]) {
+    print('HERE IS DATA');
+    print(jsonData);
+
+    //Get all events
+        for (var eachPub in jsonData[type]) {
       var file;
       if (eachPub['filepath'] != null) {
         file = File(eachPub['filepath']);
@@ -286,11 +289,97 @@ class API {
       }
     }
 
+
     //Sort for most recent first
     publications.sort((a, b) => b.datePost.compareTo(a.datePost));
 
     return publications;
   }
+
+  // Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
+  //   List<Publication> publications = [];
+  //   String? jwtToken = await getToken();
+  //   int officeId = box.read('selectedCity');
+
+  //   print('THIS IS THE TOKEN');
+  //   print(jwtToken);
+
+  //   var response = await http.get(Uri.http(baseUrl, '/api/dynamic/all-content'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $jwtToken'
+  //       });
+
+  //   print('Response status: ${response.statusCode}');
+  //   print('Response body: ${response.body}');
+
+  //   print('THIS IS DATA');
+
+  //   var jsonData = jsonDecode(response.body);
+  //   print(jsonData);
+
+  //   // for (var eachPub in jsonData[type]) {
+  //   //   var file;
+  //   //   if (eachPub['filepath'] != null) {
+  //   //     file = File(eachPub['filepath']);
+  //   //   } else {
+  //   //     file = null;
+  //   //   }
+  //   //   int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
+  //   //   if (roundedAreaId == areaId) {
+  //   //     User publisherUser = await getUser(eachPub['publisher_id']);
+  //   //     if (type == 'posts' && eachPub['type'] == 'N') {
+  //   //       final publication = Publication(
+  //   //         eachPub['post_id'],
+  //   //         publisherUser,
+  //   //         null,
+  //   //         eachPub['content'],
+  //   //         eachPub['title'],
+  //   //         eachPub['validated'],
+  //   //         eachPub['sub_area_id'],
+  //   //         DateTime.parse(eachPub['creation_date']),
+  //   //         file,
+  //   //         eachPub['p_location'],
+  //   //       );
+  //   //       await publication.getSubAreaName();
+  //   //       publications.add(publication);
+  //   //     } else if (type == 'forums') {
+  //   //       final publication = Forum(
+  //   //           eachPub['forum_id'],
+  //   //           publisherUser,
+  //   //           null,
+  //   //           eachPub['content'],
+  //   //           eachPub['title'],
+  //   //           eachPub['validated'],
+  //   //           eachPub['sub_area_id'],
+  //   //           DateTime.parse(eachPub['creation_date']));
+  //   //       await publication.getSubAreaName();
+  //   //       publications.add(publication);
+  //   //     } else if (type == 'events') {
+  //   //       final publication = Event(
+  //   //           eachPub['event_id'],
+  //   //           publisherUser,
+  //   //           null,
+  //   //           eachPub['description'],
+  //   //           eachPub['name'],
+  //   //           eachPub['validated'],
+  //   //           eachPub['sub_area_id'],
+  //   //           DateTime.parse(eachPub['creation_date']),
+  //   //           file,
+  //   //           eachPub['eventLocation'],
+  //   //           DateTime.parse(eachPub['event_date']),
+  //   //           eachPub['recurring']);
+  //   //       await publication.getSubAreaName();
+  //   //       publications.add(publication);
+  //   //     }
+  //   //   }
+  //   // }
+
+  //   //Sort for most recent first
+  //   publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+  //   return publications;
+  // }
 
   Future<List<Publication>> getAllPosts() async {
     List<Publication> pubs = [];

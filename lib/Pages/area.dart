@@ -101,9 +101,30 @@ class _MyAreaState extends State<Area> {
             Expanded(
               child: TabBarView(
                 children: [
-                  forumsContent(),
-                  eventContent(),
-                  postContent(),
+                  pubs.isEmpty == false
+                      ? forumsContent()
+                      : const Center(
+                          child: Text(
+                            'No posts found',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                  pubs.isEmpty == false
+                      ? eventContent()
+                      : const Center(
+                          child: Text(
+                            'No posts found',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                  pubs.isEmpty == false
+                      ? postContent()
+                      : const Center(
+                          child: Text(
+                            'No posts found',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -204,11 +225,7 @@ class _MyAreaState extends State<Area> {
             itemCount: pubs.length,
             itemBuilder: (context, index) {
               if (pubs.isEmpty) {
-                return (
-                  const Center(
-                    child: Text('No posts found')
-                  )
-                );
+                return (const Center(child: Text('No posts found')));
               } else {
                 return PublicationCard(pub: pubs[index]);
               }
