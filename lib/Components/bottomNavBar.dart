@@ -42,15 +42,15 @@ class MyBottomBar extends StatelessWidget {
           ),
           label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/notifications');
-            },
-            icon: const Icon(Icons.notifications),
-          ),
-          label: 'Notifications',
-        ),
+        // BottomNavigationBarItem(
+        //   icon: IconButton(
+        //     onPressed: () {
+        //       Navigator.pushNamed(context, '/notifications');
+        //     },
+        //     icon: const Icon(Icons.notifications),
+        //   ),
+        //   label: 'Notifications',
+        // ),
       ],
     );
   }
