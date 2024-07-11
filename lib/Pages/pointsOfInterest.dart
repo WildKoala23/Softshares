@@ -85,6 +85,12 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
                   ],
                 ),
               ));
+            } else if (listPoi.isEmpty) {
+              return (
+                const Center(
+                  child: Text('No posts found'),
+                )
+              );
             }
             return (ListView.builder(
                 itemCount: listPoi.length,
