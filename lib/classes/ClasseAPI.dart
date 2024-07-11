@@ -228,9 +228,6 @@ class API {
 
     var jsonData = jsonDecode(response.body);
 
-    print('HERE IS DATA');
-    print(jsonData);
-
     //Get all events
         for (var eachPub in jsonData[type]) {
       var file;
@@ -257,7 +254,7 @@ class API {
           );
           await publication.getSubAreaName();
           publications.add(publication);
-        } else if (type == 'forums') {
+        } else if (type == 'forums' && eachPub['event_id'] == null) {
           final publication = Forum(
               eachPub['forum_id'],
               publisherUser,
