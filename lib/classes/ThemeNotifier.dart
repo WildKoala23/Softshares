@@ -12,7 +12,7 @@ const lightColorScheme = ColorScheme(
   onBackground: Colors.black,
   surface: Color(0xFFFEF7FF),
   onSurface: Colors.black,
-  onTertiary: Color(0xFFD5D1DB),
+  onTertiary: Color.fromARGB(255, 65, 64, 66),
 );
 
 const darkColorScheme = ColorScheme(
