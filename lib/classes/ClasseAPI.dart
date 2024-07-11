@@ -277,7 +277,7 @@ class API {
               eachPub['sub_area_id'],
               DateTime.parse(eachPub['creation_date']),
               file,
-              eachPub['eventLocation'],
+              eachPub['event_location'],
               DateTime.parse(eachPub['event_date']),
               eachPub['recurring']);
           await publication.getSubAreaName();
