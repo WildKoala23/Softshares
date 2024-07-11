@@ -107,7 +107,7 @@ class _SignUpState extends State<SignUp> {
                               emailController.text,
                               firstNameController.text,
                               lastNameController.text,
-                              1,
+                              _selectedCity!,
                             );
                             //print(response);
                             // Ensure response is not null
