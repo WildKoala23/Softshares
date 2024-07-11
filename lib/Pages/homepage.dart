@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/eventCard.dart';
@@ -26,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final ScrollController _scrollController = ScrollController();
   //Variable to store future function
   late Future<void> futurePosts;
+  final box = GetStorage();
 
   //Fetch posts from server
   Future<void> getPosts() async {
@@ -44,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    print('initState');
+    print(box.read('selectedCity'));
     super.initState();
     futurePosts = getPosts();
     _scrollController.addListener(() {

@@ -15,7 +15,13 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   API api = API();
   SQLHelper bd = SQLHelper.instance;
-  Map<int, String> citiesMap = {};
+  Map<String, int> citiesMap = {
+         'Tomar': 1,
+         'Viseu': 2,
+         'Fundão': 3,
+         'Portoalegre': 4,
+         'Vila real': 5
+  };
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -258,7 +264,7 @@ class _SignUpState extends State<SignUp> {
         hint: const Text('Select City'),
         underline: const SizedBox.shrink(),
         value: _selectedCity,
-        items: widget.cities.entries.map((entry) {
+        items: citiesMap.entries.map((entry) {
           return DropdownMenuItem<int>(
             value: entry.value,
             child: Text(entry.key),
