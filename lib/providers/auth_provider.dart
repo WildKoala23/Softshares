@@ -32,8 +32,7 @@ class AuthProvider with ChangeNotifier {
     // Add your login logic here and retrieve the user
     var accessToken = await api.logInDb(email, password); // Example API call
     _isLoggedIn = true;
-
-    //var decryptedToken = await decryptToken(accessToken);
+    //var decryptedToken = await decryptToken(token);
 
     //print('Decrypted TOKEN: $decryptedToken');
     //decod decrypted token so the user_id can be accessed
@@ -42,7 +41,7 @@ class AuthProvider with ChangeNotifier {
     // print('Decoded TOKEN: $payload');
     // //get the user id from the payload
     // final id = payload['id'];
-    // //Get city
+    //Get city
     User user = await api.getUserLogged();
     _user = user;
     //print('USER ID: $_id');
