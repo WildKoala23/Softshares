@@ -147,6 +147,7 @@ class _EventPageState extends State<EventPage> {
                                             userLastName: user.lastName,
                                             comment: comment,
                                             colorScheme: colorScheme,
+                                            onReply: (String) {},
                                           );
                                         },
                                       ),
