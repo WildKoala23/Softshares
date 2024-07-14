@@ -19,45 +19,95 @@ import '../classes/POI.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
+import '../classes/InvalidTokenExceptionClass.dart';
 
 class API {
-  var baseUrl = 'backendpint-w3vz.onrender.com';
-  //var baseUrl = '10.0.2.2:8000';
+  //var baseUrl = 'backendpint-w3vz.onrender.com';
+  var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
   final SQLHelper bd = SQLHelper.instance;
 
-  Future<User> getUser(int id) async {
-    String? jwtToken = await getToken();
+  Future<void> refreshAccessToken() async {
+    String? refreshToken = await getRefreshToken();
+    if (refreshToken == null) {
+      print('Failed to retrieve refreshToken');
+      throw Exception('Failed to retrieve refreshToken');
+    }
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
+        body: {'refreshToken': refreshToken});
+    if (response.statusCode != 200) {
+      throw Exception('Failed to refresh token');
+    }
 
     var jsonData = jsonDecode(response.body);
-    var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
-        jsonData['data']['last_name'], jsonData['data']['email']);
+    var token = jsonData['accessToken'];
+    await storage.write(key: 'jwt_token', value: jsonEncode(token));
+  }
 
-    return user;
+  Future<User> getUser(int id) async {
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      var user = User(
+          jsonData['data']['user_id'],
+          jsonData['data']['first_name'],
+          jsonData['data']['last_name'],
+          jsonData['data']['email']);
+
+      return user;
+    } on InvalidTokenExceptionClass catch (e) {
+      await refreshAccessToken();
+      return getUser(id);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      print('inside getUserifo $e');
+      rethrow;
+    }
   }
 
   Future<User> getUserLogged(int id) async {
-    String? jwtToken = await getToken();
+    try {
+      String? jwtToken = await getToken();
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
 
-    var jsonData = jsonDecode(response.body);
-    var user = User(jsonData['data']['user_id'], jsonData['data']['first_name'],
-        jsonData['data']['last_name'], jsonData['data']['email']);
-    box.write('selectedCity', jsonData['data']['OfficeWorker']['office_id']);
+      var jsonData = jsonDecode(response.body);
+      var user = User(
+          jsonData['data']['user_id'],
+          jsonData['data']['first_name'],
+          jsonData['data']['last_name'],
+          jsonData['data']['email']);
+      box.write('selectedCity', jsonData['data']['OfficeWorker']['office_id']);
 
-    return user;
+      return user;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getUserLogged(id);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      print('inside getUserLogged $e');
+      rethrow;
+    }
   }
 
   Future<List<Publication>> getPosts() async {
@@ -71,24 +121,22 @@ class API {
         print('Failed to retrieve JWT token');
         throw Exception('Failed to retrieve JWT Token');
       }
-      // var response = await sendRequest(
-      //   method: 'GET',
-      //   url: baseUrl,
-      //   jwtToken: jwtToken,
-      // );
-      // print('ccccccccccc');
 
       var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
+          Uri.http(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
           });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
 
       print(response.statusCode);
 
       var jsonData = jsonDecode(response.body);
-      print(jsonData);
+
+      print('inside json data $jsonData');
       //Get all Posts
       for (var eachPub in jsonData['data']) {
         //Filter posts with poi's
@@ -122,125 +170,272 @@ class API {
       publications.sort((a, b) => b.datePost.compareTo(a.datePost));
 
       return publications;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getPosts();
+      // Re-throwing the exception after handling it
     } catch (err) {
-      print(err);
+      print('isnide get all posts $err');
       rethrow; // rethrow the error if needed or handle it accordingly
     }
   }
 
   Future<List<Forum>> getForums() async {
-    List<Forum> publications = [];
-    int officeId = box.read('selectedCity');
-    String? jwtToken = await getToken();
+    try {
+      List<Forum> publications = [];
+      int officeId = box.read('selectedCity');
+      String? jwtToken = await getToken();
 
-    var response = await http.get(
-        Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
-
-    var jsonData = jsonDecode(response.body);
-
-    for (var eachPub in jsonData['data']) {
-      if (eachPub['event_id'] == null) {
-        User publisherUser = await getUser(eachPub['publisher_id']);
-        final publication = Forum(
-          eachPub['forum_id'],
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']),
-        );
-        await publication.getSubAreaName();
-        publications.add(publication);
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/dynamic/forums-by-city/${officeId}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
       }
+      var jsonData = jsonDecode(response.body);
+
+      for (var eachPub in jsonData['data']) {
+        if (eachPub['event_id'] == null) {
+          User publisherUser = await getUser(eachPub['publisher_id']);
+          final publication = Forum(
+            eachPub['forum_id'],
+            publisherUser,
+            null,
+            eachPub['content'],
+            eachPub['title'],
+            eachPub['validated'],
+            eachPub['sub_area_id'],
+            DateTime.parse(eachPub['creation_date']),
+          );
+          await publication.getSubAreaName();
+          publications.add(publication);
+        }
+      }
+
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getForums();
+      // Re-throwing the exception after handling it
+    } catch (err) {
+      print('isnide get all forums $err');
+      rethrow;
     }
-
-    //Sort for most recent first
-    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-    return publications;
   }
 
   Future<List<Event>> getEvents() async {
-    List<Event> publications = [];
-    int officeId = box.read('selectedCity');
+    try {
+      List<Event> publications = [];
+      int officeId = box.read('selectedCity');
 
-    String? jwtToken = await getToken();
+      String? jwtToken = await getToken();
 
-    var response = await http.get(
-        Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
-
-    var jsonData = jsonDecode(response.body);
-
-    //Get all events
-    for (var eachPub in jsonData['data']) {
-      var file;
-      if (eachPub['filepath'] != null) {
-        file = File(eachPub['filepath']);
-      } else {
-        file = null;
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
       }
-      User publisherUser = await getUser(eachPub['publisher_id']);
-      final publication = Event(
-          eachPub['event_id'],
-          publisherUser,
-          null,
-          eachPub['description'],
-          eachPub['name'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']),
-          file,
-          eachPub['event_location'],
-          DateTime.parse(eachPub['event_date']),
-          eachPub['recurring']);
-      await publication.getSubAreaName();
-      publications.add(publication);
+      var jsonData = jsonDecode(response.body);
+
+      //Get all events
+      for (var eachPub in jsonData['data']) {
+        var file;
+        if (eachPub['filepath'] != null) {
+          file = File(eachPub['filepath']);
+        } else {
+          file = null;
+        }
+        User publisherUser = await getUser(eachPub['publisher_id']);
+        final publication = Event(
+            eachPub['event_id'],
+            publisherUser,
+            null,
+            eachPub['description'],
+            eachPub['name'],
+            eachPub['validated'],
+            eachPub['sub_area_id'],
+            DateTime.parse(eachPub['creation_date']),
+            file,
+            eachPub['event_location'],
+            DateTime.parse(eachPub['event_date']),
+            eachPub['recurring']);
+        await publication.getSubAreaName();
+        publications.add(publication);
+      }
+
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getEvents();
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      print(e);
+      rethrow;
     }
-
-    //Sort for most recent first
-    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-    return publications;
   }
 
   Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
-    List<Publication> publications = [];
-    int officeId = box.read('selectedCity');
+    try {
+      List<Publication> publications = [];
+      int officeId = box.read('selectedCity');
 
-    String? jwtToken = await getToken();
+      String? jwtToken = await getToken();
 
-    var response = await http.get(
-        Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
-
-    var jsonData = jsonDecode(response.body);
-
-    //Get all events
-        for (var eachPub in jsonData[type]) {
-      var file;
-      if (eachPub['filepath'] != null) {
-        file = File(eachPub['filepath']);
-      } else {
-        file = null;
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
       }
-      int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
-      if (roundedAreaId == areaId) {
-        User publisherUser = await getUser(eachPub['publisher_id']);
-        if (type == 'posts' && eachPub['type'] == 'N') {
-          final publication = Publication(
+      var jsonData = jsonDecode(response.body);
+
+      //Get all events
+      for (var eachPub in jsonData[type]) {
+        var file;
+        if (eachPub['filepath'] != null) {
+          file = File(eachPub['filepath']);
+        } else {
+          file = null;
+        }
+        int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
+        if (roundedAreaId == areaId) {
+          User publisherUser = await getUser(eachPub['publisher_id']);
+          if (type == 'posts' && eachPub['type'] == 'N') {
+            final publication = Publication(
+              eachPub['post_id'],
+              publisherUser,
+              null,
+              eachPub['content'],
+              eachPub['title'],
+              eachPub['validated'],
+              eachPub['sub_area_id'],
+              DateTime.parse(eachPub['creation_date']),
+              file,
+              eachPub['p_location'],
+            );
+            await publication.getSubAreaName();
+            publications.add(publication);
+          } else if (type == 'forums' && eachPub['event_id'] == null) {
+            final publication = Forum(
+                eachPub['forum_id'],
+                publisherUser,
+                null,
+                eachPub['content'],
+                eachPub['title'],
+                eachPub['validated'],
+                eachPub['sub_area_id'],
+                DateTime.parse(eachPub['creation_date']));
+            await publication.getSubAreaName();
+            publications.add(publication);
+          } else if (type == 'events') {
+            final publication = Event(
+                eachPub['event_id'],
+                publisherUser,
+                null,
+                eachPub['description'],
+                eachPub['name'],
+                eachPub['validated'],
+                eachPub['sub_area_id'],
+                DateTime.parse(eachPub['creation_date']),
+                file,
+                eachPub['event_location'],
+                DateTime.parse(eachPub['event_date']),
+                eachPub['recurring']);
+            await publication.getSubAreaName();
+            publications.add(publication);
+          }
+        }
+      }
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getAllPubsByArea(areaId, type);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Publication>> getAllPosts() async {
+    try {
+      List<Publication> pubs = [];
+      List<Publication> posts = [];
+      List<Event> events = [];
+      List<Forum> forums = [];
+
+      try {
+        posts = await getPosts();
+        events = await getEvents();
+        forums = await getForums();
+        pubs.addAll(posts);
+        pubs.addAll(events);
+        pubs.addAll(forums);
+      } catch (e) {
+        print(' iside GetAllPost $e');
+      }
+
+      //Sort for most recent first
+      pubs.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return pubs;
+    }
+    // Re-throwing the exception after handling it
+    catch (e) {
+      print('error in getAllPosts $e');
+      rethrow;
+    }
+  }
+
+  Future<List<POI>> getAllPoI() async {
+    try {
+      List<POI> list = [];
+      int officeId = box.read('selectedCity');
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      var jsonData = jsonDecode(response.body);
+
+      for (var eachPub in jsonData['posts']) {
+        var file;
+        if (eachPub['filepath'] != null) {
+          file = File(eachPub['filepath']);
+        } else {
+          file = null;
+        }
+        if (eachPub['type'] == 'P') {
+          User publisherUser = await getUser(eachPub['publisher_id']);
+          final publication = POI(
             eachPub['post_id'],
             publisherUser,
             null,
@@ -251,208 +446,33 @@ class API {
             DateTime.parse(eachPub['creation_date']),
             file,
             eachPub['p_location'],
+            3,
           );
           await publication.getSubAreaName();
-          publications.add(publication);
-        } else if (type == 'forums' && eachPub['event_id'] == null) {
-          final publication = Forum(
-              eachPub['forum_id'],
-              publisherUser,
-              null,
-              eachPub['content'],
-              eachPub['title'],
-              eachPub['validated'],
-              eachPub['sub_area_id'],
-              DateTime.parse(eachPub['creation_date']));
-          await publication.getSubAreaName();
-          publications.add(publication);
-        } else if (type == 'events') {
-          final publication = Event(
-              eachPub['event_id'],
-              publisherUser,
-              null,
-              eachPub['description'],
-              eachPub['name'],
-              eachPub['validated'],
-              eachPub['sub_area_id'],
-              DateTime.parse(eachPub['creation_date']),
-              file,
-              eachPub['event_location'],
-              DateTime.parse(eachPub['event_date']),
-              eachPub['recurring']);
-          await publication.getSubAreaName();
-          publications.add(publication);
+          list.add(publication);
         }
       }
-    }
-
-
-    //Sort for most recent first
-    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-    return publications;
-  }
-
-  // Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
-  //   List<Publication> publications = [];
-  //   String? jwtToken = await getToken();
-  //   int officeId = box.read('selectedCity');
-
-  //   print('THIS IS THE TOKEN');
-  //   print(jwtToken);
-
-  //   var response = await http.get(Uri.http(baseUrl, '/api/dynamic/all-content'),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $jwtToken'
-  //       });
-
-  //   print('Response status: ${response.statusCode}');
-  //   print('Response body: ${response.body}');
-
-  //   print('THIS IS DATA');
-
-  //   var jsonData = jsonDecode(response.body);
-  //   print(jsonData);
-
-  //   // for (var eachPub in jsonData[type]) {
-  //   //   var file;
-  //   //   if (eachPub['filepath'] != null) {
-  //   //     file = File(eachPub['filepath']);
-  //   //   } else {
-  //   //     file = null;
-  //   //   }
-  //   //   int roundedAreaId = (eachPub['sub_area_id'] / 10).round();
-  //   //   if (roundedAreaId == areaId) {
-  //   //     User publisherUser = await getUser(eachPub['publisher_id']);
-  //   //     if (type == 'posts' && eachPub['type'] == 'N') {
-  //   //       final publication = Publication(
-  //   //         eachPub['post_id'],
-  //   //         publisherUser,
-  //   //         null,
-  //   //         eachPub['content'],
-  //   //         eachPub['title'],
-  //   //         eachPub['validated'],
-  //   //         eachPub['sub_area_id'],
-  //   //         DateTime.parse(eachPub['creation_date']),
-  //   //         file,
-  //   //         eachPub['p_location'],
-  //   //       );
-  //   //       await publication.getSubAreaName();
-  //   //       publications.add(publication);
-  //   //     } else if (type == 'forums') {
-  //   //       final publication = Forum(
-  //   //           eachPub['forum_id'],
-  //   //           publisherUser,
-  //   //           null,
-  //   //           eachPub['content'],
-  //   //           eachPub['title'],
-  //   //           eachPub['validated'],
-  //   //           eachPub['sub_area_id'],
-  //   //           DateTime.parse(eachPub['creation_date']));
-  //   //       await publication.getSubAreaName();
-  //   //       publications.add(publication);
-  //   //     } else if (type == 'events') {
-  //   //       final publication = Event(
-  //   //           eachPub['event_id'],
-  //   //           publisherUser,
-  //   //           null,
-  //   //           eachPub['description'],
-  //   //           eachPub['name'],
-  //   //           eachPub['validated'],
-  //   //           eachPub['sub_area_id'],
-  //   //           DateTime.parse(eachPub['creation_date']),
-  //   //           file,
-  //   //           eachPub['eventLocation'],
-  //   //           DateTime.parse(eachPub['event_date']),
-  //   //           eachPub['recurring']);
-  //   //       await publication.getSubAreaName();
-  //   //       publications.add(publication);
-  //   //     }
-  //   //   }
-  //   // }
-
-  //   //Sort for most recent first
-  //   publications.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-  //   return publications;
-  // }
-
-  Future<List<Publication>> getAllPosts() async {
-    List<Publication> pubs = [];
-    List<Publication> posts = [];
-    List<Event> events = [];
-    List<Forum> forums = [];
-
-    try {
-      posts = await getPosts();
-      events = await getEvents();
-      forums = await getForums();
-      pubs.addAll(posts);
-      pubs.addAll(events);
-      pubs.addAll(forums);
+      return list;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getAllPoI();
+      // Re-throwing the exception after handling it
     } catch (e) {
-      print(e);
+      print('error in getAllPoI $e');
+      rethrow;
     }
-
-    //Sort for most recent first
-    pubs.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-    return pubs;
-  }
-
-  Future<List<POI>> getAllPoI() async {
-    List<POI> list = [];
-    int officeId = box.read('selectedCity');
-    String? jwtToken = await getToken();
-
-    var response = await http.get(
-        Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
-
-    var jsonData = jsonDecode(response.body);
-
-    for (var eachPub in jsonData['posts']) {
-      var file;
-      if (eachPub['filepath'] != null) {
-        file = File(eachPub['filepath']);
-      } else {
-        file = null;
-      }
-      if (eachPub['type'] == 'P') {
-        User publisherUser = await getUser(eachPub['publisher_id']);
-        final publication = POI(
-          eachPub['post_id'],
-          publisherUser,
-          null,
-          eachPub['content'],
-          eachPub['title'],
-          eachPub['validated'],
-          eachPub['sub_area_id'],
-          DateTime.parse(eachPub['creation_date']),
-          file,
-          eachPub['p_location'],
-          3,
-        );
-        await publication.getSubAreaName();
-        list.add(publication);
-      }
-    }
-    return list;
   }
 
   //This function is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
-    String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
+    String baseUrl = 'http://backendpint-w3vz.onrender.com/upload/upload';
     String? jwtToken = await getToken();
     //FOR YOU TO FIX
     // String? jwtToken = await getToken();
 
     // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //     .get(Uri.http(baseUrl, '/api/dynamic/all-content'), headers: {
     //   'Content-Type': 'application/json',
     //   'Authorization': 'Bearer $jwtToken'
     // });
@@ -474,7 +494,9 @@ class API {
         final streamedResponse = await request.send();
 
         final response = await http.Response.fromStream(streamedResponse);
-
+        if (response.statusCode == 401) {
+          throw InvalidTokenExceptionClass('token access expired');
+        }
         if (response.statusCode == 200) {
           print('File uploaded successfully');
           var data = jsonDecode(response.body);
@@ -483,6 +505,11 @@ class API {
           print('Failed to upload file. Status code: ${response.statusCode}');
           print(response.body);
         }
+      } on InvalidTokenExceptionClass catch (e) {
+        print('Caught an InvalidTokenExceptionClass: $e');
+        await refreshAccessToken();
+        return uploadPhoto(img);
+        // Re-throwing the exception after handling it
       } catch (e) {
         print('Error uploading file: $e');
       }
@@ -504,26 +531,37 @@ class API {
     // String? jwtToken = await getToken();
 
     // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //     .get(Uri.http(baseUrl, '/api/dynamic/all-content'), headers: {
     //   'Content-Type': 'application/json',
     //   'Authorization': 'Bearer $jwtToken'
     // });
+    try {
+      var response =
+          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
+        'subAreaId': pub.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': pub.user.id.toString(),
+        'title': pub.title,
+        'content': pub.desc,
+        'filePath': path.toString(),
+        'pLocation': pub.location.toString(),
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
 
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-      'subAreaId': pub.subCategory.toString(),
-      'officeId': office.toString(),
-      'publisher_id': pub.user.id.toString(),
-      'title': pub.title,
-      'content': pub.desc,
-      'filePath': path.toString(),
-      'pLocation': pub.location.toString(),
-    }, headers: {
-      'Authorization': 'Bearer $jwtToken'
-    });
-
-    print(response.body);
-    print(response.statusCode);
+      print(response.body);
+      print(response.statusCode);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return createPost(pub);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future createEvent(Event event) async {
@@ -535,55 +573,61 @@ class API {
     if (event.img != null) {
       path = await uploadPhoto(event.img!);
     }
-
-    // String? jwtToken = await getToken();
-
-    // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // });
-
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
-      'subAreaId': event.subCategory.toString(),
-      'officeId': office.toString(),
-      'publisher_id': event.user.id.toString(),
-      'name': event.title,
-      'description': event.desc,
-      'filePath': path.toString(),
-      'eventDate':
-          event.eventDate.toIso8601String(), //Convert DateTime to string
-      'location': event.location.toString(),
-    }, headers: {
-      'Authorization': 'Bearer $jwtToken'
-    });
+    try {
+      var response =
+          await http.post(Uri.http(baseUrl, '/api/event/create'), body: {
+        'subAreaId': event.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': event.user.id.toString(),
+        'name': event.title,
+        'description': event.desc,
+        'filePath': path.toString(),
+        'eventDate':
+            event.eventDate.toIso8601String(), //Convert DateTime to string
+        'location': event.location.toString(),
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return createEvent(event);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future createForum(Forum forum) async {
     var office = box.read('selectedCity');
     String? jwtToken = await getToken();
 
-    // String? jwtToken = await getToken();
-
-    // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // });
-
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/forum/create'), body: {
-      'officeID': office.toString(),
-      'subAreaId': forum.subCategory.toString(),
-      'title': forum.title,
-      'description': forum.desc,
-      'publisher_id': forum.user.id.toString(),
-    }, headers: {
-      'Authorization': 'Bearer $jwtToken'
-    });
-
-    print(response.statusCode);
+    try {
+      var response =
+          await http.post(Uri.http(baseUrl, '/api/forum/create'), body: {
+        'officeID': office.toString(),
+        'subAreaId': forum.subCategory.toString(),
+        'title': forum.title,
+        'description': forum.desc,
+        'publisher_id': forum.user.id.toString(),
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      print(response.statusCode);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return createForum(forum);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future createPOI(POI poi) async {
@@ -595,31 +639,34 @@ class API {
       path = await uploadPhoto(poi.img!);
     }
 
-    // String? jwtToken = await getToken();
-
-    // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // });
-
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
-      'subAreaId': poi.subCategory.toString(),
-      'officeId': office.toString(),
-      'publisher_id': poi.user.id.toString(),
-      'title': poi.title,
-      'content': poi.desc,
-      'type': 'P',
-      'filePath': path.toString(),
-      'pLocation': poi.location.toString(),
-      'rating': poi.aval.round().toString()
-    }, headers: {
-      'Authorization': 'Bearer $jwtToken'
-    });
-
-    print(response.statusCode);
-    print(response.body);
+    try {
+      var response =
+          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
+        'subAreaId': poi.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': poi.user.id.toString(),
+        'title': poi.title,
+        'content': poi.desc,
+        'type': 'P',
+        'filePath': path.toString(),
+        'pLocation': poi.location.toString(),
+        'rating': poi.aval.round().toString()
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      print(response.statusCode);
+      print(response.body);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return createPOI(poi);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<List<AreaClass>> getAreas() async {
@@ -629,16 +676,24 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.https(baseUrl, '/api/categories/get-areas'), headers: {
+          .get(Uri.http(baseUrl, '/api/categories/get-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
 
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
       var responseSub = await http
-          .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
+          .get(Uri.http(baseUrl, '/api/categories/get-sub-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
+
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
 
       var jsonData = jsonDecode(response.body);
       var jsonDataSub = jsonDecode(responseSub.body);
@@ -663,30 +718,49 @@ class API {
         list.add(dummyArea);
       }
       return list;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getAreas();
+      // Re-throwing the exception after handling it
     } catch (e) {
+      print('error inside gertAReas : $e');
       rethrow;
     }
   }
 
   Future<String> getSubAreaName(int id) async {
-    var result = '';
-    String? jwtToken = await getToken();
+    try {
+      var result = '';
+      String? jwtToken = await getToken();
 
-    var response = await http
-        .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/categories/get-sub-areas'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
 
-    var jsonData = jsonDecode(response.body);
-
-    for (var area in jsonData['data']) {
-      if (area['sub_area_id'] == id) {
-        result = area['title'];
-        break;
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
       }
+      var jsonData = jsonDecode(response.body);
+
+      for (var area in jsonData['data']) {
+        if (area['sub_area_id'] == id) {
+          result = area['title'];
+          break;
+        }
+      }
+      return result;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getSubAreaName(id);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      print('error in getSubAreaName $e');
+      rethrow;
     }
-    return result;
   }
 
   Future<Map<DateTime, List<Event>>> getEventCalendar() async {
@@ -697,12 +771,14 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+          Uri.http(baseUrl, '/api/dynamic/events-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
           });
-
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
       var jsonData = jsonDecode(response.body);
 
       for (var eachPub in jsonData['data']) {
@@ -741,12 +817,17 @@ class API {
         // Add the publication to the list of events for that day
         events[eventDay]!.add(publication);
       }
+      print(events.length);
+      return events;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getEventCalendar();
+      // Re-throwing the exception after handling it
     } catch (e) {
       print('Error fetching event data: $e');
       return {};
     }
-    print(events.length);
-    return events;
   }
 
   Future getComents(
@@ -765,25 +846,35 @@ class API {
       default:
         type = 'post';
     }
+    try {
+      String? jwtToken = await getToken();
 
-    String? jwtToken = await getToken();
+      var response = await http.get(
+          Uri.http(baseUrl,
+              '/api/comment/get-comment-tree/content/$type/id/${pub.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      var jsonData = jsonDecode(response.body);
 
-    var response = await http.get(
-        Uri.https(baseUrl,
-            '/api/comment/get-comment-tree/content/$type/id/${pub.id}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
+      for (var comment in jsonData['data']) {
+        User user = await getUser(comment['publisher_id']);
+        comments[user] = comment['content'];
+      }
 
-    var jsonData = jsonDecode(response.body);
-
-    for (var comment in jsonData['data']) {
-      User user = await getUser(comment['publisher_id']);
-      comments[user] = comment['content'];
+      return comments;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getComents(pub);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
     }
-
-    return comments;
   }
 
   Future createComment(Publication pub, String comment) async {
@@ -791,49 +882,54 @@ class API {
 
     switch (pub) {
       case Forum _:
-        type = 'forum';
+        type = 'Forum';
         break;
       case Event _:
-        type = 'forum';
+        type = 'Forum';
         break;
       default:
-        type = 'post';
+        type = 'Post';
     }
-    String? jwtToken = await getToken();
-    // var _id = await getID();
-    User? user = await bd.getUser();
-    // print('in comments: $_id');
-    // print(_id.runtimeType);
-    var response = await http
-        .post(Uri.https(baseUrl, '/api/comment/add-comment'), headers: {
-      'Authorization': 'Bearer $jwtToken'
-    }, body: {
-      'contentID': pub.id.toString(),
-      'contentType': type,
-      'userID': user!.id.toString(),
-      'commentText': comment
-    });
-    // var response =
-    //     await http.post(Uri.https(baseUrl, '/api/comment/add-comment'), body: {
-    //   'contentID': pub.id.toString(),
-    //   'contentType': type,
-    //   'userID': "1", //Change with loggin
-    //   'commentText': comment
-    // });
+    try {
+      String? jwtToken = await getToken();
+      // var _id = await getID();
+      User? user = await bd.getUser();
+      // print('in comments: $_id');
+      // print(_id.runtimeType);
+      var response = await http
+          .post(Uri.http(baseUrl, '/api/comment/add-comment'), headers: {
+        'Authorization': 'Bearer $jwtToken'
+      }, body: {
+        'contentID': pub.id.toString(),
+        'contentType': type,
+        'userID': user!.id.toString(),
+        'commentText': comment
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
 
-    if (response.statusCode == 200) {
-      // Handle successful response
-      print('Comment created successfully');
-    } else {
-      // Handle error response
-      print('Failed to create comment: ${response.body}');
+      if (response.statusCode == 200) {
+        // Handle successful response
+        print('Comment created successfully');
+      } else {
+        // Handle error response
+        print('Failed to create comment: ${response.body}');
+      }
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return createComment(pub, comment);
+      // Re-throwing the exception after handling it
+    } catch (e) {
+      rethrow;
     }
   }
 
   Future registerUser(
       String email, String fName, String lName, int city) async {
     var response =
-        await http.post(Uri.https(baseUrl, '/api/auth/register'), body: {
+        await http.post(Uri.http(baseUrl, '/api/auth/register'), body: {
       'email': email,
       'firstName': fName,
       'lastName': lName,
@@ -852,7 +948,7 @@ class API {
 
   Future logInDb(String email, String password) async {
     var response =
-        await http.post(Uri.https(baseUrl, '/api/auth/login_mobile'), body: {
+        await http.post(Uri.http(baseUrl, '/api/auth/login_mobile'), body: {
       'email': email,
       'password': password,
     });
@@ -863,7 +959,9 @@ class API {
 
       var jsonData = jsonDecode(response.body);
       var token = jsonData['token'];
+      var refreshToken = jsonData['refreshToken'];
       print('TOKEN: $token ');
+      print('refreshToken: $refreshToken ');
       //decrypt the recieved token
       var decryptedToken = await decryptToken(token);
 
@@ -879,6 +977,8 @@ class API {
       //print('USER ID: $_id');
       // Store the JWT token
       await storage.write(key: 'jwt_token', value: jsonEncode(token));
+      await storage.write(
+          key: 'jwt_refresh_token', value: jsonEncode(refreshToken));
       return token;
     } else {
       // Handle error response
@@ -890,6 +990,10 @@ class API {
     return await storage.read(key: 'jwt_token');
   }
 
+  Future<String?> getRefreshToken() async {
+    return await storage.read(key: 'jwt_refresh_token');
+  }
+
   // Future<String?> getID() async {
   //   return await storage.read(key: 'user_id');
   // }
@@ -899,55 +1003,7 @@ class API {
   }
 }
 
-Future<http.Response> sendRequest({
-  required String method,
-  required String url,
-  required String jwtToken,
-  Map<String, String>? headers,
-  dynamic body,
-}) async {
-  // Add the Authorization header with the JWT token
-  headers = headers ?? {};
-  headers['Content-Type'] = 'application/json';
-  headers['Authorization'] = 'Bearer $jwtToken';
-
-  // Encode the body if it's provided
-  dynamic encodedBody = body != null ? jsonEncode(body) : null;
-
-  http.Response response;
-
-  // Choose the correct method
-  switch (method.toUpperCase()) {
-    case 'POST':
-      response =
-          await http.post(Uri.parse(url), headers: headers, body: encodedBody);
-      break;
-    case 'PUT':
-      response =
-          await http.put(Uri.parse(url), headers: headers, body: encodedBody);
-      break;
-    case 'PATCH':
-      response =
-          await http.patch(Uri.parse(url), headers: headers, body: encodedBody);
-      break;
-    case 'GET':
-    default:
-      response = await http.get(Uri.parse(url), headers: headers);
-  }
-
-  // Handle the response
-  if (response.statusCode >= 200 && response.statusCode < 300) {
-    // Request was successful
-    print('Response data: ${response.body}');
-    return response;
-  } else {
-    // Request failed
-    print('Failed to load data: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    throw Exception('No response from server');
-  }
-}
-
+//apagar e fazer endpoint para ir buscar o userID
 Future<String> decryptToken(encryptedToken) async {
   print('inside decrypt {$encryptedToken}');
 
