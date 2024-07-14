@@ -21,6 +21,8 @@ class _ForumPageState extends State<ForumPage> {
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   Map<User, String> comments = {};
+  int _charCount = 0;
+  final int _charLimit = 500;
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.forum);
@@ -31,6 +33,13 @@ class _ForumPageState extends State<ForumPage> {
   void initState() {
     super.initState();
     getComments();
+    commentCx.addListener(_updateCharCount);
+  }
+
+  void _updateCharCount() {
+    setState(() {
+      _charCount = commentCx.text.length;
+    });
   }
 
   @override
@@ -123,7 +132,13 @@ class _ForumPageState extends State<ForumPage> {
                 },
                 controller: commentCx,
                 decoration: InputDecoration(
-                  label: const Text('Add comment'),
+                  label: Text(
+                    'Characters: $_charCount',
+                    style: TextStyle(
+                      color:
+                          _charCount > _charLimit ? Colors.red : Colors.black,
+                    ),
+                  ),
                   suffixIcon: IconButton(
                     onPressed: () async {
                       if (_commentKey.currentState!.validate()) {

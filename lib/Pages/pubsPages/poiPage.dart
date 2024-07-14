@@ -24,7 +24,8 @@ class _POIPageState extends State<POIPage> {
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   Map<User, String> comments = {};
-
+  late int _remainingChars;
+  final int _charLimit = 500;
   Future<void> getComments() async {
     comments = await api.getComents(widget.poi);
     setState(() {}); // Ensure the UI updates after fetching comments
@@ -51,7 +52,15 @@ class _POIPageState extends State<POIPage> {
   void initState() {
     super.initState();
     local = convertCoord(widget.poi.location!);
+    _remainingChars = _charLimit;
     getComments();
+    commentCx.addListener(_updateCharCount);
+  }
+
+  void _updateCharCount() {
+    setState(() {
+      _remainingChars = _charLimit - commentCx.text.length;
+    });
   }
 
   @override
@@ -186,7 +195,12 @@ class _POIPageState extends State<POIPage> {
                 },
                 controller: commentCx,
                 decoration: InputDecoration(
-                  label: const Text('Add comment'),
+                  label: Text(
+                    'Remaining characters: $_remainingChars',
+                    style: TextStyle(
+                      color: _remainingChars < 0 ? Colors.red : Colors.black,
+                    ),
+                  ),
                   suffixIcon: IconButton(
                     onPressed: () async {
                       if (_commentKey.currentState!.validate()) {
