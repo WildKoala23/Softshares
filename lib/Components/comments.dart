@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CommentWidget extends StatelessWidget {
+class CommentWidget extends StatefulWidget {
   final String userFirstName;
   final String userLastName;
   final String comment;
   final ColorScheme colorScheme;
+  final Function(String) onReply;
 
   const CommentWidget({
     Key? key,
@@ -12,7 +13,22 @@ class CommentWidget extends StatelessWidget {
     required this.userLastName,
     required this.comment,
     required this.colorScheme,
+    required this.onReply,
   }) : super(key: key);
+
+  @override
+  _CommentWidgetState createState() => _CommentWidgetState();
+}
+
+class _CommentWidgetState extends State<CommentWidget> {
+  bool _isReplying = false;
+  final TextEditingController _replyController = TextEditingController();
+
+  void _toggleReplying() {
+    setState(() {
+      _isReplying = !_isReplying;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +42,10 @@ class CommentWidget extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: colorScheme.primary,
+                  backgroundColor: widget.colorScheme.primary,
                   child: Text(
-                    userFirstName[0].toUpperCase(),
-                    style: TextStyle(color: colorScheme.onPrimary),
+                    widget.userFirstName[0].toUpperCase(),
+                    style: TextStyle(color: widget.colorScheme.onPrimary),
                   ),
                 ),
                 const SizedBox(width: 12.0),
@@ -38,11 +54,11 @@ class CommentWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "$userFirstName $userLastName",
+                        "${widget.userFirstName} ${widget.userLastName}",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                          color: widget.colorScheme.onSurface,
                         ),
                       ),
                       Row(
@@ -72,7 +88,7 @@ class CommentWidget extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.chat_bubble_outline),
-                      onPressed: () {},
+                      onPressed: _toggleReplying,
                       tooltip: 'Reply',
                     ),
                   ],
@@ -81,12 +97,38 @@ class CommentWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              comment,
-              style: TextStyle(color: colorScheme.onSurface),
+              widget.comment,
+              style: TextStyle(color: widget.colorScheme.onSurface),
             ),
+            if (_isReplying) ...[
+              const SizedBox(height: 8.0),
+              TextField(
+                controller: _replyController,
+                decoration: InputDecoration(
+                  labelText: 'Add a reply',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      if (_replyController.text.isNotEmpty) {
+                        widget.onReply(_replyController.text);
+                        _replyController.clear();
+                        _toggleReplying();
+                      }
+                    },
+                  ),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _replyController.dispose();
+    super.dispose();
   }
 }
