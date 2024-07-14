@@ -7,6 +7,7 @@ import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
+
 // jwt libraries
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -20,10 +21,11 @@ import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
 import '../classes/InvalidTokenExceptionClass.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class API {
-  var baseUrl = 'backendpint-w3vz.onrender.com';
-  //var baseUrl = '10.0.2.2:8000';
+  //var baseUrl = 'backendpint-w3vz.onrender.com';
+  var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
   final SQLHelper bd = SQLHelper.instance;
@@ -35,9 +37,12 @@ class API {
       throw Exception('Failed to retrieve refreshToken');
     }
 
-    var response = await http.post(
-        Uri.https(baseUrl, '/api/auth/refresh-token'),
+    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
+    if (response.statusCode == 401) {
+      //log out user
+      AuthProvider().logout();
+    }
     if (response.statusCode != 200) {
       throw Exception('Failed to refresh token');
     }
@@ -52,7 +57,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+          .get(Uri.http(baseUrl, '/api/dynamic/user-info/$id'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -78,12 +83,12 @@ class API {
     }
   }
 
-  Future<User> getUserLogged(int id) async {
+  Future<User> getUserLogged() async {
     try {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+          .get(Uri.http(baseUrl, '/api/auth/get-user-by-token/'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -92,18 +97,19 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
+      print('sinside getUserLogged $jsonData');
       var user = User(
-          jsonData['data']['user_id'],
-          jsonData['data']['first_name'],
-          jsonData['data']['last_name'],
-          jsonData['data']['email']);
-      box.write('selectedCity', jsonData['data']['OfficeWorker']['office_id']);
+          jsonData['user']['user_id'],
+          jsonData['user']['first_name'],
+          jsonData['user']['last_name'],
+          jsonData['user']['email']);
+      box.write('selectedCity', jsonData['user']['office_id']);
 
       return user;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return getUserLogged(id);
+      return getUserLogged();
       // Re-throwing the exception after handling it
     } catch (e) {
       print('inside getUserLogged $e');
@@ -118,17 +124,25 @@ class API {
     try {
       String? jwtToken = await getToken();
       // Check if the token is not null before proceeding
+      late http.Response response;
       if (jwtToken == null) {
         print('Failed to retrieve JWT token');
         throw Exception('Failed to retrieve JWT Token');
       }
-
-      var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      if (officeId == 0) {
+        response = await http.get(Uri.http(baseUrl, '/api/dynamic/posts'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      } else {
+        response = await http.get(
+            Uri.http(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      }
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -186,14 +200,22 @@ class API {
     try {
       List<Forum> publications = [];
       int officeId = box.read('selectedCity');
+      late http.Response response;
       String? jwtToken = await getToken();
-
-      var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      if (officeId == 0) {
+        response = await http.get(Uri.http(baseUrl, '/api/dynamic/forums'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      } else {
+        response = await http.get(
+            Uri.http(baseUrl, '/api/dynamic/forums-by-city/$officeId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      }
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -236,15 +258,21 @@ class API {
     try {
       List<Event> publications = [];
       int officeId = box.read('selectedCity');
-
+      late http.Response response;
       String? jwtToken = await getToken();
-
-      var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      if (officeId == 0) {
+        response = await http.get(Uri.http(baseUrl, '/api/dynamic/events'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      } else {
+        response = await http
+            .get(Uri.http(baseUrl, '/events-by-city/$officeId'), headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
+      }
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -295,15 +323,22 @@ class API {
     try {
       List<Publication> publications = [];
       int officeId = box.read('selectedCity');
-
+      late http.Response response;
       String? jwtToken = await getToken();
-
-      var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      if (officeId == 0) {
+        response = await http.get(Uri.http(baseUrl, '/api/dynamic/all-content'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      } else {
+        var response = await http.get(
+            Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      }
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -394,8 +429,9 @@ class API {
         pubs.addAll(posts);
         pubs.addAll(events);
         pubs.addAll(forums);
-      } catch (e) {
-        print(' iside GetAllPost $e');
+      } catch (e, s) {
+        print(' iside GetAllPost nested trycatch $e');
+        print('Stack trace:\n $s');
       }
 
       //Sort for most recent first
@@ -404,8 +440,9 @@ class API {
       return pubs;
     }
     // Re-throwing the exception after handling it
-    catch (e) {
+    catch (e, s) {
       print('error in getAllPosts $e');
+      print('Stack trace:\n $s');
       rethrow;
     }
   }
@@ -415,13 +452,21 @@ class API {
       List<POI> list = [];
       int officeId = box.read('selectedCity');
       String? jwtToken = await getToken();
-
-      var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      late http.Response response;
+      if (officeId == 0) {
+        response = await http.get(Uri.http(baseUrl, '/api/dynamic/all-content'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      } else {
+        response = await http.get(
+            Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $jwtToken'
+            });
+      }
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -473,7 +518,7 @@ class API {
     // String? jwtToken = await getToken();
 
     // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //     .get(Uri.http(baseUrl, '/api/dynamic/all-content'), headers: {
     //   'Content-Type': 'application/json',
     //   'Authorization': 'Bearer $jwtToken'
     // });
@@ -532,13 +577,13 @@ class API {
     // String? jwtToken = await getToken();
 
     // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
+    //     .get(Uri.http(baseUrl, '/api/dynamic/all-content'), headers: {
     //   'Content-Type': 'application/json',
     //   'Authorization': 'Bearer $jwtToken'
     // });
     try {
       var response =
-          await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
+          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
         'subAreaId': pub.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': pub.user.id.toString(),
@@ -576,7 +621,7 @@ class API {
     }
     try {
       var response =
-          await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
+          await http.post(Uri.http(baseUrl, '/api/event/create'), body: {
         'subAreaId': event.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': event.user.id.toString(),
@@ -608,7 +653,7 @@ class API {
 
     try {
       var response =
-          await http.post(Uri.https(baseUrl, '/api/forum/create'), body: {
+          await http.post(Uri.http(baseUrl, '/api/forum/create'), body: {
         'officeID': office.toString(),
         'subAreaId': forum.subCategory.toString(),
         'title': forum.title,
@@ -642,7 +687,7 @@ class API {
 
     try {
       var response =
-          await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
+          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
         'subAreaId': poi.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': poi.user.id.toString(),
@@ -677,7 +722,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.https(baseUrl, '/api/categories/get-areas'), headers: {
+          .get(Uri.http(baseUrl, '/api/categories/get-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -687,7 +732,7 @@ class API {
       }
 
       var responseSub = await http
-          .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
+          .get(Uri.http(baseUrl, '/api/categories/get-sub-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -736,7 +781,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
+          .get(Uri.http(baseUrl, '/api/categories/get-sub-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -772,7 +817,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+          Uri.http(baseUrl, '/api/dynamic/events-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -839,19 +884,19 @@ class API {
     late String type;
     switch (pub) {
       case Forum _:
-        type = 'forum';
+        type = 'Forum';
         break;
       case Event _:
-        type = 'forum';
+        type = 'Forum';
         break;
       default:
-        type = 'post';
+        type = 'Post';
     }
     try {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.https(baseUrl,
+          Uri.http(baseUrl,
               '/api/comment/get-comment-tree/content/$type/id/${pub.id}'),
           headers: {
             'Content-Type': 'application/json',
@@ -898,7 +943,7 @@ class API {
       // print('in comments: $_id');
       // print(_id.runtimeType);
       var response = await http
-          .post(Uri.https(baseUrl, '/api/comment/add-comment'), headers: {
+          .post(Uri.http(baseUrl, '/api/comment/add-comment'), headers: {
         'Authorization': 'Bearer $jwtToken'
       }, body: {
         'contentID': pub.id.toString(),
@@ -930,7 +975,7 @@ class API {
   Future registerUser(
       String email, String fName, String lName, int city) async {
     var response =
-        await http.post(Uri.https(baseUrl, '/api/auth/register'), body: {
+        await http.post(Uri.http(baseUrl, '/api/auth/register'), body: {
       'email': email,
       'firstName': fName,
       'lastName': lName,
@@ -949,7 +994,7 @@ class API {
 
   Future logInDb(String email, String password) async {
     var response =
-        await http.post(Uri.https(baseUrl, '/api/auth/login_mobile'), body: {
+        await http.post(Uri.http(baseUrl, '/api/auth/login_mobile'), body: {
       'email': email,
       'password': password,
     });
@@ -959,28 +1004,15 @@ class API {
       print('User login successfull');
 
       var jsonData = jsonDecode(response.body);
-      var token = jsonData['token'];
+      var accessToken = jsonData['token'];
       var refreshToken = jsonData['refreshToken'];
-      print('TOKEN: $token ');
+      print('TOKEN: $accessToken ');
       print('refreshToken: $refreshToken ');
-      //decrypt the recieved token
-      var decryptedToken = await decryptToken(token);
 
-      //print('Decrypted TOKEN: $decryptedToken');
-      //decod decrypted token so the user_id can be accessed
-      final jwt = JWT.decode(decryptedToken);
-      final payload = jwt.payload;
-      print('Decoded TOKEN: ${payload}');
-      //get the user id from the payload
-      final _id = payload['id'];
-      //Get city
-      //await getUserLogged(_id);
-      //print('USER ID: $_id');
-      // Store the JWT token
-      await storage.write(key: 'jwt_token', value: jsonEncode(token));
+      await storage.write(key: 'jwt_token', value: jsonEncode(accessToken));
       await storage.write(
           key: 'jwt_refresh_token', value: jsonEncode(refreshToken));
-      return token;
+      return accessToken;
     } else {
       // Handle error response
       print('Failed to log in: ${response.body}');
@@ -1002,32 +1034,4 @@ class API {
   Future<void> logout() async {
     await storage.delete(key: 'jwt_token');
   }
-}
-
-//apagar e fazer endpoint para ir buscar o userID
-Future<String> decryptToken(encryptedToken) async {
-  print('inside decrypt {$encryptedToken}');
-
-  print(encryptedToken['iv']);
-  final String encryptionKey = Env.encryption_key;
-  final key = encrypt.Key.fromBase64(encryptionKey);
-  // Convert the IV from hex to bytes
-  final iv = encrypt.IV.fromBase16(encryptedToken['iv']);
-  final encryptedData = encryptedToken['encryptedData'];
-
-  final encrypter =
-      encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
-  // Convert the encrypted data from base64
-  final encryptedBytes = encrypt.Encrypted.fromBase64(encryptedData);
-
-  // Decrypt the data
-  final decrypted = encrypter.decrypt(encryptedBytes, iv: iv);
-
-  // print('Encrypted Data: $encryptedData');
-  // print('IV: ${encryptedToken['iv']}');
-  // print('Decrypted: $decrypted');
-  // print(decrypted.runtimeType);
-
-  return decrypted;
 }

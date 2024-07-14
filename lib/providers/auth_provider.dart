@@ -30,19 +30,20 @@ class AuthProvider with ChangeNotifier {
 
   Future login(String email, String password) async {
     // Add your login logic here and retrieve the user
-    var token = await api.logInDb(email, password); // Example API call
+    var accessToken = await api.logInDb(email, password); // Example API call
     _isLoggedIn = true;
-    var decryptedToken = await decryptToken(token);
+
+    //var decryptedToken = await decryptToken(accessToken);
 
     //print('Decrypted TOKEN: $decryptedToken');
     //decod decrypted token so the user_id can be accessed
-    final jwt = JWT.decode(decryptedToken);
-    final payload = jwt.payload;
-    print('Decoded TOKEN: $payload');
-    //get the user id from the payload
-    final id = payload['id'];
-    //Get city
-    User user = await api.getUserLogged(id);
+    // final jwt = JWT.decode(decryptedToken);
+    // final payload = jwt.payload;
+    // print('Decoded TOKEN: $payload');
+    // //get the user id from the payload
+    // final id = payload['id'];
+    // //Get city
+    User user = await api.getUserLogged();
     _user = user;
     //print('USER ID: $_id');
     // Store the JWT token
@@ -54,7 +55,7 @@ class AuthProvider with ChangeNotifier {
     // Load areas and cities data
     await loadAreasAndCities();
     notifyListeners();
-    return token;
+    return accessToken;
   }
 
   Future<void> logout() async {
