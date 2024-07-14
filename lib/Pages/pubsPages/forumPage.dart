@@ -103,9 +103,9 @@ class _ForumPageState extends State<ForumPage> {
                                 userLastName: user.lastName,
                                 comment: comment,
                                 colorScheme: colorScheme,
+                                onReply: (String) {},
                               );
-                            }, 
-
+                            },
                           ),
                   ],
                 ),

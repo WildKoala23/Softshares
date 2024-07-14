@@ -166,6 +166,7 @@ class _POIPageState extends State<POIPage> {
                                 userLastName: user.lastName,
                                 comment: comment,
                                 colorScheme: colorScheme,
+                                onReply: (String) {},
                               );
                             },
                           ),

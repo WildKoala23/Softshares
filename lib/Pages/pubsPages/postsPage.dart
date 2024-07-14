@@ -24,7 +24,7 @@ class _PostPageState extends State<PostPage> {
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.publication);
-    setState(() {}); 
+    setState(() {});
   }
 
   @override
@@ -105,6 +105,7 @@ class _PostPageState extends State<PostPage> {
                                 userLastName: user.lastName,
                                 comment: comment,
                                 colorScheme: colorScheme,
+                                onReply: (String) {},
                               );
                             },
 
