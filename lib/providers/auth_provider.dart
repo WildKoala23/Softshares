@@ -29,27 +29,17 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future login(String email, String password) async {
-    // Add your login logic here and retrieve the user
     var accessToken = await api.logInDb(email, password); // Example API call
     _isLoggedIn = true;
-    //var decryptedToken = await decryptToken(token);
 
-    //print('Decrypted TOKEN: $decryptedToken');
-    //decod decrypted token so the user_id can be accessed
-    // final jwt = JWT.decode(decryptedToken);
-    // final payload = jwt.payload;
-    // print('Decoded TOKEN: $payload');
-    // //get the user id from the payload
-    // final id = payload['id'];
-    //Get city
-    User user = await api.getUserLogged();
+    var user = await api.getUserLogged();
+    //If getUserLogged() returns -1, it means the user is admin
+    if (user == -1) {
+      return -1;
+    }
     _user = user;
-    //print('USER ID: $_id');
-    // Store the JWT token
-    // Save user data securely
-    // await storage.write(key: 'logged_user', value: user.toString());
 
-    await bd.insertUser(user.firstname, user.id, user.lastName, user.email);
+    await bd.insertUser(user!.firstname, user.id, user.lastName, user.email);
 
     // Load areas and cities data
     await loadAreasAndCities();

@@ -97,8 +97,11 @@ class _SignInState extends State<SignIn> {
                             var jwtToken = await authProvider.login(
                                 usernameController.text,
                                 passwordController.text);
-                            if (jwtToken != null) {
-                              AuthProvider().login(usernameController.text, passwordController.text);
+                            if (jwtToken == -1) {
+                              _showErrorDialog('Admin cannot login in the app');
+                            } else if (jwtToken != null) {
+                              AuthProvider().login(usernameController.text,
+                                  passwordController.text);
                               Navigator.pushNamed(context, '/home');
                             } else {
                               // Handle null response here

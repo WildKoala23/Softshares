@@ -79,7 +79,7 @@ class API {
     }
   }
 
-  Future<User> getUserLogged() async {
+  Future getUserLogged() async {
     try {
       String? jwtToken = await getToken();
 
@@ -93,14 +93,21 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
+
+      print(jsonData['user']['office_id']);
+
+      // If user is admin
+      if (jsonData['user']['office_id'] == 0) {
+        return -1;
+      }
       print('jsonData $jsonData');
       var user = User(
           jsonData['user']['user_id'],
           jsonData['user']['first_name'],
           jsonData['user']['last_name'],
           jsonData['user']['email']);
-      box.write('selectedCity', jsonData['user']['office_id']);
 
+      box.write('selectedCity', jsonData['user']['office_id']);
       return user;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
