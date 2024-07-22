@@ -94,6 +94,7 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: const formAppbar(title: 'Create Checkbox'),
       body: Padding(
@@ -117,15 +118,15 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
                 itemBuilder: (context, index) {
                   return TextField(
                     controller: controllers[index],
-                    decoration: InputDecoration(labelText: 'Option ${index + 1}'),
+                    decoration:
+                        InputDecoration(labelText: 'Option ${index + 1}'),
                   );
                 },
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
-              child: Center(
-                child: addBtn()),
+              child: Center(child: addBtn(colorScheme)),
             ),
           ],
         ),
@@ -133,7 +134,7 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
     );
   }
 
-  ElevatedButton addBtn() {
+  ElevatedButton addBtn(ColorScheme colorScheme) {
     return ElevatedButton(
       onPressed: () {
         int result = returnValues();
@@ -146,8 +147,10 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
         }
       },
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(widget.mainColor),
-      ),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(colorScheme.primary),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(colorScheme.onPrimary)),
       child: const Text('Add Fieldtext'),
     );
   }
@@ -156,6 +159,7 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
       child: TextField(
+        textCapitalization: TextCapitalization.words,
         controller: numOptController,
         onSubmitted: (value) {
           int newOptNum = int.tryParse(value) ?? 1;
@@ -190,6 +194,7 @@ class _CustomCheckboxFormState extends State<customCheckboxForm> {
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
       child: TextField(
+        textCapitalization: TextCapitalization.words,
         controller: labelController,
         decoration: const InputDecoration(
           labelText: 'Label',

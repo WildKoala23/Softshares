@@ -5,8 +5,6 @@ class customTextField extends StatefulWidget {
   final bool numericInput;
   TextEditingController? controller;
 
-  // Properly define the key parameter in the constructor
-
   customTextField(
       {Key? key,
       required this.label,
@@ -20,7 +18,6 @@ class customTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<customTextField> {
   late TextEditingController controller;
-
   @override
   void initState() {
     /*If not provided with a controller, create a new one */
@@ -37,14 +34,21 @@ class _CustomTextFieldState extends State<customTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 25, top: 20, right: 25),
+      padding: const EdgeInsets.only(left: 0, top: 20, right: 0),
       child: TextField(
         textCapitalization: TextCapitalization.sentences,
         controller: controller,
         keyboardType:
             widget.numericInput ? TextInputType.number : TextInputType.name,
         decoration: InputDecoration(
-          labelText: widget.label, // Use labelText instead of label
+          labelText: widget.label,
+          border: const UnderlineInputBorder(),
+          enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue),
+          ),
         ),
       ),
     );

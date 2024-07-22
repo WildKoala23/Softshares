@@ -33,7 +33,7 @@ class _CustomRadioBtnState extends State<customRadioBtn> {
           padding: const EdgeInsets.only(left: 25.0, top: 20),
           child: Text(
             widget.label,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),

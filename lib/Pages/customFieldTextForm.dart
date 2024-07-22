@@ -32,11 +32,13 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: formAppbar(
         title: 'Create Textfield',
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             margin: const EdgeInsets.only(left: 25, top: 20, right: 25),
@@ -49,56 +51,57 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
                 TextField(
-                  textCapitalization: TextCapitalization.words,
-                  controller: userLabelController,
-                  onSubmitted: (value) {
-                    userLabel = userLabelController.text;
-                  },
-                  keyboardType: TextInputType.name,
-                  decoration: const InputDecoration(
-                      label: Text('Label'),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF49454F)))),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 25, top: 20, right: 25),
-            child: Row(
-              children: [
-                const SizedBox(
-                  child: Text(
-                    'Numeric input ',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textCapitalization: TextCapitalization.words,
+                    controller: userLabelController,
+                    onSubmitted: (value) {
+                      userLabel = userLabelController.text;
+                    },
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                        label: const Text('Label'),
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: colorScheme.tertiary)))),
+                Container(
+                  margin: const EdgeInsets.only(left: 25, top: 20, right: 25),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        child: Text(
+                          'Numeric input ',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                        },
+                      )
+                    ],
                   ),
                 ),
-                Checkbox(
-                  value: isChecked,
-                  onChanged: (value) {
-                    setState(() {
-                      isChecked = value!;
-                    });
-                  },
-                )
               ],
             ),
           ),
           Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: Center(
-                child: addBtn()),
-            ),
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Center(child: addBtn(colorScheme)),
+          ),
         ],
       ),
     );
   }
 
-  ElevatedButton addBtn() {
+  ElevatedButton addBtn(ColorScheme colorScheme) {
     return ElevatedButton(
         onPressed: () {
           if (userLabel != '') {
-            Navigator.pop(context, {"userLabel": userLabel, "numeric":isChecked});
+            Navigator.pop(
+                context, {"userLabel": userLabel, "numeric": isChecked});
           } else {
             showDialog<void>(
                 context: context,
@@ -119,8 +122,10 @@ class _customFieldtextFormState extends State<customFieldtextForm> {
           }
         },
         style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(colorScheme.primary),
             foregroundColor:
-                MaterialStateProperty.all<Color>(widget.mainColor)),
+                MaterialStateProperty.all<Color>(colorScheme.onPrimary)),
         child: Text('Add Fieldtext'));
   }
 }

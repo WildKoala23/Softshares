@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/formAppBar.dart';
 
 class customRadioBtnForm extends StatefulWidget {
   customRadioBtnForm({super.key});
@@ -70,29 +71,9 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: widget.appBarColor,
-        foregroundColor: widget.appBarFont,
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context, null),
-        ),
-        title: const Text('Create Radio Button'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              if (returnValues() == 1) {
-                Navigator.pop(
-                    context, {"userLabel": userLabel, "options": options});
-              } else {
-                print('Invalid options');
-              }
-            },
-            icon: const Icon(Icons.check),
-          ),
-        ],
-      ),
+      appBar: const formAppbar(title: 'Create Radio Button'),
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
         child: Column(
@@ -102,12 +83,12 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
               'Label',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            labelContent(),
+            labelContent(colorScheme),
             const Text(
               'Number of options',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            numOptionContent(),
+            numOptionContent(colorScheme),
             Expanded(
               child: ListView.builder(
                 itemCount: controllers.length,
@@ -116,6 +97,7 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: TextField(
                       controller: controllers[index],
+                      textCapitalization: TextCapitalization.words,
                       decoration:
                           InputDecoration(labelText: 'Option ${index + 1}'),
                     ),
@@ -125,8 +107,7 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
-              child: Center(
-                child: addBtn()),
+              child: Center(child: addBtn(colorScheme)),
             ),
           ],
         ),
@@ -134,10 +115,11 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
     );
   }
 
-  Container numOptionContent() {
+  Container numOptionContent(ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
       child: TextField(
+        textCapitalization: TextCapitalization.words,
         controller: numOptController,
         onSubmitted: (value) {
           try {
@@ -177,35 +159,35 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
           }
         },
         keyboardType: TextInputType.number,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF49454F)),
-          ),
+              borderSide: BorderSide(color: colorScheme.primary)),
         ),
       ),
     );
   }
 
-  Container labelContent() {
+  Container labelContent(ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
       child: TextField(
+        textCapitalization: TextCapitalization.words,
         controller: labelController,
         onSubmitted: (value) {
           userLabel = labelController.text;
         },
         keyboardType: TextInputType.name,
-        decoration: const InputDecoration(
-          label: Text('Label'),
+        decoration: InputDecoration(
+          label: const Text('Label'),
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF49454F)),
+            borderSide: BorderSide(color: colorScheme.tertiary),
           ),
         ),
       ),
     );
   }
 
-  ElevatedButton addBtn() {
+  ElevatedButton addBtn(ColorScheme colorScheme) {
     return ElevatedButton(
       onPressed: () {
         int result = returnValues();
@@ -251,8 +233,10 @@ class _CustomRadioBtnState extends State<customRadioBtnForm> {
         }
       },
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(widget.mainColor),
-      ),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(colorScheme.primary),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(colorScheme.onPrimary)),
       child: Text('Add Fieldtext'),
     );
   }

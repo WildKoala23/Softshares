@@ -12,7 +12,7 @@ import 'classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
 import 'Pages/MyProfile.dart';
 import 'Pages/calendar.dart';
-import 'Pages/createCheckboxForm.dart';
+import 'Pages/customCheckForm.dart';
 import 'Pages/createForm.dart';
 import 'Pages/createPub.dart';
 import 'Pages/customFieldTextForm.dart';
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: logged == true ? '/Login' : '/SignIn',
+          initialRoute: '/createForm', //logged == true ? '/Login' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(areas: authProvider.areas),
             '/PointOfInterest': (context) =>

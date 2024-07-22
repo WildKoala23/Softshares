@@ -329,29 +329,7 @@ class _EventCreationState extends State<EventCreation> {
                         DateTime.parse(dateController.text),
                         recurrent);
 
-                    try {
-                      await api.createEvent(post);
-                      Navigator.pushNamed(context, '/home');
-                    } catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Error creating post'),
-                          content: Text(
-                              'An error occurred while creating the Event'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/home'); // Close the dialog
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamed(context, '/createForm');
                   } else {
                     showDialog(
                       context: context,
