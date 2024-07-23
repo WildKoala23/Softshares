@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/comments.dart';
+import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/forums.dart';
@@ -52,7 +53,7 @@ class _ForumPageState extends State<ForumPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: formAppbar(title: widget.forum.title),
+      appBar: contentAppBar(pub: widget.forum),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(

@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/comments.dart';
+import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/event.dart';
@@ -60,9 +59,7 @@ class _EventPageState extends State<EventPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: formAppbar(
-        title: '',
-      ),
+      appBar: contentAppBar(pub: widget.event,),
       body: DefaultTabController(
         length: 2,
         child: Column(

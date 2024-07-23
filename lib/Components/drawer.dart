@@ -111,7 +111,7 @@ class _myDrawerState extends State<myDrawer> {
                 },
                 leading: Icon(
                   widget.areas[index].icon,
-                  color: Colors.black,
+                  color: colorScheme.onPrimary,
                 ),
                 title: Text(widget.areas[index].areaName),
               );
