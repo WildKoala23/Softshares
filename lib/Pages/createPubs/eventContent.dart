@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/widget/search_widget.dart';
+import 'package:softshares/Pages/createForm.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
@@ -313,7 +314,7 @@ class _EventCreationState extends State<EventCreation> {
                 onPressed: () async {
                   if (_eventKey.currentState!.validate() &&
                       _selectedImage != null &&
-                      location != null ) {
+                      location != null) {
                     User user = (await bd.getUser())!;
                     Event post = Event(
                         null,
@@ -328,8 +329,15 @@ class _EventCreationState extends State<EventCreation> {
                         location,
                         DateTime.parse(dateController.text),
                         recurrent);
-
-                    Navigator.pushNamed(context, '/createForm');
+                    int id = await api.createEvent(post);
+                    // Navigate to create a form with specific id
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => createForm(
+                                id: id,
+                              )),
+                    );
                   } else {
                     showDialog(
                       context: context,

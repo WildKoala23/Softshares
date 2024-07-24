@@ -93,7 +93,6 @@ class MyApp extends StatelessWidget {
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(cities: authProvider.cities),
             '/createPost': (context) => createPost(areas: authProvider.areas),
-            '/createForm': (context) => createForm(),
             '/createRadioBtnForm': (context) => customRadioBtnForm(),
             '/createFieldTextForm': (context) => customFieldtextForm(),
             '/createCheckboxForm': (context) => customCheckboxForm(),

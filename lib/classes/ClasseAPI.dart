@@ -585,6 +585,39 @@ class API {
     }
   }
 
+  // Create dynamic form related to specific event
+  Future<void> createForm(int id, dynamic jsonData) async {
+    String? jwtToken = await getToken();
+
+    // Print raw and encoded JSON data for debugging
+    print('Raw: $jsonData');
+    print('Decode: ${jsonDecode(jsonData)}');
+    print('Encode: ${jsonEncode(jsonData)}');
+
+    try {
+      // Ensure jsonData is a JSON-encoded string
+      final jsonDataString = jsonEncode(jsonData);
+
+      var response = await http.post(
+        Uri.https(baseUrl, '/api/form/create-form'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json' // Set content type to JSON
+        },
+        body: jsonEncode(
+            {'eventID': id.toString(), 'customFieldsJson': jsonDataString}),
+      );
+
+      // Print response information for debugging
+      print('Dynamic form created successfully');
+      print('Response: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    } catch (e) {
+      print('Something went wrong (createForm())');
+      print('Error: $e');
+    }
+  }
+
   Future createEvent(Event event) async {
     var office = box.read('selectedCity');
     String? jwtToken = await getToken();
@@ -612,6 +645,10 @@ class API {
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
+      Map<String, dynamic> decodedJson = json.decode(response.body);
+      int id = decodedJson['data'];
+      print(id);
+      return id;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
@@ -1028,39 +1065,7 @@ class API {
     return await storage.read(key: 'jwt_refresh_token');
   }
 
-  // Future<String?> getID() async {
-  //   return await storage.read(key: 'user_id');
-  // }
-
   Future<void> logout() async {
     await storage.delete(key: 'jwt_token');
   }
 }
-
-//apagar e fazer endpoint para ir buscar o userID
-// Future<String> decryptToken(encryptedToken) async {
-//   print('inside decrypt {$encryptedToken}');
-
-//   print(encryptedToken['iv']);
-//   final String encryptionKey = Env.encryption_key;
-//   final key = encrypt.Key.fromBase64(encryptionKey);
-//   // Convert the IV from hex to bytes
-//   final iv = encrypt.IV.fromBase16(encryptedToken['iv']);
-//   final encryptedData = encryptedToken['encryptedData'];
-
-//   final encrypter =
-//       encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
-//   // Convert the encrypted data from base64
-//   final encryptedBytes = encrypt.Encrypted.fromBase64(encryptedData);
-
-//   // Decrypt the data
-//   final decrypted = encrypter.decrypt(encryptedBytes, iv: iv);
-
-//   // print('Encrypted Data: $encryptedData');
-//   // print('IV: ${encryptedToken['iv']}');
-//   // print('Decrypted: $decrypted');
-//   // print(decrypted.runtimeType);
-
-//   return decrypted;
-// }
