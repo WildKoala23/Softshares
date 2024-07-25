@@ -12,6 +12,7 @@ import '../Components/appBar.dart';
 import '../Components/forumCard.dart';
 import '../classes/ClasseAPI.dart';
 import '../classes/areaClass.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.areas});
@@ -22,6 +23,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //firebase
+  late FirebaseMessaging messaging;
+  String message = "No notifications";
+
   List<Publication> posts = [];
   final API api = API();
   final ScrollController _scrollController = ScrollController();
@@ -55,6 +60,27 @@ class _MyHomePageState extends State<MyHomePage> {
       if (_scrollController.position.pixels == 0) {
         getPosts();
       }
+    });
+    messaging = FirebaseMessaging.instance;
+    // Get the token
+    messaging.getToken().then((token) {
+      print("FCM Token: $token");
+      // Send the token to your server and store it in your database
+      if (token != null) {
+        api.sendTokenToServer(token);
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message received");
+      print(event.notification?.body);
+      setState(() {
+        message = event.notification?.body ?? "No Message";
+      });
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
     });
   }
 

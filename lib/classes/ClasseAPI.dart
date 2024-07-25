@@ -1068,4 +1068,28 @@ class API {
   Future<void> logout() async {
     await storage.delete(key: 'jwt_token');
   }
+
+  //FIREBASE
+  // Method to send the FCM token to the server
+  Future<void> sendTokenToServer(String token) async {
+    User? user = await bd.getUser();
+
+    final response = await http.post(
+      Uri.https(baseUrl, '/api/store-token'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'token': token,
+        // Can also send user id or other necessary information here
+        'userId': user!.id.toString(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Token stored successfully');
+    } else {
+      print('Failed to store token');
+    }
+  }
 }
