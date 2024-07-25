@@ -23,7 +23,7 @@ const List<String> options = [
 ];
 List<Widget> formItens = [];
 
-var jsonForm = [];
+List<Map<String, dynamic>> jsonForm = [];
 
 class _MyWidgetState extends State<createForm> {
   String currentOption = options[0];
@@ -36,29 +36,29 @@ class _MyWidgetState extends State<createForm> {
   }
 
   Future<void> sendForm() async {
-  print(widget.id);
+    print(widget.id);
 
-  // Convert jsonForm to JSON string
-  String data = jsonEncode(jsonForm); 
-  print(data);
+    // Convert jsonForm to JSON string
+    String data = jsonEncode(jsonForm);
+    print(data);
 
-  try {
-    await api.createForm(widget.id, data); // Pass data as a string
-    print('Created form');
-  } catch (e) {
-    print('Something went wrong (sendForm()):');
-    print(e);
+    try {
+      await api.createForm(widget.id, data); // Pass data as a string
+      print('Created form');
+    } catch (e) {
+      print('Something went wrong (sendForm()):');
+      print(e);
+    }
   }
-}
 
   // Create jsonObject to send to server
   void addInfo(String label, List<String>? options, String type) {
     var object = {
-      "FIELD_NAME": label,
-      "FIELD_TYPE": type,
-      "FIELD_VALUE": options.toString(),
-      "MAX_VALUE": null,
-      "MIN_VALUE": null
+      "field_name": label,
+      "field_type": type,
+      "field_value": jsonEncode(options), //options.toString(),
+      "max_value": null,
+      "min_value": null
     };
     jsonForm.add(object);
   }
