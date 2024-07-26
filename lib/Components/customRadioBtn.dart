@@ -22,6 +22,7 @@ class _CustomRadioBtnState extends State<customRadioBtn> {
     super.initState();
     currentOption = widget.options[0];
     controller = widget.controller ?? TextEditingController();
+    controller.text = currentOption;
   }
 
   @override

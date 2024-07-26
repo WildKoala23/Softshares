@@ -61,27 +61,27 @@ class _MyHomePageState extends State<MyHomePage> {
         getPosts();
       }
     });
-    messaging = FirebaseMessaging.instance;
-    // Get the token
-    messaging.getToken().then((token) {
-      print("FCM Token: $token");
-      // Send the token to your server and store it in your database
-      if (token != null) {
-        api.sendTokenToServer(token);
-      }
-    });
+    // messaging = FirebaseMessaging.instance;
+    // // Get the token
+    // messaging.getToken().then((token) {
+    //   print("FCM Token: $token");
+    //   // Send the token to your server and store it in your database
+    //   if (token != null) {
+    //     api.sendTokenToServer(token);
+    //   }
+    // });
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message received");
-      print(event.notification?.body);
-      setState(() {
-        message = event.notification?.body ?? "No Message";
-      });
-    });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+    //   print("message received");
+    //   print(event.notification?.body);
+    //   setState(() {
+    //     message = event.notification?.body ?? "No Message";
+    //   });
+    // });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message clicked!');
-    });
+    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    //   print('Message clicked!');
+    // });
   }
 
   @override

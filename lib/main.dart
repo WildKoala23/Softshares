@@ -2,10 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:softshares/Pages/chooseCityPage.dart';
-import 'package:softshares/Pages/pubsPages/postsPage.dart';
 import 'package:softshares/Pages/settings.dart';
-import 'package:softshares/classes/ClasseAPI.dart';
-import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/user.dart';
 import 'classes/ThemeNotifier.dart';
@@ -13,7 +10,6 @@ import 'Pages/homepage.dart';
 import 'Pages/MyProfile.dart';
 import 'Pages/calendar.dart';
 import 'Pages/customCheckForm.dart';
-import 'Pages/createForm.dart';
 import 'Pages/createPub.dart';
 import 'Pages/customFieldTextForm.dart';
 import 'Pages/customRadioBtnForm.dart';
@@ -38,6 +34,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
+
   SQLHelper db = SQLHelper.instance;
   User? user;
   bool logged;
@@ -52,8 +49,9 @@ void main() async {
     print(e);
     logged = false;
   }
-  await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // await Firebase.initializeApp();
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     MultiProvider(
       providers: [
@@ -70,10 +68,10 @@ void main() async {
   );
 }
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
-}
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   print("Handling a background message: ${message.messageId}");
+// }
 
 class MyApp extends StatelessWidget {
   MyApp({super.key, required this.logged, required this.user});

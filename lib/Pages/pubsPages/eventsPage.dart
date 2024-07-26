@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/Pages/registerEvent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
@@ -59,7 +60,9 @@ class _EventPageState extends State<EventPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: contentAppBar(pub: widget.event,),
+      appBar: contentAppBar(
+        pub: widget.event,
+      ),
       body: DefaultTabController(
         length: 2,
         child: Column(
@@ -266,7 +269,13 @@ class _EventPageState extends State<EventPage> {
             Align(
               alignment: Alignment.center,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Register(id: widget.event.id)),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.primary,
                 ),

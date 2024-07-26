@@ -11,6 +11,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:softshares/classes/fieldClass.dart';
 import '../env.dart';
 
 //import files
@@ -616,6 +617,32 @@ class API {
       print('Something went wrong (createForm())');
       print('Error: $e');
     }
+  }
+
+  // Get specific form to event
+  Future getForm(int id) async {
+    String? jwtToken = await getToken();
+    List<Field> formItens = [];
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/form/event-form/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
+    // print('Response status: ${response.statusCode}');
+    var jsonData = jsonDecode(response.body);
+    // print('FORM:');
+    // print(jsonData);
+    for (var item in jsonData['data']) {
+      List<String> options = [];
+      for (var option in jsonDecode(item['field_value'])) {
+        options.add(option.toString());
+      }
+      Field field = Field(
+          name: item['field_name'], type: item['field_type'], options: options);
+      formItens.add(field);
+    }
+
+    return formItens;
   }
 
   Future createEvent(Event event) async {

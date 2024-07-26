@@ -1,0 +1,12 @@
+// Class that helps with dynamic forms
+
+class Field {
+  String name, type;
+  List<String>? options;
+
+    Field({
+    required this.name,
+    required this.type,
+    this.options,
+  });
+}
