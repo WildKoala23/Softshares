@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
@@ -14,13 +16,13 @@ class Register extends StatefulWidget {
   State<Register> createState() => _RegisterState();
 }
 
-Map<String, List<String>> formItens = {};
-
 class _RegisterState extends State<Register> {
   final API api = API();
   List<Field> fields = [];
   List<Widget> widgets = [];
+  Map<String, List<String>> formItens = {};
   List<TextEditingController> controllers = [];
+  var responses = [];
   bool loaded = false;
 
   void buildForm() {
@@ -125,9 +127,11 @@ class _RegisterState extends State<Register> {
                     // Ensure setState is used if there are state changes
                     print(controllers.length);
                     for (var controller in controllers) {
-                      print(controller.text);
+                      // print(controller.text);
+                      responses.add(controller.text);
                     }
-                    print('Button Pressed');
+                    print('RESPONSES');
+                    print(jsonEncode(responses));
                   });
                 },
                 child: const Text('Register'),

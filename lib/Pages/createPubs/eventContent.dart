@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/widget/search_widget.dart';
 import 'package:softshares/Pages/createForm.dart';
@@ -48,6 +49,8 @@ class _EventCreationState extends State<EventCreation> {
   List<String> recurrentOpt = ["Weekly", "Monthly"];
   bool recurrent = false;
   late String recurrentValue;
+  TimeOfDay start_time = TimeOfDay.now();
+  TimeOfDay end_time = TimeOfDay.now();
 
   final _eventKey = GlobalKey<FormState>();
 
@@ -247,12 +250,87 @@ class _EventCreationState extends State<EventCreation> {
               dateContent(colorScheme, _eventKey),
               const SizedBox(height: 30),
               const Text(
+                'Time',
+                style: TextStyle(fontSize: 22),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: colorScheme.onPrimary, // Set the color of the border
+                    width: 1.0, // Set the width of the border
+                  ),
+                  borderRadius: BorderRadius.circular(
+                      8.0), // Optional: Add rounded corners
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            '${start_time.hour}:${start_time.minute}',
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          ElevatedButton(
+                              onPressed: () async {
+                                final TimeOfDay? timeOfDay =
+                                    await showTimePicker(
+                                        context: context,
+                                        initialTime: start_time,
+                                        initialEntryMode:
+                                            TimePickerEntryMode.dial);
+                                if (timeOfDay != null) {
+                                  setState(() {
+                                    start_time = timeOfDay;
+                                  });
+                                }
+                              },
+                              child: Text(
+                                'Choose start time',
+                                style: TextStyle(color: colorScheme.onPrimary),
+                              ))
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            '${end_time.hour}:${end_time.minute}',
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          ElevatedButton(
+                              onPressed: () async {
+                                final TimeOfDay? timeOfDay =
+                                    await showTimePicker(
+                                        context: context,
+                                        initialTime: end_time,
+                                        initialEntryMode:
+                                            TimePickerEntryMode.dial);
+                                if (timeOfDay != null) {
+                                  setState(() {
+                                    end_time = timeOfDay;
+                                  });
+                                }
+                              },
+                              child: Text(
+                                'Choose end time',
+                                style: TextStyle(color: colorScheme.onPrimary),
+                              ))
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              const Text(
                 'Area',
                 style: TextStyle(fontSize: 22),
               ),
               Container(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.onPrimary),
                     borderRadius: BorderRadius.all(Radius.circular(8.0))),
@@ -342,8 +420,8 @@ class _EventCreationState extends State<EventCreation> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Non valid inputs'),
-                        content: Text(
+                        title: const Text('Non valid inputs'),
+                        content: const Text(
                             'Please check if all inputs are valid (image/location)'),
                         actions: [
                           TextButton(
@@ -386,7 +464,7 @@ class _EventCreationState extends State<EventCreation> {
             suffixIcon: const Icon(Icons.calendar_today),
             label: Text(
               "Date",
-              style: TextStyle(color: colorScheme.onTertiary),
+              style: TextStyle(color: colorScheme.onPrimary),
             ),
             border: OutlineInputBorder(
                 borderSide: BorderSide(color: colorScheme.primary))),
@@ -397,8 +475,8 @@ class _EventCreationState extends State<EventCreation> {
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
         context: context,
-        firstDate: DateTime(1970),
-        lastDate: DateTime(2026),
+        firstDate: DateTime.now().add(const Duration(days: 7)),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
         initialDate: DateTime.now());
     if (_picked != null) {
       setState(() {

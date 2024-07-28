@@ -15,12 +15,18 @@ class _contentAppBarState extends State<contentAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: const Icon(Icons.close),
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.close),
+      ),
       title: Text(widget.pub.title),
       actions: [
         IconButton(
             onPressed: () {
-              Share.share('_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
+              Share.share(
+                  '_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
             },
             icon: const Icon(Icons.share))
       ],

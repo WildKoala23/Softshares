@@ -5,6 +5,7 @@ import '../classes/publication.dart';
 
 class Event extends Publication {
   DateTime eventDate;
+  DateTime? event_start, event_end;
   bool recurring;
   Event(
       int? id,
