@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
 import 'package:softshares/Pages/customFieldTextForm.dart';
@@ -36,7 +37,7 @@ class _RegisterState extends State<Register> {
             controller: cx,
           ));
           break;
-        case 'Int':
+        case 'Number':
           aux.add(customTextField(
             label: item.name,
             numericInput: true,
@@ -50,19 +51,27 @@ class _RegisterState extends State<Register> {
             controller: cx,
           ));
           break;
+        case 'Checkbox':
+          aux.add(customCheckbox(
+            label: item.name,
+            options: item.options!,
+            controller: cx,
+          ));
       }
     }
     setState(() {
       controllers = aux_cx;
       widgets = aux;
-      loaded = true;
     });
+    print(controllers.length);
   }
 
   Future<void> getForm() async {
     fields = await api.getForm(widget.id);
-    print('HERE');
     buildForm();
+    setState(() {
+      loaded = true;
+    });
   }
 
   @override
@@ -88,6 +97,7 @@ class _RegisterState extends State<Register> {
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (!loaded)
                 const Center(
@@ -102,19 +112,26 @@ class _RegisterState extends State<Register> {
                     return widgets[index];
                   },
                 ),
+              const SizedBox(height: 20), // Add some space before the button
               ElevatedButton(
                 style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(colorScheme.onPrimary),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(colorScheme.primary)),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(colorScheme.onPrimary),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(colorScheme.primary),
+                ),
                 onPressed: () {
-                  for (var controller in controllers) {
-                    print(controller.text);
-                  }
+                  setState(() {
+                    // Ensure setState is used if there are state changes
+                    print(controllers.length);
+                    for (var controller in controllers) {
+                      print(controller.text);
+                    }
+                    print('Button Pressed');
+                  });
                 },
                 child: const Text('Register'),
-              )
+              ),
             ],
           ),
         ),

@@ -630,12 +630,15 @@ class API {
     });
     // print('Response status: ${response.statusCode}');
     var jsonData = jsonDecode(response.body);
-    // print('FORM:');
-    // print(jsonData);
+    print('FORM:');
+    print(jsonData);
     for (var item in jsonData['data']) {
       List<String> options = [];
-      for (var option in jsonDecode(item['field_value'])) {
-        options.add(option.toString());
+      if (item['field_type'] == 'Radio' || item['field_type'] == 'Checkbox') {
+        for (var option in jsonDecode(item['field_value'])) {
+          print(option);
+          options.add(option.toString());
+        }
       }
       Field field = Field(
           name: item['field_name'], type: item['field_type'], options: options);

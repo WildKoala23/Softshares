@@ -37,7 +37,7 @@ class _customCheckboxState extends State<customCheckbox> {
           padding: const EdgeInsets.only(left: 25.0, top: 20),
           child: Text(
             widget.label,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
