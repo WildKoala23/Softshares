@@ -24,6 +24,34 @@ class _MyHomePageState extends State<MyProfile> {
     Navigator.pushNamed(context, '/settings');
   }
 
+  void logOff() {
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Log Off?'),
+            content: const Text('To log off press "Log Off"'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel')),
+              TextButton(
+                  onPressed: () async {
+                    await bd.removeUser(widget.user);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignIn()));
+                  },
+                  child: const Text('Log Off'))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -93,10 +121,8 @@ class _MyHomePageState extends State<MyProfile> {
                     side: BorderSide(color: colorScheme.secondary)))),
             child: const Text('Edit Profile')),
         ElevatedButton(
-            onPressed: () async {
-              await bd.removeUser(widget.user);
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const SignIn()));
+            onPressed: () {
+              logOff();
             },
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
