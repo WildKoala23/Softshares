@@ -662,39 +662,41 @@ class API {
 
     String? path;
 
+    var recurring_aux = jsonEncode(event.recurring_path);
+
     if (event.img != null) {
       path = await uploadPhoto(event.img!);
     }
     try {
-    var response =
-        await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
-      'subAreaId': event.subCategory.toString(),
-      'officeId': office.toString(),
-      'publisher_id': event.user.id.toString(),
-      'name': event.title,
-      'description': event.desc,
-      'filePath': path.toString(),
-      'eventDate':
-          event.eventDate.toIso8601String(), //Convert DateTime to string
-      'location': event.location.toString(),
-      'recurring': event.recurring.toString(),
-      'recurring_pattern': event.recurring_path
-    }, headers: {
-      'Authorization': 'Bearer $jwtToken'
-    });
-    if (response.statusCode == 401) {
-      throw InvalidTokenExceptionClass('token access expired');
-    }
+      var response =
+          await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
+        'subAreaId': event.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': event.user.id.toString(),
+        'name': event.title,
+        'description': event.desc,
+        'filePath': path.toString(),
+        'eventDate':
+            event.eventDate.toIso8601String(), //Convert DateTime to string
+        'location': event.location.toString(),
+        'recurring': event.recurring.toString(),
+        'recurring_pattern': recurring_aux
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
 
-    Map<String, dynamic> decodedJson = json.decode(response.body);
-    int id = decodedJson['data'];
-    print(id);
-    return id;
+      Map<String, dynamic> decodedJson = json.decode(response.body);
+      int id = decodedJson['data'];
+      print(id);
+      return id;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
       return createEvent(event);
-    // Re-throwing the exception after handling it
+      // Re-throwing the exception after handling it
     } catch (e, s) {
       print('create Event');
       print('Stack trace:\n $s');
@@ -927,6 +929,39 @@ class API {
 
         // Initialize List if not already initialized
         events[eventDay] ??= [];
+
+        //Handle recurring events -> weekly
+        if (publication.recurring_path == 'Weekly') {
+          DateTime recurrenceDate = eventDate;
+
+          // Add occurrences for a reasonable future range (e.g., 6 months)
+          for (int i = 1; i <= 26; i++) {
+
+            recurrenceDate = recurrenceDate.add(Duration(days: 7));
+            if (recurrenceDate.year > DateTime.now().year + 1) break;
+
+            DateTime recurrenceDay = DateTime(
+                recurrenceDate.year, recurrenceDate.month, recurrenceDate.day);
+            events[recurrenceDay] ??= [];
+            events[recurrenceDay]!.add(publication);
+          }
+        }
+        //Handle recurring events -> monthly
+        else if (publication.recurring_path == 'Monthly') {
+          DateTime recurrenceDate = eventDate;
+
+          // Add occurrences for a reasonable future range (e.g., 6 months)
+          for (int i = 1; i <= 6; i++) {
+
+            recurrenceDate = recurrenceDate.add(Duration(days: 31));
+            if (recurrenceDate.year > DateTime.now().year + 1) break;
+
+            DateTime recurrenceDay = DateTime(
+                recurrenceDate.year, recurrenceDate.month, recurrenceDate.day);
+            events[recurrenceDay] ??= [];
+            events[recurrenceDay]!.add(publication);
+          }
+        }
 
         // Add the publication to the list of events for that day
         events[eventDay]!.add(publication);

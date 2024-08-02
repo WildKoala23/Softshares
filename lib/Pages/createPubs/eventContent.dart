@@ -411,7 +411,9 @@ class _EventCreationState extends State<EventCreation> {
                         start_time,
                         end_time);
                     int id = await api.createEvent(post);
+                    
                     // Navigate to create a form with specific id
+                    
                     Navigator.push(
                       context,
                       MaterialPageRoute(

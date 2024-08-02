@@ -57,12 +57,16 @@ class _CalendarState extends State<Calendar> {
     }
   }
 
-  void callBack(context) {
-    print('Will implement');
+  List<Event> _getEventsForDay(DateTime day) {
+    // Retrieve events for the specific day
+    List<Event> eventsForDay =
+        events[DateTime(day.year, day.month, day.day)] ?? [];
+
+    return eventsForDay;
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    return events[DateTime(day.year, day.month, day.day)] ?? [];
+  void callBack(context) {
+    print('Will implement');
   }
 
   @override
@@ -90,7 +94,9 @@ class _CalendarState extends State<Calendar> {
               },
               lastDay: DateTime.utc(2026, 09, 01),
               onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
+                setState(() {
+                  _focusedDay = focusedDay;
+                });
               },
               onDaySelected: _onDaySelected,
               eventLoader: (day) {
@@ -111,65 +117,70 @@ class _CalendarState extends State<Calendar> {
               ),
             ),
           ),
-          loading == true
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Container(
-                  child: _selectedEvents != null
-                      ? SingleChildScrollView(
-                          child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: _selectedEvents?.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {},
-                                  child: (Card(
-                                      child: Padding(
-                                    padding: const EdgeInsets.all(18.0),
-                                    child: Row(
-                                      children: [
-                                        Row(
+          Expanded(
+            child: loading == true
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : _selectedEvents != null
+                    ? Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: ListView.builder(
+                          itemCount: _selectedEvents?.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      userCircle(colorScheme, index),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            userCircle(colorScheme, index),
-                                            const SizedBox(
-                                              width: 10,
+                                            Text(
+                                              '${_selectedEvents![index].user.firstname} ${_selectedEvents![index].user.lastName}',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${_selectedEvents![index].user.firstname} ${_selectedEvents![index].user.lastName}',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Text(_selectedEvents![index]
-                                                    .title)
-                                              ],
-                                            ),
+                                            Text(_selectedEvents![index].title),
                                           ],
                                         ),
-                                        _selectedEvents![index].img != null
-                                            ? Image.network(
-                                                'https://backendpint-w3vz.onrender.com/uploads/${_selectedEvents![index].img!.path}',
-                                                //Handles images not existing
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                return Container();
-                                              })
-                                            : const SizedBox()
-                                      ],
-                                    ),
-                                  ))),
-                                );
-                              }),
-                        ))
-                      : const SizedBox(),
-                )
+                                      ),
+                                      if (_selectedEvents![index].img != null)
+                                        Container(
+                                          width:
+                                              100, // Set a fixed width or constraints for images
+                                          height:
+                                              100, // Set a fixed height or constraints for images
+                                          child: Image.network(
+                                            'https://backendpint-w3vz.onrender.com/uploads/${_selectedEvents![index].img!.path}',
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Container(); // Handles images not existing
+                                            },
+                                          ),
+                                        )
+                                      else
+                                        const SizedBox(
+                                            width:
+                                                100), // Space for alignment if no image
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : const SizedBox(),
+          ),
         ],
       ),
       drawer: myDrawer(
