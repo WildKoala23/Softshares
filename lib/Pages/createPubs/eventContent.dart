@@ -406,7 +406,11 @@ class _EventCreationState extends State<EventCreation> {
                         _selectedImage,
                         location,
                         DateTime.parse(dateController.text),
-                        recurrent);
+                        recurrent,
+                        recurrentValue,
+                        start_time,
+                        end_time
+                        );
                     int id = await api.createEvent(post);
                     // Navigate to create a form with specific id
                     Navigator.push(

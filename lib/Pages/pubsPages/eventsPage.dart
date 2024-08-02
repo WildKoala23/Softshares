@@ -242,7 +242,7 @@ class _EventPageState extends State<EventPage> {
             const SizedBox(height: 20),
             Text(
               'Date: ${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
-              style: const TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 20),
             Container(

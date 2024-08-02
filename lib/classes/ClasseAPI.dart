@@ -188,7 +188,7 @@ class API {
       return getPosts();
       // Re-throwing the exception after handling it
     } catch (err, s) {
-      print('isnide get all posts $err');
+      print('inside get all posts $err');
       print('Stack trace:\n $s');
       rethrow; // rethrow the error if needed or handle it accordingly
     }
@@ -262,7 +262,6 @@ class API {
         throw InvalidTokenExceptionClass('token access expired');
       }
       var jsonData = jsonDecode(response.body);
-
       //Get all events
       for (var eachPub in jsonData['data']) {
         var file;
@@ -272,19 +271,29 @@ class API {
           file = null;
         }
         User publisherUser = await getUser(eachPub['publisher_id']);
+        User? adminUser = eachPub['admin_id'] != null
+            ? await getUser(eachPub['admin_id'])
+            : null;
+        DateTime creationDate = DateTime.parse(eachPub['creation_date']);
+        DateTime eventDate = DateTime.parse(eachPub['event_date']);
+        // Create Event object
         final publication = Event(
             eachPub['event_id'],
             publisherUser,
-            null,
+            adminUser,
             eachPub['description'],
             eachPub['name'],
             eachPub['validated'],
             eachPub['sub_area_id'],
-            DateTime.parse(eachPub['creation_date']),
+            creationDate,
             file,
-            eachPub['event_location'],
-            DateTime.parse(eachPub['event_date']),
-            eachPub['recurring']);
+            eachPub['eventLocation'],
+            eventDate,
+            eachPub['recurring'],
+            eachPub['recurring_pattern']?.toString(),
+            null,
+            null);
+        print('Object created -> ${publication.id}');
         await publication.getSubAreaName();
         publications.add(publication);
       }
@@ -299,7 +308,7 @@ class API {
       return getEvents();
       // Re-throwing the exception after handling it
     } catch (e, s) {
-      print('isnide GetEvents');
+      print('inside GetEvents');
       print(e);
       print('Stack trace:\n $s');
       rethrow;
@@ -363,6 +372,10 @@ class API {
             await publication.getSubAreaName();
             publications.add(publication);
           } else if (type == 'events') {
+            DateTime creationDate = DateTime.parse(eachPub['creation_date']);
+            DateTime eventDate = DateTime.parse(eachPub['event_date']);
+
+            // Create Event object
             final publication = Event(
                 eachPub['event_id'],
                 publisherUser,
@@ -371,11 +384,14 @@ class API {
                 eachPub['name'],
                 eachPub['validated'],
                 eachPub['sub_area_id'],
-                DateTime.parse(eachPub['creation_date']),
+                creationDate,
                 file,
-                eachPub['event_location'],
-                DateTime.parse(eachPub['event_date']),
-                eachPub['recurring']);
+                eachPub['eventLocation'],
+                eventDate,
+                eachPub['recurring'],
+                eachPub['recurring_pattern'],
+                null,
+                null);
             await publication.getSubAreaName();
             publications.add(publication);
           }
@@ -488,14 +504,6 @@ class API {
   Future uploadPhoto(File img) async {
     String baseUrl = 'http://backendpint-w3vz.onrender.com/upload/upload';
     String? jwtToken = await getToken();
-    //FOR YOU TO FIX
-    // String? jwtToken = await getToken();
-
-    // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // });
 
     // Check if the file exists
     if (await img.exists()) {
@@ -669,6 +677,8 @@ class API {
         'eventDate':
             event.eventDate.toIso8601String(), //Convert DateTime to string
         'location': event.location.toString(),
+        'recurring': event.recurring.toString(),
+        'recurring_pattern': event.recurring_path
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
@@ -878,19 +888,23 @@ class API {
       var jsonData = jsonDecode(response.body);
 
       for (var eachPub in jsonData['data']) {
+        print(eachPub);
         var file = eachPub['filepath'] != null
             ? File(eachPub['filepath'])
             : null; // Check if event has image
         User publisherUser = await getUser(eachPub['publisher_id']); // Get user
-
+        User? adminUser = eachPub['admin_id'] != null
+            ? await getUser(eachPub['admin_id'])
+            : null;
         DateTime creationDate = DateTime.parse(eachPub['creation_date']);
         DateTime eventDate = DateTime.parse(eachPub['event_date']);
+        print('Pattern: ${eachPub['recurring_pattern'].toString()}');
 
         // Create Event object
         final publication = Event(
             eachPub['event_id'],
             publisherUser,
-            null,
+            adminUser,
             eachPub['description'],
             eachPub['name'],
             eachPub['validated'],
@@ -899,7 +913,10 @@ class API {
             file,
             eachPub['eventLocation'],
             eventDate,
-            eachPub['recurring']);
+            eachPub['recurring'],
+            eachPub['recurring_pattern'].toString(),
+            null,
+            null);
 
         await publication.getSubAreaName();
 

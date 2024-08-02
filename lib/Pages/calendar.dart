@@ -46,6 +46,9 @@ class _CalendarState extends State<Calendar> {
         loading = false;
       });
       print('Success fetching events, total: ${events.length}');
+      events.forEach((key, value) {
+        print('Key <$key>: Value: <${value}>;');
+      });
     } catch (e) {
       print("Error fetching events: $e");
       setState(() {
