@@ -409,8 +409,7 @@ class _EventCreationState extends State<EventCreation> {
                         recurrent,
                         recurrentValue,
                         start_time,
-                        end_time
-                        );
+                        end_time);
                     int id = await api.createEvent(post);
                     // Navigate to create a form with specific id
                     Navigator.push(
@@ -481,7 +480,7 @@ class _EventCreationState extends State<EventCreation> {
         context: context,
         firstDate: DateTime.now().add(const Duration(days: 7)),
         lastDate: DateTime.now().add(const Duration(days: 365)),
-        initialDate: DateTime.now());
+        initialDate: DateTime.now().add(const Duration(days: 7)));
     if (_picked != null) {
       setState(() {
         dateController.text = _picked.toString().split(" ")[0];

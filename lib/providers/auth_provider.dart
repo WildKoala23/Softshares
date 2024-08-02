@@ -28,7 +28,7 @@ class AuthProvider with ChangeNotifier {
     _isLoggedIn = !_isLoggedIn;
   }
 
-  Future login(String email, String password) async {
+  Future login(String email, String password, bool keepSign) async {
     var accessToken = await api.logInDb(email, password); // Example API call
     _isLoggedIn = true;
 
@@ -39,7 +39,10 @@ class AuthProvider with ChangeNotifier {
     }
     _user = user;
 
-    await bd.insertUser(user!.firstname, user.id, user.lastName, user.email);
+    // If checkbox is selected
+    if(keepSign){
+      await bd.insertUser(user!.firstname, user.id, user.lastName, user.email);
+    }
 
     // Load areas and cities data
     await loadAreasAndCities();

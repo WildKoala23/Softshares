@@ -666,34 +666,35 @@ class API {
       path = await uploadPhoto(event.img!);
     }
     try {
-      var response =
-          await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
-        'subAreaId': event.subCategory.toString(),
-        'officeId': office.toString(),
-        'publisher_id': event.user.id.toString(),
-        'name': event.title,
-        'description': event.desc,
-        'filePath': path.toString(),
-        'eventDate':
-            event.eventDate.toIso8601String(), //Convert DateTime to string
-        'location': event.location.toString(),
-        'recurring': event.recurring.toString(),
-        'recurring_pattern': event.recurring_path
-      }, headers: {
-        'Authorization': 'Bearer $jwtToken'
-      });
-      if (response.statusCode == 401) {
-        throw InvalidTokenExceptionClass('token access expired');
-      }
-      Map<String, dynamic> decodedJson = json.decode(response.body);
-      int id = decodedJson['data'];
-      print(id);
-      return id;
+    var response =
+        await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
+      'subAreaId': event.subCategory.toString(),
+      'officeId': office.toString(),
+      'publisher_id': event.user.id.toString(),
+      'name': event.title,
+      'description': event.desc,
+      'filePath': path.toString(),
+      'eventDate':
+          event.eventDate.toIso8601String(), //Convert DateTime to string
+      'location': event.location.toString(),
+      'recurring': event.recurring.toString(),
+      'recurring_pattern': event.recurring_path
+    }, headers: {
+      'Authorization': 'Bearer $jwtToken'
+    });
+    if (response.statusCode == 401) {
+      throw InvalidTokenExceptionClass('token access expired');
+    }
+
+    Map<String, dynamic> decodedJson = json.decode(response.body);
+    int id = decodedJson['data'];
+    print(id);
+    return id;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
       return createEvent(event);
-      // Re-throwing the exception after handling it
+    // Re-throwing the exception after handling it
     } catch (e, s) {
       print('create Event');
       print('Stack trace:\n $s');

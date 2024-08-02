@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyProfile> {
         builder: (context) {
           return AlertDialog(
             title: const Text('Log Off?'),
-            content: const Text('To log off press "Log Off"'),
+            content: const Text('Are you sure you want to log off?'),
             actions: [
               TextButton(
                   onPressed: () {

@@ -20,6 +20,8 @@ class _SignInState extends State<SignIn> {
   bool _isLoading = false;
   bool hidePassword = true;
 
+  bool keepLog = false;
+
   bool validInput() {
     if (usernameController.text == '' || passwordController.text == '') {
       return false;
@@ -49,11 +51,13 @@ class _SignInState extends State<SignIn> {
               child: Form(
                 key: _formkey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Text(
-                      'Log In',
-                      style: TextStyle(fontSize: 32),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 18.0),
+                      child: Text(
+                        'Log In',
+                        style: TextStyle(fontSize: 32),
+                      ),
                     ),
                     Column(
                       children: [
@@ -65,22 +69,36 @@ class _SignInState extends State<SignIn> {
                         myDivider(colorScheme),
                         userTextfield(colorScheme),
                         passwordFieldtext(colorScheme),
+                        Row(
+                          children: <Widget>[
+                            Checkbox(
+                              value: keepLog,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    keepLog = value;
+                                  });
+                                }
+                              },
+                            ),
+                            const Text(
+                              'Keep me signed',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
                         Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: colorScheme.onPrimary,
-                            ),
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  decoration: TextDecoration.underline),
-                            ),
-                          ),
-                        )
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'Forgot password?',
+                                style: TextStyle(
+                                  color: colorScheme.onPrimary,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ))
                       ],
                     ),
                     continueBtn(
@@ -96,12 +114,12 @@ class _SignInState extends State<SignIn> {
 
                             var jwtToken = await authProvider.login(
                                 usernameController.text,
-                                passwordController.text);
+                                passwordController.text, keepLog);
                             if (jwtToken == -1) {
                               _showErrorDialog('Admin cannot login in the app');
                             } else if (jwtToken != null) {
                               AuthProvider().login(usernameController.text,
-                                  passwordController.text);
+                                  passwordController.text, keepLog);
                               Navigator.pushNamed(context, '/home');
                             } else {
                               // Handle null response here
