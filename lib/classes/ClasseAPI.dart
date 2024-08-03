@@ -148,7 +148,7 @@ class API {
 
       var jsonData = jsonDecode(response.body);
 
-      print('inside json data $jsonData');
+      // print('inside json data $jsonData');
       //Get all Posts
       for (var eachPub in jsonData['data']) {
         //Filter posts with poi's
@@ -173,7 +173,7 @@ class API {
             file,
             eachPub['p_location'],
           );
-          print('Publication ${publication.id}');
+          publication.price = eachPub['price'];
           await publication.getSubAreaName();
           publications.add(publication);
         }
@@ -556,13 +556,6 @@ class API {
       print('Path: $path');
     }
 
-    // String? jwtToken = await getToken();
-
-    // var response = await http
-    //     .get(Uri.https(baseUrl, '/api/dynamic/all-content'), headers: {
-    //   'Content-Type': 'application/json',
-    //   'Authorization': 'Bearer $jwtToken'
-    // });
     try {
       var response =
           await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
@@ -573,6 +566,7 @@ class API {
         'content': pub.desc,
         'filePath': path.toString(),
         'pLocation': pub.location.toString(),
+        'price': pub.price.toString()
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
@@ -936,7 +930,6 @@ class API {
 
           // Add occurrences for a reasonable future range (e.g., 6 months)
           for (int i = 1; i <= 26; i++) {
-
             recurrenceDate = recurrenceDate.add(Duration(days: 7));
             if (recurrenceDate.year > DateTime.now().year + 1) break;
 
@@ -952,7 +945,6 @@ class API {
 
           // Add occurrences for a reasonable future range (e.g., 6 months)
           for (int i = 1; i <= 6; i++) {
-
             recurrenceDate = recurrenceDate.add(Duration(days: 31));
             if (recurrenceDate.year > DateTime.now().year + 1) break;
 

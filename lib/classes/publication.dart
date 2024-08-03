@@ -12,12 +12,23 @@ class Publication {
   bool _validated;
   DateTime _postDate;
   int _subCategory;
+  int? price;
   late String subAreaName;
   String? location;
   File? img;
 
-  Publication(this._id, this._user, this._admin, this._desc, this._title, this._validated,
-      this._subCategory, this._postDate, this.img, this.location);
+  Publication(
+      this._id,
+      this._user,
+      this._admin,
+      this._desc,
+      this._title,
+      this._validated,
+      this._subCategory,
+      this._postDate,
+      this.img,
+      this.location,
+      );
 
   User get user => _user;
   User get admin => _admin!;

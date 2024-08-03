@@ -22,6 +22,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
   final API api = API();
   bool failedLoading = false;
   late Future futurePosts;
+  List<int> filter = [];
 
   void rightCallback(context) {
     print('search');
@@ -86,11 +87,9 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
                 ),
               ));
             } else if (listPoi.isEmpty) {
-              return (
-                const Center(
-                  child: Text('No posts found'),
-                )
-              );
+              return (const Center(
+                child: Text('No posts found'),
+              ));
             }
             return (ListView.builder(
                 itemCount: listPoi.length,

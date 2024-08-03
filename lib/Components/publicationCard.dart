@@ -32,7 +32,7 @@ class _PubState extends State<PublicationCard> {
         );
       },
       child: Card(
-        margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
+        margin: const EdgeInsets.fromLTRB(26, 26, 20, 0),
         child: Column(
           children: [
             Padding(
@@ -98,6 +98,16 @@ class _PubState extends State<PublicationCard> {
             )
           ],
         ),
+        widget.pub.price != null
+            ? Row(
+                children: List.generate(
+                    widget.pub.price!,
+                    (start) => Icon(
+                          Icons.euro,
+                          color: colorScheme.secondary,
+                          size: 25,
+                        )))
+            : const SizedBox()
       ],
     );
   }
