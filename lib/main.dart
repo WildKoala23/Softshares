@@ -28,10 +28,18 @@ import 'package:softshares/providers/auth_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'firebase_options.dart';
+
 final storage = FlutterSecureStorage();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
 
@@ -50,7 +58,7 @@ void main() async {
     logged = false;
   }
 
-  // await Firebase.initializeApp();
+  // Uncomment if you need to handle background messages
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     MultiProvider(
@@ -67,7 +75,7 @@ void main() async {
     ),
   );
 }
-
+// Uncomment if you need to handle background messages
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
 //   print("Handling a background message: ${message.messageId}");

@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "896312359336",
-    "project_id": "softshare-3686f",
-    "storage_bucket": "softshare-3686f.appspot.com"
+    "project_number": "602316436569",
+    "project_id": "softshares-000515",
+    "storage_bucket": "softshares-000515.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:896312359336:android:e3e45da99f78ac9ae1059d",
+        "mobilesdk_app_id": "1:602316436569:android:6a85220e2c84a0292aad48",
         "android_client_info": {
           "package_name": "com.example.softshares"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "896312359336-jkc3klu9p027brfatej7li8g9oe363qv.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7dSwu6yaVpg4NnicbY8TpenHYlvT7Gq4"
+          "current_key": "AIzaSyCVuWQz-6HhTXVWdaQqWvwXgbdzFJ0JY1Q"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "896312359336-jkc3klu9p027brfatej7li8g9oe363qv.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
