@@ -114,7 +114,8 @@ class _SignInState extends State<SignIn> {
 
                             var jwtToken = await authProvider.login(
                                 usernameController.text,
-                                passwordController.text, keepLog);
+                                passwordController.text,
+                                keepLog);
                             if (jwtToken == -1) {
                               _showErrorDialog('Admin cannot login in the app');
                             } else if (jwtToken != null) {
@@ -299,7 +300,9 @@ class _SignInState extends State<SignIn> {
           side: BorderSide(color: colorScheme.onTertiary),
           elevation: 0,
         ),
-        onPressed: () {},
+        onPressed: () {
+          AuthProvider().signInWithGoogle();
+        },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
