@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Pages/signIn.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/providers/auth_provider.dart';
@@ -19,9 +20,21 @@ class MyProfile extends StatefulWidget {
 
 class _MyHomePageState extends State<MyProfile> {
   SQLHelper bd = SQLHelper.instance;
+  API api = API();
 
   void rightCallback(context) {
     Navigator.pushNamed(context, '/settings');
+  }
+
+  Future getPosts() async {
+    var data = await api.getUserPosts();
+    print(data);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getPosts();
   }
 
   void logOff() {

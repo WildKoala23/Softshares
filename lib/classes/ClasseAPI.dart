@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
@@ -39,7 +40,7 @@ class API {
     var response = await http.post(
         Uri.https(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
-    if(response.statusCode != 401){
+    if (response.statusCode != 401) {
       // Add logic
     } else if (response.statusCode != 200) {
       throw Exception('Failed to refresh token');
@@ -73,6 +74,7 @@ class API {
       return user;
     } on InvalidTokenExceptionClass catch (e) {
       await refreshAccessToken();
+      print(e);
       return getUser(id);
       // Re-throwing the exception after handling it
     } catch (e, s) {
@@ -194,6 +196,79 @@ class API {
       print('Stack trace:\n $s');
       rethrow; // rethrow the error if needed or handle it accordingly
     }
+  }
+
+  Future<List<Publication>> getUserPosts() async {
+    List<Publication> publications = [];
+    int officeId = box.read('selectedCity');
+
+    // try {
+      String? jwtToken = await getToken();
+      // Check if the token is not null before proceeding
+      if (jwtToken == null) {
+        print('Failed to retrieve JWT token');
+        throw Exception('Failed to retrieve JWT Token');
+      }
+
+      var response = await http.get(Uri.https(baseUrl, '/get-content'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      print(response.body);
+
+      var jsonData = jsonDecode(response.body);
+
+      print(jsonData);
+
+      // print('inside json data $jsonData');
+      //Get all Posts
+      // for (var eachPub in jsonData['data']) {
+      //   //Filter posts with poi's
+      //   if (eachPub['type'] == 'N') {
+      //     User publisherUser = await getUser(eachPub['publisher_id']);
+      //     print('ID: ${publisherUser.id} ');
+      //     var file;
+      //     if (eachPub['filepath'] != null) {
+      //       file = File(eachPub['filepath']);
+      //     } else {
+      //       file = null;
+      //     }
+      //     final publication = Publication(
+      //       eachPub['post_id'],
+      //       publisherUser,
+      //       null,
+      //       eachPub['content'],
+      //       eachPub['title'],
+      //       eachPub['validated'],
+      //       eachPub['sub_area_id'],
+      //       DateTime.parse(eachPub['creation_date']),
+      //       file,
+      //       eachPub['p_location'],
+      //     );
+      //     publication.price = eachPub['price'];
+      //     await publication.getSubAreaName();
+      //     publications.add(publication);
+      //   }
+      // }
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    // } on InvalidTokenExceptionClass catch (e) {
+    //   print('Caught an InvalidTokenExceptionClass: $e');
+    //   await refreshAccessToken();
+    //   return getPosts();
+      // Re-throwing the exception after handling it
+    // } catch (err, s) {
+    //   print('inside get all posts $err');
+    //   print('Stack trace:\n $s');
+    //   rethrow; // rethrow the error if needed or handle it accordingly
+    // }
   }
 
   Future<List<Forum>> getForums() async {
@@ -676,7 +751,9 @@ class API {
             event.eventDate.toIso8601String(), //Convert DateTime to string
         'location': event.location.toString(),
         'recurring': event.recurring.toString(),
-        'recurring_pattern': recurring_aux
+        'recurring_pattern': recurring_aux,
+        'startTime': event.event_start,
+        'endTime': event.event_end
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
@@ -897,6 +974,15 @@ class API {
             : null;
         DateTime creationDate = DateTime.parse(eachPub['creation_date']);
         DateTime eventDate = DateTime.parse(eachPub['event_date']);
+        TimeOfDay eventStart = TimeOfDay(
+          hour: int.parse(eachPub['startTime'].split(":")[0]),
+          minute: int.parse(eachPub['startTime'].split(":")[1]),
+        );
+
+        TimeOfDay eventEnd = TimeOfDay(
+          hour: int.parse(eachPub['endTime'].split(":")[0]),
+          minute: int.parse(eachPub['endTime'].split(":")[1]),
+        );
         print('Pattern: ${eachPub['recurring_pattern'].toString()}');
 
         // Create Event object
@@ -914,8 +1000,8 @@ class API {
             eventDate,
             eachPub['recurring'],
             eachPub['recurring_pattern'].toString(),
-            null,
-            null);
+            eventStart,
+            eventEnd);
 
         await publication.getSubAreaName();
 
