@@ -220,8 +220,8 @@ class _SignInState extends State<SignIn> {
               });
             },
             icon: hidePassword
-                ? const Icon(Icons.visibility)
-                : const Icon(Icons.visibility_off),
+                ? const Icon(Icons.visibility_off)
+                : const Icon(Icons.visibility),
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(color: colorScheme.onTertiary),

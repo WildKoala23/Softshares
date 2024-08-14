@@ -39,7 +39,9 @@ class API {
     var response = await http.post(
         Uri.https(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
-    if (response.statusCode != 200) {
+    if(response.statusCode != 401){
+      // Add logic
+    } else if (response.statusCode != 200) {
       throw Exception('Failed to refresh token');
     }
 

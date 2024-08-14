@@ -36,12 +36,10 @@ class _RecoveryState extends State<Recovery> {
                     ),
                   ),
                   emailTextfield(colorScheme),
-                  passwordFieldtext(colorScheme),
-                  confirmPasswordFieldtext(colorScheme),
                   continueBtn(
                       colorScheme: colorScheme,
                       onContinue: () {
-                        // Insert logic to redefine password
+                        //Add logic
                       })
                 ],
               ),
@@ -114,86 +112,6 @@ class _RecoveryState extends State<Recovery> {
             Icons.account_circle,
             color: colorScheme.onTertiary,
             size: 32,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: colorScheme.onTertiary),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container passwordFieldtext(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextFormField(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter password';
-          }
-          return null;
-        },
-        obscureText: hidePassword,
-        controller: newPassCx,
-        decoration: InputDecoration(
-          label: Text(
-            'password',
-            style: TextStyle(color: colorScheme.onTertiary),
-          ),
-          prefixIcon: Icon(
-            Icons.password,
-            color: colorScheme.onTertiary,
-            size: 32,
-          ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              setState(() {
-                hidePassword = !hidePassword;
-              });
-            },
-            icon: hidePassword
-                ? const Icon(Icons.visibility)
-                : const Icon(Icons.visibility_off),
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: colorScheme.onTertiary),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container confirmPasswordFieldtext(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextFormField(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter password';
-          }
-          return null;
-        },
-        obscureText: hideConfirm,
-        controller: confirmPasslCx,
-        decoration: InputDecoration(
-          label: Text(
-            'password',
-            style: TextStyle(color: colorScheme.onTertiary),
-          ),
-          prefixIcon: Icon(
-            Icons.password,
-            color: colorScheme.onTertiary,
-            size: 32,
-          ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              setState(() {
-                hideConfirm = !hideConfirm;
-              });
-            },
-            icon: hideConfirm
-                ? const Icon(Icons.visibility)
-                : const Icon(Icons.visibility_off),
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(color: colorScheme.onTertiary),
