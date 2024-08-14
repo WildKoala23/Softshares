@@ -90,7 +90,9 @@ class _SignInState extends State<SignIn> {
                         Align(
                             alignment: Alignment.centerLeft,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/recovery');
+                              },
                               child: Text(
                                 'Forgot password?',
                                 style: TextStyle(
@@ -235,14 +237,14 @@ class _SignInState extends State<SignIn> {
       child: TextFormField(
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter email/phone number';
+            return 'Please enter email';
           }
           return null;
         },
         controller: usernameController,
         decoration: InputDecoration(
           label: Text(
-            'Email/phone number',
+            'Email',
             style: TextStyle(color: colorScheme.onTertiary),
           ),
           prefixIcon: Icon(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:softshares/Pages/chooseCityPage.dart';
+import 'package:softshares/Pages/recovery.dart';
 import 'package:softshares/Pages/settings.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/user.dart';
@@ -115,6 +116,7 @@ class MyApp extends StatelessWidget {
                 Notifications(areas: authProvider.areas),
             '/settings': (context) => SettingsPage(),
             '/chooseCity': (context) => ChooseCityPage(),
+            '/recovery': (context) => Recovery(),
             '/test': (context) => test(),
           },
         );

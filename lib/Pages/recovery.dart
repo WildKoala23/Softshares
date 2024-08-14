@@ -1,0 +1,205 @@
+import 'package:flutter/material.dart';
+import 'package:softshares/Components/appBar.dart';
+
+class Recovery extends StatefulWidget {
+  const Recovery({super.key});
+
+  @override
+  State<Recovery> createState() => _RecoveryState();
+}
+
+class _RecoveryState extends State<Recovery> {
+  TextEditingController emailCx = TextEditingController();
+  TextEditingController newPassCx = TextEditingController();
+  TextEditingController confirmPasslCx = TextEditingController();
+
+  bool hidePassword = true;
+  bool hideConfirm = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: myAppBar(colorScheme),
+      body: SingleChildScrollView(
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 18.0),
+                    child: Text(
+                      'Recover password',
+                      style: TextStyle(fontSize: 32),
+                    ),
+                  ),
+                  emailTextfield(colorScheme),
+                  passwordFieldtext(colorScheme),
+                  confirmPasswordFieldtext(colorScheme),
+                  continueBtn(
+                      colorScheme: colorScheme,
+                      onContinue: () {
+                        // Insert logic to redefine password
+                      })
+                ],
+              ),
+            )),
+      ),
+    );
+  }
+
+  Container continueBtn({
+    required ColorScheme colorScheme,
+    required VoidCallback onContinue,
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(left: 20, right: 20),
+      height: 45,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
+        ),
+        onPressed: onContinue,
+        child: const Text('Continue'),
+      ),
+    );
+  }
+
+  AppBar myAppBar(ColorScheme colorScheme) {
+    return AppBar(
+      centerTitle: true,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
+      title: RichText(
+        text: TextSpan(
+          text: 'Soft',
+          style: TextStyle(color: colorScheme.onSecondary, fontSize: 36),
+          children: <TextSpan>[
+            TextSpan(
+              text: 'Shares',
+              style: TextStyle(color: colorScheme.secondary, fontSize: 36),
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Container emailTextfield(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter email';
+          }
+          return null;
+        },
+        controller: emailCx,
+        decoration: InputDecoration(
+          label: Text(
+            'Email',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.account_circle,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container passwordFieldtext(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter password';
+          }
+          return null;
+        },
+        obscureText: hidePassword,
+        controller: newPassCx,
+        decoration: InputDecoration(
+          label: Text(
+            'password',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.password,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              setState(() {
+                hidePassword = !hidePassword;
+              });
+            },
+            icon: hidePassword
+                ? const Icon(Icons.visibility)
+                : const Icon(Icons.visibility_off),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container confirmPasswordFieldtext(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter password';
+          }
+          return null;
+        },
+        obscureText: hideConfirm,
+        controller: confirmPasslCx,
+        decoration: InputDecoration(
+          label: Text(
+            'password',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.password,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              setState(() {
+                hideConfirm = !hideConfirm;
+              });
+            },
+            icon: hideConfirm
+                ? const Icon(Icons.visibility)
+                : const Icon(Icons.visibility_off),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
+      ),
+    );
+  }
+}
