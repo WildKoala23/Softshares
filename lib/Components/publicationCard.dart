@@ -88,7 +88,10 @@ class _PubState extends State<PublicationCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+             widget.pub.title.length > 30 ? Text(
+              widget.pub.title.substring(0, 30) + '....',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ):Text(
               widget.pub.title,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
