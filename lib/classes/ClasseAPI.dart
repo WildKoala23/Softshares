@@ -42,6 +42,7 @@ class API {
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
+      print('HERERRERERERER WEYAIOAIEDOASJDFCWRIKAFGHNERPLIGHJERTIGH');
     } else if (response.statusCode != 200) {
       throw Exception('Failed to refresh token');
     }
@@ -203,67 +204,67 @@ class API {
     int officeId = box.read('selectedCity');
 
     // try {
-      String? jwtToken = await getToken();
-      // Check if the token is not null before proceeding
-      if (jwtToken == null) {
-        print('Failed to retrieve JWT token');
-        throw Exception('Failed to retrieve JWT Token');
-      }
+    String? jwtToken = await getToken();
+    // Check if the token is not null before proceeding
+    if (jwtToken == null) {
+      print('Failed to retrieve JWT token');
+      throw Exception('Failed to retrieve JWT Token');
+    }
 
-      var response = await http.get(Uri.https(baseUrl, '/get-content'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
-      if (response.statusCode == 401) {
-        throw InvalidTokenExceptionClass('token access expired');
-      }
+    var response = await http.get(Uri.https(baseUrl, '/api/user/get-content'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
+    if (response.statusCode == 401) {
+      throw InvalidTokenExceptionClass('token access expired');
+    }
 
-      print(response.body);
+    print(response.body);
 
-      var jsonData = jsonDecode(response.body);
+    var jsonData = jsonDecode(response.body);
 
-      print(jsonData);
+    print(jsonData);
 
-      // print('inside json data $jsonData');
-      //Get all Posts
-      // for (var eachPub in jsonData['data']) {
-      //   //Filter posts with poi's
-      //   if (eachPub['type'] == 'N') {
-      //     User publisherUser = await getUser(eachPub['publisher_id']);
-      //     print('ID: ${publisherUser.id} ');
-      //     var file;
-      //     if (eachPub['filepath'] != null) {
-      //       file = File(eachPub['filepath']);
-      //     } else {
-      //       file = null;
-      //     }
-      //     final publication = Publication(
-      //       eachPub['post_id'],
-      //       publisherUser,
-      //       null,
-      //       eachPub['content'],
-      //       eachPub['title'],
-      //       eachPub['validated'],
-      //       eachPub['sub_area_id'],
-      //       DateTime.parse(eachPub['creation_date']),
-      //       file,
-      //       eachPub['p_location'],
-      //     );
-      //     publication.price = eachPub['price'];
-      //     await publication.getSubAreaName();
-      //     publications.add(publication);
-      //   }
-      // }
-      //Sort for most recent first
-      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+    // print('inside json data $jsonData');
+    //Get all Posts
+    // for (var eachPub in jsonData['data']) {
+    //   //Filter posts with poi's
+    //   if (eachPub['type'] == 'N') {
+    //     User publisherUser = await getUser(eachPub['publisher_id']);
+    //     print('ID: ${publisherUser.id} ');
+    //     var file;
+    //     if (eachPub['filepath'] != null) {
+    //       file = File(eachPub['filepath']);
+    //     } else {
+    //       file = null;
+    //     }
+    //     final publication = Publication(
+    //       eachPub['post_id'],
+    //       publisherUser,
+    //       null,
+    //       eachPub['content'],
+    //       eachPub['title'],
+    //       eachPub['validated'],
+    //       eachPub['sub_area_id'],
+    //       DateTime.parse(eachPub['creation_date']),
+    //       file,
+    //       eachPub['p_location'],
+    //     );
+    //     publication.price = eachPub['price'];
+    //     await publication.getSubAreaName();
+    //     publications.add(publication);
+    //   }
+    // }
+    //Sort for most recent first
+    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
 
-      return publications;
+    return publications;
     // } on InvalidTokenExceptionClass catch (e) {
     //   print('Caught an InvalidTokenExceptionClass: $e');
     //   await refreshAccessToken();
     //   return getPosts();
-      // Re-throwing the exception after handling it
+    // Re-throwing the exception after handling it
     // } catch (err, s) {
     //   print('inside get all posts $err');
     //   print('Stack trace:\n $s');
@@ -364,7 +365,7 @@ class API {
             eachPub['sub_area_id'],
             creationDate,
             file,
-            eachPub['eventLocation'],
+            eachPub['event_location'],
             eventDate,
             eachPub['recurring'],
             eachPub['recurring_pattern']?.toString(),
@@ -732,7 +733,10 @@ class API {
     String? jwtToken = await getToken();
 
     String? path;
-
+    String eventStart =
+        '${event.event_start!.hour.toString().padLeft(2, '0')}:${event.event_start!.minute.toString().padLeft(2, '0')}:00';
+    String eventEnd =
+        '${event.event_end!.hour.toString().padLeft(2, '0')}:${event.event_end!.minute.toString().padLeft(2, '0')}:00';
     var recurring_aux = jsonEncode(event.recurring_path);
 
     if (event.img != null) {
@@ -752,8 +756,8 @@ class API {
         'location': event.location.toString(),
         'recurring': event.recurring.toString(),
         'recurring_pattern': recurring_aux,
-        'startTime': event.event_start,
-        'endTime': event.event_end
+        'startTime': eventStart,
+        'endTime': eventEnd
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
@@ -975,13 +979,13 @@ class API {
         DateTime creationDate = DateTime.parse(eachPub['creation_date']);
         DateTime eventDate = DateTime.parse(eachPub['event_date']);
         TimeOfDay eventStart = TimeOfDay(
-          hour: int.parse(eachPub['startTime'].split(":")[0]),
-          minute: int.parse(eachPub['startTime'].split(":")[1]),
+          hour: int.parse(eachPub['start_time'].split(":")[0]),
+          minute: int.parse(eachPub['start_time'].split(":")[1]),
         );
 
         TimeOfDay eventEnd = TimeOfDay(
-          hour: int.parse(eachPub['endTime'].split(":")[0]),
-          minute: int.parse(eachPub['endTime'].split(":")[1]),
+          hour: int.parse(eachPub['end_time'].split(":")[0]),
+          minute: int.parse(eachPub['end_time'].split(":")[1]),
         );
         print('Pattern: ${eachPub['recurring_pattern'].toString()}');
 
@@ -996,7 +1000,7 @@ class API {
             eachPub['sub_area_id'],
             creationDate,
             file,
-            eachPub['eventLocation'],
+            eachPub['event_location'],
             eventDate,
             eachPub['recurring'],
             eachPub['recurring_pattern'].toString(),
