@@ -25,9 +25,9 @@ import '../classes/InvalidTokenExceptionClass.dart';
 
 class API {
   // Filipe
-  var baseUrl = 'backendpint-w3vz.onrender.com';
+  //var baseUrl = 'backendpint-w3vz.onrender.com';
   // Machado
-  //var baseUrl = 'backendpint-909f.onrender.com';
+  var baseUrl = 'backendpint-909f.onrender.com';
   //var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
@@ -40,7 +40,8 @@ class API {
       throw Exception('Failed to retrieve refreshToken');
     }
 
-    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
+    var response = await http.post(
+        Uri.https(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
@@ -59,7 +60,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.http(baseUrl, '/api/dynamic/user-info/$id'), headers: {
+          .get(Uri.https(baseUrl, '/api/dynamic/user-info/$id'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -92,7 +93,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.http(baseUrl, '/api/auth/get-user-by-token/'), headers: {
+          .get(Uri.https(baseUrl, '/api/auth/get-user-by-token/'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -142,7 +143,7 @@ class API {
       }
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
+          Uri.https(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -213,7 +214,7 @@ class API {
       throw Exception('Failed to retrieve JWT Token');
     }
 
-    var response = await http.get(Uri.http(baseUrl, '/api/user/get-content'),
+    var response = await http.get(Uri.https(baseUrl, '/api/user/get-content'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken'
@@ -281,7 +282,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/forums-by-city/${officeId}'),
+          Uri.https(baseUrl, '/api/dynamic/forums-by-city/${officeId}'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -333,7 +334,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+          Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -403,7 +404,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+          Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -531,7 +532,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+          Uri.https(baseUrl, '/api/dynamic/all-content-per/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -638,7 +639,7 @@ class API {
 
     try {
       var response =
-          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
+          await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
         'subAreaId': pub.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': pub.user.id.toString(),
@@ -682,7 +683,7 @@ class API {
       final jsonDataString = jsonEncode(jsonData);
 
       var response = await http.post(
-        Uri.http(baseUrl, '/api/form/create-form'),
+        Uri.https(baseUrl, '/api/form/create-form'),
         headers: {
           'Authorization': 'Bearer $jwtToken',
           'Content-Type': 'application/json' // Set content type to JSON
@@ -705,11 +706,11 @@ class API {
   Future getForm(int id) async {
     String? jwtToken = await getToken();
     List<Field> formItens = [];
-    var response = await http.get(Uri.http(baseUrl, '/api/form/event-form/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
+    var response = await http
+        .get(Uri.https(baseUrl, '/api/form/event-form/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
     // print('Response status: ${response.statusCode}');
     var jsonData = jsonDecode(response.body);
     print('FORM:');
@@ -746,7 +747,7 @@ class API {
     }
     try {
       var response =
-          await http.post(Uri.http(baseUrl, '/api/event/create'), body: {
+          await http.post(Uri.https(baseUrl, '/api/event/create'), body: {
         'subAreaId': event.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': event.user.id.toString(),
@@ -789,7 +790,7 @@ class API {
 
     try {
       var response =
-          await http.post(Uri.http(baseUrl, '/api/forum/create'), body: {
+          await http.post(Uri.https(baseUrl, '/api/forum/create'), body: {
         'officeID': office.toString(),
         'subAreaId': forum.subCategory.toString(),
         'title': forum.title,
@@ -825,7 +826,7 @@ class API {
 
     try {
       var response =
-          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
+          await http.post(Uri.https(baseUrl, '/api/post/create'), body: {
         'subAreaId': poi.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': poi.user.id.toString(),
@@ -862,7 +863,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.http(baseUrl, '/api/categories/get-areas'), headers: {
+          .get(Uri.https(baseUrl, '/api/categories/get-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -872,7 +873,7 @@ class API {
       }
 
       var responseSub = await http
-          .get(Uri.http(baseUrl, '/api/categories/get-sub-areas'), headers: {
+          .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -922,7 +923,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http
-          .get(Uri.http(baseUrl, '/api/categories/get-sub-areas'), headers: {
+          .get(Uri.https(baseUrl, '/api/categories/get-sub-areas'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
@@ -959,7 +960,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/events-by-city/$officeId'),
+          Uri.https(baseUrl, '/api/dynamic/events-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -1086,7 +1087,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl,
+          Uri.https(baseUrl,
               '/api/comment/get-comment-tree/content/$type/id/${pub.id}'),
           headers: {
             'Content-Type': 'application/json',
@@ -1135,7 +1136,7 @@ class API {
       // print('in comments: $_id');
       // print(_id.runtimeType);
       var response = await http
-          .post(Uri.http(baseUrl, '/api/comment/add-comment'), headers: {
+          .post(Uri.https(baseUrl, '/api/comment/add-comment'), headers: {
         'Authorization': 'Bearer $jwtToken'
       }, body: {
         'contentID': pub.id.toString(),
@@ -1169,7 +1170,7 @@ class API {
   Future registerUser(
       String email, String fName, String lName, int city) async {
     var response =
-        await http.post(Uri.http(baseUrl, '/api/auth/register'), body: {
+        await http.post(Uri.https(baseUrl, '/api/auth/register'), body: {
       'email': email,
       'firstName': fName,
       'lastName': lName,
@@ -1188,7 +1189,7 @@ class API {
 
   Future logInDb(String email, String password) async {
     var response =
-        await http.post(Uri.http(baseUrl, '/api/auth/login_mobile'), body: {
+        await http.post(Uri.https(baseUrl, '/api/auth/login_mobile'), body: {
       'email': email,
       'password': password,
     });
@@ -1227,7 +1228,7 @@ class API {
   }
 
   Future loginGoogle(var response) async {
-    if(response['success'] == true){
+    if (response['success'] == true) {
       var accessToken = response['token'];
       var refreshToken = response['refreshToken'];
       print('accessToken: $accessToken ');
@@ -1260,7 +1261,7 @@ class API {
     User? user = await bd.getUser();
 
     final response = await http.post(
-      Uri.http(baseUrl, '/api/store-token'),
+      Uri.https(baseUrl, '/api/store-token'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
