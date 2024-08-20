@@ -96,27 +96,6 @@ class AuthProvider with ChangeNotifier {
     _cities = await db.getCities();
   }
 
-  Future login_firebase(id) async {
-    var accessToken = await api.loginGoogle(id.toString()); // Example API call
-    _isLoggedIn = true;
-    print('login firebase');
-    print(accessToken);
-    var user = await api.getUserLogged();
-    //If getUserLogged() returns -1, it means the user is admin
-
-    // if (user == -1) {
-    //   return -1;
-    // }
-    // _user = user;
-
-    // }
-
-    // Load areas and cities data
-    await loadAreasAndCities();
-    notifyListeners();
-    return accessToken;
-  }
-
   Future<SignInResult> signInWithGoogle() async {
     //var baseUrl = 'backendpint-w3vz.onrender.com';
     var baseUrl = '10.0.2.2:8000';
