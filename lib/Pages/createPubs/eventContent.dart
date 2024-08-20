@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/widget/search_widget.dart';
@@ -411,9 +412,9 @@ class _EventCreationState extends State<EventCreation> {
                         start_time,
                         end_time);
                     int id = await api.createEvent(post);
-                    
+
                     // Navigate to create a form with specific id
-                    
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -491,12 +492,16 @@ class _EventCreationState extends State<EventCreation> {
   }
 
   Future _pickImageFromGallery() async {
-    final returnedImg =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (returnedImg != null) {
-      setState(() {
-        _selectedImage = File(returnedImg.path);
-      });
+    try {
+      final returnedImg =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (returnedImg != null) {
+        setState(() {
+          _selectedImage = File(returnedImg.path);
+        });
+      }
+    } on PlatformException {
+      // Silently ignore PlatformException
     }
   }
 }
