@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:softshares/classes/publication.dart';
+
 import '../../classes/db.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
-import 'package:softshares/classes/POI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -277,7 +278,7 @@ class _POICreationState extends State<POICreation> {
                   if (_poiKey.currentState!.validate() &&
                       _selectedImage != null &&
                       location != null) {
-                    POI post = POI(
+                    Publication post = Publication(
                         null,
                         user,
                         null,

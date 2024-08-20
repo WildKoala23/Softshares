@@ -22,24 +22,31 @@ class Area extends StatefulWidget {
 }
 
 class _MyAreaState extends State<Area> {
-  List<Publication> pubs = [];
+  List<Publication> allPubs = [];
   final API api = API();
   String type = 'forums';
+  int? price, aval;
 
-  Future<void> getPubs(String type) async {
-    pubs = [];
+  Future<void> getPubs(String type, int? price, int? aval) async {
+    allPubs = [];
     // Get specific area
     AreaClass area =
         widget.areas.firstWhere((area) => area.areaName == widget.title);
     // Get type of publications from specific area
     var data = await api.getAllPubsByArea(area.id, type);
-    pubs = data;
+
+    // Filter based on provided filters
+    allPubs = data.where((pub) {
+      bool matchesPrice = price == null || pub.price == price;
+      bool matchesAval = aval == null || pub == aval;
+      return matchesPrice && matchesAval;
+    }).toList();
   }
 
   @override
   void initState() {
     super.initState();
-    getPubs(type);
+    getPubs(type, price, aval);
   }
 
   void _onTabChanged(int index) {
@@ -55,7 +62,7 @@ class _MyAreaState extends State<Area> {
           type = 'posts';
           break;
       }
-      getPubs(type); // Fetch data when tab changes
+      getPubs(type, price, aval); // Fetch data when tab changes
     });
   }
 
@@ -120,12 +127,12 @@ class _MyAreaState extends State<Area> {
 
   FutureBuilder<dynamic> forumsContent() {
     return FutureBuilder(
-      future: getPubs(type),
+      future: getPubs(type, price, aval),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          if (pubs.isEmpty) {
+          if (allPubs.isEmpty) {
             return const Center(
               child: Text(
                 'No posts found',
@@ -134,9 +141,9 @@ class _MyAreaState extends State<Area> {
             );
           } else {
             return ListView.builder(
-              itemCount: pubs.length,
+              itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return ForumCard(forum: pubs[index] as Forum);
+                return ForumCard(forum: allPubs[index] as Forum);
               },
             );
           }
@@ -147,12 +154,12 @@ class _MyAreaState extends State<Area> {
 
   FutureBuilder<dynamic> eventContent() {
     return FutureBuilder(
-      future: getPubs(type),
+      future: getPubs(type, price, aval),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          if (pubs.isEmpty) {
+          if (allPubs.isEmpty) {
             return const Center(
               child: Text(
                 'No posts found',
@@ -161,9 +168,9 @@ class _MyAreaState extends State<Area> {
             );
           } else {
             return ListView.builder(
-              itemCount: pubs.length,
+              itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return EventCard(event: pubs[index] as Event);
+                return EventCard(event: allPubs[index] as Event);
               },
             );
           }
@@ -174,12 +181,12 @@ class _MyAreaState extends State<Area> {
 
   FutureBuilder<dynamic> postContent() {
     return FutureBuilder(
-      future: getPubs(type),
+      future: getPubs(type, price, aval),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else {
-          if (pubs.isEmpty) {
+          if (allPubs.isEmpty) {
             return const Center(
               child: Text(
                 'No posts found',
@@ -188,9 +195,9 @@ class _MyAreaState extends State<Area> {
             );
           } else {
             return ListView.builder(
-              itemCount: pubs.length,
+              itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return PublicationCard(pub: pubs[index]);
+                return PublicationCard(pub: allPubs[index]);
               },
             );
           }

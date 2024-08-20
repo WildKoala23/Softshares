@@ -322,7 +322,7 @@ class _PostCreationState extends State<PostCreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null);
+                        null, null);
 
                     try {
                       await api.createPost(post);

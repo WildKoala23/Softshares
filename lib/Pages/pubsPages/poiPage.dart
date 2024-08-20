@@ -5,14 +5,14 @@ import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
-import 'package:softshares/classes/POI.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
 class POIPage extends StatefulWidget {
   const POIPage({super.key, required this.poi});
 
-  final POI poi;
+  final Publication poi;
 
   @override
   State<POIPage> createState() => _POIPageState();
@@ -276,7 +276,7 @@ class _POIPageState extends State<POIPage> {
         ),
         Row(
             children: List.generate(
-                widget.poi.aval.round(),
+                widget.poi.aval!.round(),
                 (start) => Icon(
                       Icons.star,
                       color: colorScheme.secondary,

@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -27,5 +28,5 @@ class Event extends Publication {
     this.event_start,
     this.event_end,
   ) : super(id, user, admin, desc, title, validated, subCategory, postDate,
-            imgPath, location);
+            imgPath, location, null);
 }

@@ -17,7 +17,6 @@ import '../env.dart';
 
 //import files
 import 'utils.dart';
-import '../classes/POI.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
@@ -25,9 +24,9 @@ import '../classes/InvalidTokenExceptionClass.dart';
 
 class API {
   // Filipe
-  //var baseUrl = 'backendpint-w3vz.onrender.com';
+  var baseUrl = 'backendpint-w3vz.onrender.com';
   // Machado
-  var baseUrl = 'backendpint-909f.onrender.com';
+  //var baseUrl = 'backendpint-909f.onrender.com';
   //var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
@@ -180,6 +179,7 @@ class API {
             DateTime.parse(eachPub['creation_date']),
             file,
             eachPub['p_location'],
+            null,
           );
           publication.price = eachPub['price'];
           await publication.getSubAreaName();
@@ -303,7 +303,7 @@ class API {
             eachPub['title'],
             eachPub['validated'],
             eachPub['sub_area_id'],
-            DateTime.parse(eachPub['creation_date']),
+            DateTime.parse(eachPub['creation_date'],),
           );
           await publication.getSubAreaName();
           publications.add(publication);
@@ -437,6 +437,7 @@ class API {
               DateTime.parse(eachPub['creation_date']),
               file,
               eachPub['p_location'],
+              null
             );
             await publication.getSubAreaName();
             publications.add(publication);
@@ -525,9 +526,9 @@ class API {
     }
   }
 
-  Future<List<POI>> getAllPoI() async {
+  Future<List<Publication>> getAllPoI() async {
     try {
-      List<POI> list = [];
+      List<Publication> list = [];
       int officeId = box.read('selectedCity');
       String? jwtToken = await getToken();
 
@@ -551,7 +552,7 @@ class API {
         }
         if (eachPub['type'] == 'P') {
           User publisherUser = await getUser(eachPub['publisher_id']);
-          final publication = POI(
+          final publication = Publication(
             eachPub['post_id'],
             publisherUser,
             null,
@@ -562,7 +563,7 @@ class API {
             DateTime.parse(eachPub['creation_date']),
             file,
             eachPub['p_location'],
-            3,
+            3, // Change this
           );
           await publication.getSubAreaName();
           list.add(publication);
@@ -815,7 +816,7 @@ class API {
     }
   }
 
-  Future createPOI(POI poi) async {
+  Future createPOI(Publication poi) async {
     var office = box.read('selectedCity');
     String? path;
     String? jwtToken = await getToken();
@@ -835,7 +836,7 @@ class API {
         'type': 'P',
         'filePath': path.toString(),
         'pLocation': poi.location.toString(),
-        'rating': poi.aval.round().toString()
+        'rating': poi.aval!.round().toString()
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });

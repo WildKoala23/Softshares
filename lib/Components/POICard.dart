@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/pubsPages/poiPage.dart';
-import 'package:softshares/classes/POI.dart';
+import 'package:softshares/classes/publication.dart';
 
 class POICard extends StatefulWidget {
   const POICard({super.key, required this.pointOfInterest});
 
-  final POI pointOfInterest;
+  final Publication pointOfInterest;
 
   @override
   State<POICard> createState() => _POIState();
@@ -87,8 +87,8 @@ class _POIState extends State<POICard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // If title is bigger than 30 chars, cut it
-            widget.pointOfInterest.title.length > 30 ? Text(
-              widget.pointOfInterest.title.substring(0, 30) + '....',
+            widget.pointOfInterest.title.length > 15 ? Text(
+              widget.pointOfInterest.title.substring(0, 15) + '....',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ):Text(
               widget.pointOfInterest.title,
@@ -102,7 +102,7 @@ class _POIState extends State<POICard> {
         ),
         Row(
             children: List.generate(
-                widget.pointOfInterest.aval.round(),
+                widget.pointOfInterest.aval!.round(),
                 (start) => Icon(
                       Icons.star,
                       color: colorScheme.secondary,

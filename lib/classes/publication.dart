@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:softshares/classes/ClasseAPI.dart';
@@ -16,19 +17,21 @@ class Publication {
   late String subAreaName;
   String? location;
   File? img;
+  double? aval;
 
   Publication(
-      this._id,
-      this._user,
-      this._admin,
-      this._desc,
-      this._title,
-      this._validated,
-      this._subCategory,
-      this._postDate,
-      this.img,
-      this.location,
-      );
+    this._id,
+    this._user,
+    this._admin,
+    this._desc,
+    this._title,
+    this._validated,
+    this._subCategory,
+    this._postDate,
+    this.img,
+    this.location,
+    this.aval
+  );
 
   User get user => _user;
   User get admin => _admin!;

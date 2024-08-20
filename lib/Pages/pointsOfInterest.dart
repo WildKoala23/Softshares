@@ -4,9 +4,9 @@ import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 import '../Components/POICard.dart';
-import '../classes/POI.dart';
 
 User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
@@ -18,7 +18,7 @@ class PointsOfInterest extends StatefulWidget {
 }
 
 class _PointsOfInterestState extends State<PointsOfInterest> {
-  List<POI> listPoi = [];
+  List<Publication> listPoi = [];
   final API api = API();
   bool failedLoading = false;
   late Future futurePosts;
