@@ -303,9 +303,11 @@ class _SignInState extends State<SignIn> {
           side: BorderSide(color: colorScheme.onTertiary),
           elevation: 0,
         ),
-        onPressed: () {
-          final result = AuthProvider().signInWithGoogle();
-          print(result);
+        onPressed: () async {
+          final result = await AuthProvider().signInWithGoogle();
+          print('onGooglePressed');
+          print(result.user);
+          print(result.response.body);
           //var jwtToken = AuthProvider().login_firebase(id);
           /*
           if (jwtToken == -1) {
