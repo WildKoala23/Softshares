@@ -4,6 +4,7 @@ import 'package:dev_icons/dev_icons.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/user.dart';
 import 'package:softshares/providers/auth_provider.dart';
+import '../providers/sign_in_result.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -15,7 +16,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
+  API api = API();
   final _formkey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool hidePassword = true;
@@ -303,7 +304,22 @@ class _SignInState extends State<SignIn> {
           elevation: 0,
         ),
         onPressed: () {
-          AuthProvider().signInWithGoogle();
+          final result = AuthProvider().signInWithGoogle();
+          print(result);
+          //var jwtToken = AuthProvider().login_firebase(id);
+          /*
+          if (jwtToken == -1) {
+            _showErrorDialog('Admin cannot login in the app');
+          } else if (jwtToken != null) {
+            // AuthProvider().login(usernameController.text,
+            //     passwordController.text, keepLog);
+            print('we got here!');
+            Navigator.pushNamed(context, '/home');
+          } else {
+            // Handle null response here
+            _showErrorDialog('Login failed. Please try again.');
+          }
+          */
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.start,

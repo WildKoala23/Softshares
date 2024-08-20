@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //Fetch posts from server
   Future<void> getPosts() async {
-    print('aaaaaaaaaa');
+    //print('aaaaaaaaaa');
     var data = await api.getAllPosts();
     posts = data;
   }
