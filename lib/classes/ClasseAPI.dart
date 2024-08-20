@@ -24,8 +24,11 @@ import '../classes/publication.dart';
 import '../classes/InvalidTokenExceptionClass.dart';
 
 class API {
-  //var baseUrl = 'backendpint-w3vz.onrender.com';
-  var baseUrl = '10.0.2.2:8000';
+  // Filipe
+  var baseUrl = 'backendpint-w3vz.onrender.com';
+  // Machado
+  //var baseUrl = 'backendpint-909f.onrender.com';
+  //var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
   final SQLHelper bd = SQLHelper.instance;
@@ -1223,21 +1226,10 @@ class API {
     }
   }
 
-  Future loginGoogle(idToken) async {
-    print(' in logInGG');
-    print(idToken);
-    var response =
-        await http.post(Uri.http(baseUrl, '/api/auth/login_google'), body: {
-      'idToken': idToken,
-    });
-    print('fckingreposnse: $response ');
-    if (response.statusCode == 200) {
-      // Handle successful response
-      print('User login successfull');
-
-      var jsonData = jsonDecode(response.body);
-      var accessToken = jsonData['token'];
-      var refreshToken = jsonData['refreshToken'];
+  Future loginGoogle(var response) async {
+    if(response['success'] == true){
+      var accessToken = response['token'];
+      var refreshToken = response['refreshToken'];
       print('accessToken: $accessToken ');
       print('refreshToken: $refreshToken ');
       await storage.write(key: 'jwt_token', value: jsonEncode(accessToken));

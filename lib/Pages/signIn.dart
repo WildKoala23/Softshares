@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dev_icons/dev_icons.dart';
@@ -305,11 +307,15 @@ class _SignInState extends State<SignIn> {
         ),
         onPressed: () async {
           final result = await AuthProvider().signInWithGoogle();
+
           print('onGooglePressed');
           print(result.user);
           print(result.response.body);
-          //var jwtToken = ;
-          /*
+
+          var jsonData = jsonDecode(result.response.body);
+
+          var jwtToken = await api.loginGoogle(jsonData);
+
           if (jwtToken == -1) {
             _showErrorDialog('Admin cannot login in the app');
           } else if (jwtToken != null) {
@@ -321,7 +327,6 @@ class _SignInState extends State<SignIn> {
             // Handle null response here
             _showErrorDialog('Login failed. Please try again.');
           }
-          */
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
