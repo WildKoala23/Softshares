@@ -1263,12 +1263,10 @@ class API {
   // Method to send the FCM token to the server
   Future<void> sendTokenToServer(String token) async {
     User? user = await bd.getUser();
-
+    String? jwtToken = await getToken();
     final response = await http.post(
-      Uri.http(baseUrl, '/api/store-token'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+      Uri.http(baseUrl, '/api/auth/store-fcm-token'),
+      headers: {'Authorization': 'Bearer $jwtToken'},
       body: jsonEncode(<String, String>{
         'token': token,
         // Can also send user id or other necessary information here
@@ -1281,5 +1279,15 @@ class API {
     } else {
       print('Failed to store token');
     }
+  }
+
+  void saveToken(String token) {
+    final storage = GetStorage();
+    storage.write('fcmToken', token);
+  }
+
+  String? retrieveToken() {
+    final storage = GetStorage();
+    return storage.read('fcmToken');
   }
 }

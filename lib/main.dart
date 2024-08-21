@@ -25,6 +25,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:softshares/providers/auth_provider.dart';
+
+import 'package:softshares/classes/ClasseAPI.dart';
 //firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -97,28 +99,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    messaging.getToken().then((fcmtoken) {
-      print("FCM Token: $fcmtoken");
-      // Send this token to your server to enable push notifications
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("Message received: ${message.notification?.title}");
-      // Handle the message
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message clicked!');
-      // Navigate to a specific screen based on the message
-    });
+    initializeFCM();
   }
 
   @override
@@ -159,4 +140,47 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
+}
+
+void initializeFCM() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Request permission to send notifications (necessary for iOS)
+  await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  API api = API();
+  // Check if the token is already stored locally
+  String? fcmtoken = api.retrieveToken();
+  if (fcmtoken == null) {
+    // If not, get a new token
+    fcmtoken = await messaging.getToken();
+    if (fcmtoken != null) {
+      print("FCM Token: $fcmtoken");
+      api.saveToken(fcmtoken);
+
+      // Send this token to your server
+      String userId = "yourUserId"; // Replace with the actual user ID
+
+      await api.sendTokenToServer(fcmtoken);
+    }
+  } else {
+    print("FCM Token retrieved from local storage: $fcmtoken");
+    // Ensure the token is sent to the server even if it's retrieved locally
+    await api.sendTokenToServer(fcmtoken);
+  }
+
+  // Listen for foreground messages
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("Message received: ${message.notification?.title}");
+    // Handle the message
+  });
+
+  // Handle notification clicks when the app is in the background or terminated
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('Message clicked!');
+    // Navigate to a specific screen based on the message
+  });
 }
