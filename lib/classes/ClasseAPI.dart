@@ -162,7 +162,10 @@ class API {
         //Filter posts with poi's
         if (eachPub['type'] == 'N') {
           User publisherUser = await getUser(eachPub['publisher_id']);
-          print('ID: ${publisherUser.id} ');
+          double? price =
+              eachPub['price'] != null ? (eachPub['price'] as num) * 1.0 : null;
+          //double? rating = eachPub['score'] != null ? (eachPub['score'] as double) * 1.0 : null;
+          print('ID: ${publisherUser.id}\n Price: $price');
           var file;
           if (eachPub['filepath'] != null) {
             file = File(eachPub['filepath']);
@@ -180,9 +183,8 @@ class API {
               DateTime.parse(eachPub['creation_date']),
               file,
               eachPub['p_location'],
-              eachPub['rating'],
-              eachPub['price']);
-          publication.price = eachPub['price'];
+              null,
+              price);
           await publication.getSubAreaName();
           publications.add(publication);
         }
@@ -429,6 +431,10 @@ class API {
         if (roundedAreaId == areaId) {
           User publisherUser = await getUser(eachPub['publisher_id']);
           if (type == 'posts' && eachPub['type'] == 'N') {
+            double? price = eachPub['price'] != null
+                ? (eachPub['price'] as num) * 1.0
+                : null;
+
             final publication = Publication(
                 eachPub['post_id'],
                 publisherUser,
@@ -441,7 +447,7 @@ class API {
                 file,
                 eachPub['p_location'],
                 null,
-                null);
+                price);
             await publication.getSubAreaName();
             publications.add(publication);
           } else if (type == 'forums' && eachPub['event_id'] == null) {
@@ -505,16 +511,16 @@ class API {
       List<Event> events = [];
       List<Forum> forums = [];
 
-      // try {
-      posts = await getPosts();
-      events = await getEvents();
-      forums = await getForums();
-      pubs.addAll(posts);
-      pubs.addAll(events);
-      pubs.addAll(forums);
-      // } catch (e) {
-      //   print('inside GetAllPost $e');
-      // }
+      try {
+        posts = await getPosts();
+        events = await getEvents();
+        forums = await getForums();
+        pubs.addAll(posts);
+        pubs.addAll(events);
+        pubs.addAll(forums);
+      } catch (e) {
+        print('inside GetAllPost $e');
+      }
 
       //Sort for most recent first
       pubs.sort((a, b) => b.datePost.compareTo(a.datePost));
@@ -642,6 +648,7 @@ class API {
     }
 
     int? price = pub.price?.toInt();
+    int? rating = pub.aval?.toInt();
 
     try {
       var response =
@@ -653,7 +660,8 @@ class API {
         'content': pub.desc,
         'filePath': path.toString(),
         'pLocation': pub.location.toString(),
-        'price': price.toString()
+        'price': price.toString(),
+        'rating': rating.toString()
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
