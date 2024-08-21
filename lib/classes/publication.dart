@@ -13,11 +13,10 @@ class Publication {
   bool _validated;
   DateTime _postDate;
   int _subCategory;
-  int? price;
   late String subAreaName;
   String? location;
   File? img;
-  double? aval;
+  double? aval, price;
 
   Publication(
     this._id,
@@ -30,7 +29,8 @@ class Publication {
     this._postDate,
     this.img,
     this.location,
-    this.aval
+    this.aval,
+    this.price
   );
 
   User get user => _user;

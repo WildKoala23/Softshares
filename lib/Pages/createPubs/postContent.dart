@@ -30,8 +30,10 @@ class _PostCreationState extends State<PostCreation> {
 
   late AreaClass selectedArea;
   late AreaClass selectedSubArea;
-  late double currentSlideValue;
-  late double currentPriceValue;
+  late double? currentSlideValue;
+  late double? currentPriceValue;
+
+  late String? location;
 
   //Variables to en/disable rating and price sliders when not necessary
   late bool nonRating;
@@ -171,8 +173,9 @@ class _PostCreationState extends State<PostCreation> {
                 country: 'PT',
                 onSelected: (place) async {
                   final geolocation = await place.geolocation;
-                  print(
-                      'PLACE SELECTED: ${place.description}\n ${place.fullJSON} \n $geolocation');
+
+                  location =
+                      '${geolocation?.coordinates.latitude} ${geolocation?.coordinates.longitude}';
                 },
               ),
               const SizedBox(
@@ -262,7 +265,7 @@ class _PostCreationState extends State<PostCreation> {
                 Slider(
                   min: 1,
                   max: 5,
-                  value: currentSlideValue,
+                  value: currentSlideValue!,
                   onChanged: (double value) {
                     setState(() {
                       currentSlideValue = value;
@@ -293,7 +296,7 @@ class _PostCreationState extends State<PostCreation> {
                 Slider(
                   min: 1,
                   max: 4,
-                  value: currentPriceValue,
+                  value: currentPriceValue!,
                   onChanged: (double value) {
                     setState(() {
                       currentPriceValue = value;
@@ -311,7 +314,8 @@ class _PostCreationState extends State<PostCreation> {
                 onPressed: () async {
                   if (_postKey.currentState!.validate()) {
                     User user = (await bd.getUser())!;
-                    //Change when images and google api are working
+                    if (nonPrice == true) currentPriceValue = null;
+                    if (nonRating == true) currentSlideValue = null;
                     var post = Publication(
                         null,
                         user,
@@ -322,8 +326,9 @@ class _PostCreationState extends State<PostCreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null, null);
-
+                        null,
+                        currentSlideValue,
+                        currentPriceValue);
                     try {
                       await api.createPost(post);
                     } catch (e) {

@@ -28,5 +28,5 @@ class Event extends Publication {
     this.event_start,
     this.event_end,
   ) : super(id, user, admin, desc, title, validated, subCategory, postDate,
-            imgPath, location, null);
+            imgPath, location, null, null);
 }

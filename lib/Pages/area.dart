@@ -36,11 +36,13 @@ class _MyAreaState extends State<Area> {
     var data = await api.getAllPubsByArea(area.id, type);
 
     // Filter based on provided filters
-    allPubs = data.where((pub) {
+    if(type != 'events'){
+      allPubs = data.where((pub) {
       bool matchesPrice = price == null || pub.price == price;
-      bool matchesAval = aval == null || pub == aval;
+      bool matchesAval = aval == null || pub.aval == aval;
       return matchesPrice && matchesAval;
     }).toList();
+    }
   }
 
   @override

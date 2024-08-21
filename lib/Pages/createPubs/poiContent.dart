@@ -289,7 +289,9 @@ class _POICreationState extends State<POICreation> {
                         DateTime.now(),
                         _selectedImage,
                         location,
-                        currentSlideValue);
+                        currentSlideValue,
+                        currentPriceValue
+                        );
                     try {
                       await api.createPOI(post);
                     } catch (e) {

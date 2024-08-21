@@ -152,6 +152,7 @@ class API {
       }
 
       print(response.statusCode);
+      print(response.body);
 
       var jsonData = jsonDecode(response.body);
 
@@ -169,18 +170,18 @@ class API {
             file = null;
           }
           final publication = Publication(
-            eachPub['post_id'],
-            publisherUser,
-            null,
-            eachPub['content'],
-            eachPub['title'],
-            eachPub['validated'],
-            eachPub['sub_area_id'],
-            DateTime.parse(eachPub['creation_date']),
-            file,
-            eachPub['p_location'],
-            null,
-          );
+              eachPub['post_id'],
+              publisherUser,
+              null,
+              eachPub['content'],
+              eachPub['title'],
+              eachPub['validated'],
+              eachPub['sub_area_id'],
+              DateTime.parse(eachPub['creation_date']),
+              file,
+              eachPub['p_location'],
+              eachPub['rating'],
+              eachPub['price']);
           publication.price = eachPub['price'];
           await publication.getSubAreaName();
           publications.add(publication);
@@ -303,7 +304,9 @@ class API {
             eachPub['title'],
             eachPub['validated'],
             eachPub['sub_area_id'],
-            DateTime.parse(eachPub['creation_date'],),
+            DateTime.parse(
+              eachPub['creation_date'],
+            ),
           );
           await publication.getSubAreaName();
           publications.add(publication);
@@ -427,18 +430,18 @@ class API {
           User publisherUser = await getUser(eachPub['publisher_id']);
           if (type == 'posts' && eachPub['type'] == 'N') {
             final publication = Publication(
-              eachPub['post_id'],
-              publisherUser,
-              null,
-              eachPub['content'],
-              eachPub['title'],
-              eachPub['validated'],
-              eachPub['sub_area_id'],
-              DateTime.parse(eachPub['creation_date']),
-              file,
-              eachPub['p_location'],
-              null
-            );
+                eachPub['post_id'],
+                publisherUser,
+                null,
+                eachPub['content'],
+                eachPub['title'],
+                eachPub['validated'],
+                eachPub['sub_area_id'],
+                DateTime.parse(eachPub['creation_date']),
+                file,
+                eachPub['p_location'],
+                null,
+                null);
             await publication.getSubAreaName();
             publications.add(publication);
           } else if (type == 'forums' && eachPub['event_id'] == null) {
@@ -502,23 +505,23 @@ class API {
       List<Event> events = [];
       List<Forum> forums = [];
 
-      try {
-        posts = await getPosts();
-        events = await getEvents();
-        forums = await getForums();
-        pubs.addAll(posts);
-        pubs.addAll(events);
-        pubs.addAll(forums);
-      } catch (e) {
-        print(' iside GetAllPost $e');
-      }
+      // try {
+      posts = await getPosts();
+      events = await getEvents();
+      forums = await getForums();
+      pubs.addAll(posts);
+      pubs.addAll(events);
+      pubs.addAll(forums);
+      // } catch (e) {
+      //   print('inside GetAllPost $e');
+      // }
 
       //Sort for most recent first
       pubs.sort((a, b) => b.datePost.compareTo(a.datePost));
 
       return pubs;
     }
-    // Re-throwing the exception after handling it
+    //Re-throwing the exception after handling it
     catch (e, s) {
       print('error in getAllPosts $e');
       print('Stack trace:\n $s');
@@ -553,18 +556,18 @@ class API {
         if (eachPub['type'] == 'P') {
           User publisherUser = await getUser(eachPub['publisher_id']);
           final publication = Publication(
-            eachPub['post_id'],
-            publisherUser,
-            null,
-            eachPub['content'],
-            eachPub['title'],
-            eachPub['validated'],
-            eachPub['sub_area_id'],
-            DateTime.parse(eachPub['creation_date']),
-            file,
-            eachPub['p_location'],
-            3, // Change this
-          );
+              eachPub['post_id'],
+              publisherUser,
+              null,
+              eachPub['content'],
+              eachPub['title'],
+              eachPub['validated'],
+              eachPub['sub_area_id'],
+              DateTime.parse(eachPub['creation_date']),
+              file,
+              eachPub['p_location'],
+              eachPub['rating'],
+              eachPub['price']);
           await publication.getSubAreaName();
           list.add(publication);
         }
@@ -648,7 +651,6 @@ class API {
         'content': pub.desc,
         'filePath': path.toString(),
         'pLocation': pub.location.toString(),
-        'price': pub.price.toString()
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
@@ -804,6 +806,7 @@ class API {
         throw InvalidTokenExceptionClass('token access expired');
       }
       print(response.statusCode);
+      print(response.body);
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
