@@ -67,7 +67,7 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
-      print(response.body);
+      //print(response.body);
       var user = User(
           jsonData['data']['user_id'],
           jsonData['data']['first_name'],
@@ -102,13 +102,13 @@ class API {
 
       var jsonData = jsonDecode(response.body);
 
-      print(jsonData['user']['office_id']);
+      //print(jsonData['user']['office_id']);
 
       // If user is admin
       if (jsonData['user']['office_id'] == 0) {
         return -1;
       }
-      print('jsonData $jsonData');
+      //print('jsonData $jsonData');
       var user = User(
           jsonData['user']['user_id'],
           jsonData['user']['first_name'],

@@ -26,30 +26,69 @@ class _MyAreaState extends State<Area> {
   List<Publication> allPubs = [];
   final API api = API();
   String type = 'forums';
-  int? price, aval;
+  bool loaded = false;
+  Map<String, dynamic> filters = {};
 
-  Future<void> getPubs(String type, int? price, int? aval) async {
+  Future<void> getPubs(String type, Map<String, dynamic> filters) async {
     allPubs = [];
+    loaded = false;
+    print('Filters: $filters');
+
     // Get specific area
     AreaClass area =
         widget.areas.firstWhere((area) => area.areaName == widget.title);
+
     // Get type of publications from specific area
     var data = await api.getAllPubsByArea(area.id, type);
 
-    // Filter based on provided filters
-    if(type != 'events'){
-      allPubs = data.where((pub) {
-      bool matchesPrice = price == null || pub.price == price;
-      bool matchesAval = aval == null || pub.aval == aval;
-      return matchesPrice && matchesAval;
-    }).toList();
+    if (type == 'posts' && filters.isNotEmpty) {
+      // Initialize a set to track seen publications and avoid duplicates
+      Set<Publication> seenPubs = {};
+
+      // Filter by price
+      if (filters.containsKey('price') && filters['price'] != null) {
+        var filterPrices = filters['price'] as List<dynamic>;
+        filterPrices = filterPrices.map((price) => price.toString()).toList();
+
+        data.forEach((pub) {
+          if (pub.price != null &&
+              filterPrices.contains(pub.price!.toInt().toString())) {
+            seenPubs.add(pub);
+          }
+        });
+      }
+
+      // Filter by rating
+      if (filters.containsKey('rating') && filters['rating'] != null) {
+        var filterRatings = filters['rating'] as List<dynamic>;
+        filterRatings =
+            filterRatings.map((rating) => rating.toString()).toList();
+
+        // Use a temporary set to filter by rating
+        Set<Publication> tempPubs = {};
+        seenPubs.forEach((pub) {
+          if (pub.aval != null &&
+              filterRatings.contains(pub.aval!.toInt().toString())) {
+            tempPubs.add(pub);
+          }
+        });
+
+        // Update seenPubs with filtered results by rating
+        seenPubs = tempPubs;
+      }
+
+      // Convert the set to a list for final output
+
+      allPubs = seenPubs.toList();
+    } else {
+      allPubs = data;
     }
   }
 
   @override
   void initState() {
     super.initState();
-    getPubs(type, price, aval);
+    getPubs(type, filters);
   }
 
   void _onTabChanged(int index) {
@@ -65,17 +104,34 @@ class _MyAreaState extends State<Area> {
           type = 'posts';
           break;
       }
-      getPubs(type, price, aval); // Fetch data when tab changes
+      getPubs(type, filters); // Fetch data when tab changes
     });
   }
 
-  void leftCallback(context) {
-     Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FilterPage(),
-          ),
-        );
+  void leftCallback(context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FilterPage(
+          filters: filters,
+        ),
+      ),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      print('Received filters: $result');
+
+      if (result.entries.isNotEmpty) {
+        filters['rating'] = result['rating'];
+        filters['price'] = result['price'];
+      } else {
+        filters = {};
+      }
+
+      setState(() {
+        getPubs(type, filters);
+      });
+    }
   }
 
   void rigthCallBack(context) {
@@ -135,7 +191,7 @@ class _MyAreaState extends State<Area> {
 
   FutureBuilder<dynamic> forumsContent() {
     return FutureBuilder(
-      future: getPubs(type, price, aval),
+      future: getPubs(type, filters),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -162,7 +218,7 @@ class _MyAreaState extends State<Area> {
 
   FutureBuilder<dynamic> eventContent() {
     return FutureBuilder(
-      future: getPubs(type, price, aval),
+      future: getPubs(type, filters),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -189,7 +245,7 @@ class _MyAreaState extends State<Area> {
 
   FutureBuilder<dynamic> postContent() {
     return FutureBuilder(
-      future: getPubs(type, price, aval),
+      future: getPubs(type, filters),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

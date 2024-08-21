@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 
 class FilterPage extends StatefulWidget {
-  const FilterPage({super.key});
+  FilterPage({super.key, required this.filters});
+
+  Map<String, dynamic> filters;
 
   @override
   State<FilterPage> createState() => _FilterPageState();
@@ -10,7 +12,13 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   void rightCallback(context) {
-    print('Hello :)');
+    Navigator.pop(context, widget.filters);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.filters.clear();
   }
 
   @override
@@ -35,7 +43,7 @@ class _FilterPageState extends State<FilterPage> {
                 ),
               ),
             ),
-            RatingFilter(),
+            RatingFilter(filters: widget.filters),
             const Padding(
               padding: EdgeInsets.only(bottom: 14.0, top: 75),
               child: SizedBox(
@@ -45,7 +53,7 @@ class _FilterPageState extends State<FilterPage> {
                 ),
               ),
             ),
-            PriceFilter(),
+            PriceFilter(filters: widget.filters),
           ],
         ),
       ),
@@ -54,12 +62,23 @@ class _FilterPageState extends State<FilterPage> {
 }
 
 class RatingFilter extends StatefulWidget {
+  RatingFilter({super.key, required this.filters});
+
+  Map<String, dynamic> filters;
   @override
   _RatingFilterState createState() => _RatingFilterState();
 }
 
 class _RatingFilterState extends State<RatingFilter> {
-  List<bool> isSelected = [false, false, false, false, false];
+  // Define the map to track button selection states
+  final Map<String, bool> isSelected = {
+    'None': false,
+    '1': false,
+    '2': false,
+    '3': false,
+    '4': false,
+    '5': false,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +92,88 @@ class _RatingFilterState extends State<RatingFilter> {
           double buttonWidth = (constraints.maxWidth / isSelected.length) - 6;
 
           return ToggleButtons(
-            isSelected: isSelected,
+            isSelected:
+                isSelected.values.toList(), // Convert map values to list
             onPressed: (int index) {
+              // Get the key from the map based on index
+              String key = isSelected.keys.elementAt(index);
               setState(() {
-                isSelected[index] =
-                    !isSelected[index]; // Toggle the selected state
+                // Toggle the selection state
+                isSelected[key] = !isSelected[key]!;
+                _updateFilters();
+              });
+            },
+            borderRadius: BorderRadius.circular(8.0),
+            selectedColor: colorScheme.onPrimary,
+            fillColor: colorScheme.primary,
+            constraints: BoxConstraints(
+              minHeight: 50.0,
+              minWidth: buttonWidth,
+            ),
+            children: isSelected.keys
+                .map((key) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(key),
+                    ))
+                .toList(),
+          );
+        },
+      ),
+    );
+  }
+
+  // Update the filters map based on the selection states
+  void _updateFilters() {
+    List<String> selectedRatings = isSelected.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    // Update the filters map
+    setState(() {
+      widget.filters['rating'] = selectedRatings;
+    });
+  }
+}
+
+class PriceFilter extends StatefulWidget {
+  PriceFilter({super.key, required this.filters});
+
+  Map<String, dynamic> filters;
+  @override
+  _PriceFilterState createState() => _PriceFilterState();
+}
+
+class _PriceFilterState extends State<PriceFilter> {
+  final Map<String, bool> isSelected = {
+    'None': false,
+    '1': false,
+    '2': false,
+    '3': false,
+    '4': false,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Calculate the width available for each button
+          double buttonWidth = (constraints.maxWidth / isSelected.length) - 6;
+
+          return ToggleButtons(
+            isSelected:
+                isSelected.values.toList(), // Convert map values to list
+            onPressed: (int index) {
+              // Get the key from the map based on index
+              String key = isSelected.keys.elementAt(index);
+              setState(() {
+                // Toggle the selection state
+                isSelected[key] = !isSelected[key]!;
+                _updateFilters();
               });
             },
             borderRadius: BorderRadius.circular(8.0),
@@ -88,6 +184,10 @@ class _RatingFilterState extends State<RatingFilter> {
               minWidth: buttonWidth,
             ),
             children: const [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text('None'),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text('1'),
@@ -103,10 +203,6 @@ class _RatingFilterState extends State<RatingFilter> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text('4'),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('5'),
               ),
             ],
           );
@@ -114,63 +210,16 @@ class _RatingFilterState extends State<RatingFilter> {
       ),
     );
   }
-}
 
-class PriceFilter extends StatefulWidget {
-  @override
-  _PriceFilterState createState() => _PriceFilterState();
-}
+  void _updateFilters() {
+    List<String> selectedRatings = isSelected.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
 
-class _PriceFilterState extends State<PriceFilter> {
-  List<bool> isSelected = [false, false, false, false];
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Calculate the width available for each button
-          double buttonWidth = (constraints.maxWidth / isSelected.length) - 6;
-
-          return ToggleButtons(
-            isSelected: isSelected,
-            onPressed: (int index) {
-              setState(() {
-                isSelected[index] =
-                    !isSelected[index]; // Toggle the selected state
-              });
-            },
-            borderRadius: BorderRadius.circular(8.0),
-            selectedColor: colorScheme.onPrimary,
-            fillColor: colorScheme.primary,
-            constraints: BoxConstraints(
-              minHeight: 50.0,
-              minWidth: buttonWidth,
-            ),
-            children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('1'),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('2'),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('3'),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('4'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+    // Update the filters map
+    setState(() {
+      widget.filters['price'] = selectedRatings;
+    });
   }
 }
