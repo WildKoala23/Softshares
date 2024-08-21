@@ -641,6 +641,8 @@ class API {
       print('Path: $path');
     }
 
+    int? price = pub.price?.toInt();
+
     try {
       var response =
           await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
@@ -651,6 +653,7 @@ class API {
         'content': pub.desc,
         'filePath': path.toString(),
         'pLocation': pub.location.toString(),
+        'price': price.toString()
       }, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
@@ -667,6 +670,7 @@ class API {
       // Re-throwing the exception after handling it
     } catch (e, s) {
       print('inside creating Post');
+      print(e);
       print('Stack trace:\n $s');
       rethrow;
     }

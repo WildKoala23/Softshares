@@ -30,7 +30,7 @@ class _PostCreationState extends State<PostCreation> {
 
   late AreaClass selectedArea;
   late AreaClass selectedSubArea;
-  late double? currentSlideValue;
+  late double? currentRatingValue;
   late double? currentPriceValue;
 
   late String? location;
@@ -46,7 +46,7 @@ class _PostCreationState extends State<PostCreation> {
     super.initState();
     selectedArea = widget.areas[0];
     selectedSubArea = selectedArea.subareas![0];
-    currentSlideValue = 3;
+    currentRatingValue = 3;
     currentPriceValue = 3;
     nonPrice = true;
     nonRating = true;
@@ -265,14 +265,14 @@ class _PostCreationState extends State<PostCreation> {
                 Slider(
                   min: 1,
                   max: 5,
-                  value: currentSlideValue!,
+                  value: currentRatingValue!,
                   onChanged: (double value) {
                     setState(() {
-                      currentSlideValue = value;
+                      currentRatingValue = value;
                     });
                   },
                   divisions: 4,
-                  label: currentSlideValue.toString(),
+                  label: currentRatingValue.toString(),
                 ),
               const SizedBox(
                 height: 30,
@@ -314,8 +314,10 @@ class _PostCreationState extends State<PostCreation> {
                 onPressed: () async {
                   if (_postKey.currentState!.validate()) {
                     User user = (await bd.getUser())!;
-                    if (nonPrice == true) currentPriceValue = null;
-                    if (nonRating == true) currentSlideValue = null;
+                    if (nonPrice == false) currentPriceValue = null;
+                    if (nonRating == false) currentRatingValue = null;
+                    print('Price: ${currentPriceValue}');
+                    print('Rating: ${currentRatingValue}');
                     var post = Publication(
                         null,
                         user,
@@ -327,7 +329,7 @@ class _PostCreationState extends State<PostCreation> {
                         DateTime.now(),
                         _selectedImage,
                         null,
-                        currentSlideValue,
+                        currentRatingValue,
                         currentPriceValue);
                     try {
                       await api.createPost(post);
