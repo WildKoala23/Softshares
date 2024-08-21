@@ -309,10 +309,10 @@ class _SignInState extends State<SignIn> {
           final result = await AuthProvider().signInWithGoogle();
 
           print('onGooglePressed');
-          print(result.user);
-          print(result.response.body);
+          print(result?.user);
+          print(result?.response.body);
 
-          var jsonData = jsonDecode(result.response.body);
+          var jsonData = jsonDecode(result!.response.body);
 
           var jwtToken = await api.loginGoogle(jsonData);
 

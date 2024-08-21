@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initializeFCM();
+    initializeFCM(widget.logged);
   }
 
   @override
@@ -142,7 +142,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-void initializeFCM() async {
+void initializeFCM(bool log) async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   // Request permission to send notifications (necessary for iOS)
@@ -153,24 +153,38 @@ void initializeFCM() async {
   );
   API api = API();
   // Check if the token is already stored locally
-  String? fcmtoken = api.retrieveToken();
-  if (fcmtoken == null) {
-    // If not, get a new token
-    fcmtoken = await messaging.getToken();
+  if (log) {
+    String? fcmtoken = await messaging.getToken();
     if (fcmtoken != null) {
       print("FCM Token: $fcmtoken");
-      api.saveToken(fcmtoken);
+      var tk = await api.getToken();
+      print('AAAAAAAAAAAAAAA');
+      print(tk);
+      if (tk != null) {
+        // Only send the token if the user is logged in
+        API api = API();
+        await api.sendTokenToServer(fcmtoken);
+      } else {
+        print("User is not logged in, skipping FCM token send.");
+      }
 
-      // Send this token to your server
-      String userId = "yourUserId"; // Replace with the actual user ID
-
-      await api.sendTokenToServer(fcmtoken);
+      api.saveToken(fcmtoken); // Save the token locally regardless
     }
-  } else {
-    print("FCM Token retrieved from local storage: $fcmtoken");
-    // Ensure the token is sent to the server even if it's retrieved locally
-    await api.sendTokenToServer(fcmtoken);
   }
+
+  // Listen for token refresh and handle it
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+    print("FCM Token refreshed: $newToken");
+    var tk = await api.getToken();
+    if (tk != null) {
+      // Only send the token if the user is logged in
+      await api.sendTokenToServer(newToken);
+    } else {
+      print("User is not logged in, skipping FCM token send.");
+    }
+
+    api.saveToken(newToken); // Save the token locally regardless
+  });
 
   // Listen for foreground messages
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {

@@ -1264,6 +1264,10 @@ class API {
   // Method to send the FCM token to the server
   Future<void> sendTokenToServer(String token) async {
     User? user = await bd.getUser();
+    if (user == null) {
+      print('i entered here for some reason');
+      return;
+    }
     String? jwtToken = await getToken();
     final response = await http.post(
       Uri.http(baseUrl, '/api/auth/store-fcm-token'),

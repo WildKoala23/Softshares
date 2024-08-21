@@ -57,13 +57,15 @@ class AuthProvider with ChangeNotifier {
     // Load areas and cities data
     await loadAreasAndCities();
     notifyListeners();
+    // Handle the successful login
+    handleLoginSuccess();
     return accessToken;
   }
 
   Future<void> logout() async {
     _user = null;
     _isLoggedIn = false;
-
+    await api.logout();
     // Clear stored user data
     await storage.deleteAll();
 
@@ -96,7 +98,7 @@ class AuthProvider with ChangeNotifier {
     _cities = await db.getCities();
   }
 
-  Future<SignInResult> signInWithGoogle() async {
+  Future<SignInResult?> signInWithGoogle() async {
     //var baseUrl = 'backendpint-w3vz.onrender.com';
     var baseUrl = '10.0.2.2:8000';
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -128,14 +130,16 @@ class AuthProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       // Handle the response from the backend
       print(response.body);
+      handleLoginSuccess();
+      // Returning both the user and the response
+      return SignInResult(
+        user: userCredential.user,
+        response: response,
+      );
     } else {
       print('Failed to authenticate with backend');
+      return null;
     }
-    // Returning both the user and the response
-    return SignInResult(
-      user: userCredential.user,
-      response: response,
-    );
   }
 
   Future<User?> signInWithFacebook() async {
@@ -147,5 +151,16 @@ class AuthProvider with ChangeNotifier {
     final UserCredential userCredential = await FirebaseAuth.instance
         .signInWithCredential(facebookAuthCredential);
     return userCredential.user;
+  }
+
+  void handleLoginSuccess() async {
+    String? fcmtoken =
+        api.retrieveToken(); // Retrieve the token from local storage
+    print('IAMHERE IN HANDLE HANDLE');
+    print(fcmtoken);
+    if (fcmtoken != null) {
+      print('i am here inside ififififififiif');
+      await api.sendTokenToServer(fcmtoken);
+    }
   }
 }
