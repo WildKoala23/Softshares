@@ -1257,6 +1257,7 @@ class API {
 
   Future<void> logout() async {
     await storage.delete(key: 'jwt_token');
+    await storage.delete(key: 'fcmToken');
   }
 
   //FIREBASE
