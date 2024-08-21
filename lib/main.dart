@@ -60,7 +60,7 @@ void main() async {
   }
 
   // Uncomment if you need to handle background messages
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     MultiProvider(
       providers: [
@@ -76,16 +76,51 @@ void main() async {
     ),
   );
 }
-// Uncomment if you need to handle background messages
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   print("Handling a background message: ${message.messageId}");
-// }
 
-class MyApp extends StatelessWidget {
+// Uncomment if you need to handle background messages
+// Background message handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
+
+class MyApp extends StatefulWidget {
   MyApp({super.key, required this.logged, required this.user});
   bool logged;
   User? user;
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    messaging.getToken().then((fcmtoken) {
+      print("FCM Token: $fcmtoken");
+      // Send this token to your server to enable push notifications
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Message received: ${message.notification?.title}");
+      // Handle the message
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Message clicked!');
+      // Navigate to a specific screen based on the message
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<ThemeNotifier, AuthProvider>(
@@ -94,7 +129,8 @@ class MyApp extends StatelessWidget {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: logged == true ? '/Login' : '/SignIn',
+          initialRoute: widget.logged == true ? '/Login' : '/SignIn',
+          //initialRoute: '/test',
           routes: {
             '/home': (context) => MyHomePage(areas: authProvider.areas),
             '/PointOfInterest': (context) =>
@@ -105,7 +141,7 @@ class MyApp extends StatelessWidget {
                   user: authProvider.user!,
                 ),
             '/Editprofile': (context) => EditProfile(areas: authProvider.areas),
-            '/Login': (context) => MyLoginIn(user: user!),
+            '/Login': (context) => MyLoginIn(user: widget.user!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(cities: authProvider.cities),
             '/createPost': (context) => createPost(areas: authProvider.areas),

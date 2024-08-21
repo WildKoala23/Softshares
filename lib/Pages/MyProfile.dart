@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyProfile> {
   @override
   void initState() {
     super.initState();
-    getPosts();
+    //getPosts();
   }
 
   void logOff() {
