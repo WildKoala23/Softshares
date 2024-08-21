@@ -1262,21 +1262,20 @@ class API {
 
   //FIREBASE
   // Method to send the FCM token to the server
-  Future<void> sendTokenToServer(String token) async {
-    User? user = await bd.getUser();
+  Future<void> sendTokenToServer(String fcmtoken) async {
+    User? user = await getUserLogged();
     if (user == null) {
       print('i entered here for some reason');
       return;
     }
     String? jwtToken = await getToken();
-    final response = await http.post(
+    final response = await http.patch(
       Uri.http(baseUrl, '/api/auth/store-fcm-token'),
       headers: {'Authorization': 'Bearer $jwtToken'},
-      body: jsonEncode(<String, String>{
-        'token': token,
-        // Can also send user id or other necessary information here
+      body: {
+        'fcmToken': fcmtoken.toString(),
         'userId': user!.id.toString(),
-      }),
+      },
     );
 
     if (response.statusCode == 200) {
