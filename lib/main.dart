@@ -30,11 +30,12 @@ import 'package:softshares/classes/ClasseAPI.dart';
 //firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:get_it/get_it.dart';
 import 'firebase_options.dart';
 
 final storage = FlutterSecureStorage();
-
+// Initialize GetIt
+final getIt = GetIt.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -63,12 +64,16 @@ void main() async {
 
   // Uncomment if you need to handle background messages
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Register dependencies
+  getIt.registerSingleton<FirebaseMessaging>(FirebaseMessaging.instance);
+  getIt.registerSingleton<AuthProvider>(AuthProvider());
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeNotifier()),
         ChangeNotifierProvider(
-          create: (_) => AuthProvider()..checkLoginStatus(),
+          create: (_) => getIt<AuthProvider>()..checkLoginStatus(),
         ),
       ],
       child: MyApp(

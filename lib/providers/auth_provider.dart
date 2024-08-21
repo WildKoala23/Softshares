@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_storage/get_storage.dart';
@@ -16,10 +17,12 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:get_it/get_it.dart';
 
 import 'sign_in_result.dart';
 
 class AuthProvider with ChangeNotifier {
+  final FirebaseMessaging _firebaseMessaging = GetIt.I<FirebaseMessaging>();
   final FlutterSecureStorage storage = FlutterSecureStorage();
   final box = GetStorage();
   u.User? _user;
@@ -161,6 +164,23 @@ class AuthProvider with ChangeNotifier {
     if (fcmtoken != null) {
       print('i am here inside ififififififiif');
       await api.sendTokenToServer(fcmtoken);
+    } else {
+      String? fcmtoken = await _firebaseMessaging.getToken();
+      if (fcmtoken != null) {
+        print("FCM Token: $fcmtoken");
+        var tk = await api.getToken();
+        print('AAAAAAAAAAAAAAA');
+        print(tk);
+        if (tk != null) {
+          // Only send the token if the user is logged in
+          API api = API();
+          await api.sendTokenToServer(fcmtoken);
+        } else {
+          print("User is not logged in, skipping FCM token send.");
+        }
+
+        api.saveToken(fcmtoken); // Save the token locally regardless
+      }
     }
   }
 }
