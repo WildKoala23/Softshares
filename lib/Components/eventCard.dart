@@ -22,7 +22,9 @@ class _EventCardState extends State<EventCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EventPage(event: widget.event,),
+            builder: (context) => EventPage(
+              event: widget.event,
+            ),
           ),
         );
       },
@@ -30,6 +32,9 @@ class _EventCardState extends State<EventCard> {
         margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
         child: Column(
           children: [
+            widget.event.validated == false
+                ? const Text('Awaiting validation')
+                : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
@@ -66,13 +71,15 @@ class _EventCardState extends State<EventCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             widget.event.title.length > 30 ? Text(
-              widget.event.title.substring(0, 30) + '....',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ):Text(
-              widget.event.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            widget.event.title.length > 30
+                ? Text(
+                    widget.event.title.substring(0, 30) + '....',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    widget.event.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
             Text(
               widget.event.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
@@ -122,29 +129,6 @@ class _EventCardState extends State<EventCard> {
             ),
           ],
         ),
-        !saved
-            ? IconButton(
-                icon: Icon(
-                  Icons.bookmark_add_outlined,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = true;
-                  });
-                },
-              )
-            : IconButton(
-                icon: Icon(
-                  Icons.bookmark,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = false;
-                  });
-                },
-              )
       ],
     );
   }

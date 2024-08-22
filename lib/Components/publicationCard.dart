@@ -35,6 +35,9 @@ class _PubState extends State<PublicationCard> {
         margin: const EdgeInsets.fromLTRB(26, 26, 20, 0),
         child: Column(
           children: [
+            widget.pub.validated == false
+                ? const Text('Awaiting validation')
+                : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
@@ -88,13 +91,15 @@ class _PubState extends State<PublicationCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             widget.pub.title.length > 30 ? Text(
-              widget.pub.title.substring(0, 30) + '....',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ):Text(
-              widget.pub.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            widget.pub.title.length > 30
+                ? Text(
+                    widget.pub.title.substring(0, 30) + '....',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    widget.pub.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
             Text(
               widget.pub.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
@@ -150,29 +155,6 @@ class _PubState extends State<PublicationCard> {
             ),
           ],
         ),
-        !saved
-            ? IconButton(
-                icon: Icon(
-                  Icons.bookmark_add_outlined,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = true;
-                  });
-                },
-              )
-            : IconButton(
-                icon: Icon(
-                  Icons.bookmark,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = false;
-                  });
-                },
-              )
       ],
     );
   }

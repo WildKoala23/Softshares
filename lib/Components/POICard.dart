@@ -32,6 +32,9 @@ class _POIState extends State<POICard> {
         margin: EdgeInsets.fromLTRB(26, 26, 20, 0),
         child: Column(
           children: [
+            widget.pointOfInterest.validated == false
+                ? const Text('Awaiting validation')
+                : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
@@ -147,29 +150,6 @@ class _POIState extends State<POICard> {
             ),
           ],
         ),
-        !saved
-            ? IconButton(
-                icon: Icon(
-                  Icons.bookmark_add_outlined,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = true;
-                  });
-                },
-              )
-            : IconButton(
-                icon: Icon(
-                  Icons.bookmark,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = false;
-                  });
-                },
-              )
       ],
     );
   }

@@ -15,7 +15,6 @@ class ForumCard extends StatefulWidget {
 class _POIState extends State<ForumCard> {
   bool saved = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -26,11 +25,13 @@ class _POIState extends State<ForumCard> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ForumPage(forum: widget.forum,),
+            builder: (context) => ForumPage(
+              forum: widget.forum,
+            ),
           ),
         );
       },
@@ -38,6 +39,9 @@ class _POIState extends State<ForumCard> {
         margin: const EdgeInsets.fromLTRB(26, 26, 20, 0),
         child: Column(
           children: [
+            widget.forum.validated == false
+                ? const Text('Awaiting validation')
+                : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
@@ -70,13 +74,15 @@ class _POIState extends State<ForumCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             widget.forum.title.length > 30 ? Text(
-              widget.forum.title.substring(0, 30) + '....',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ):Text(
-              widget.forum.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            widget.forum.title.length > 30
+                ? Text(
+                    widget.forum.title.substring(0, 30) + '....',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    widget.forum.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
             Text(
               widget.forum.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),
@@ -122,29 +128,6 @@ class _POIState extends State<ForumCard> {
             ),
           ],
         ),
-        !saved
-            ? IconButton(
-                icon: Icon(
-                  Icons.bookmark_add_outlined,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = true;
-                  });
-                },
-              )
-            : IconButton(
-                icon: Icon(
-                  Icons.bookmark,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    saved = false;
-                  });
-                },
-              )
       ],
     );
   }

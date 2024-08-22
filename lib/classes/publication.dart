@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:softshares/classes/ClasseAPI.dart';
@@ -9,7 +8,7 @@ class Publication {
   int? _id;
   User _user;
   String _desc, _title;
-  bool _validated;
+  bool? validated;
   DateTime _postDate;
   int _subCategory;
   late String subAreaName;
@@ -22,7 +21,7 @@ class Publication {
     this._user,
     this._desc,
     this._title,
-    this._validated,
+    this.validated,
     this._subCategory,
     this._postDate,
     this.img,
@@ -36,7 +35,6 @@ class Publication {
   String get title => _title;
   int get subCategory => _subCategory;
   int get id => _id!;
-  bool get validated => _validated;
 
   DateTime get datePost => _postDate;
 
@@ -54,10 +52,6 @@ class Publication {
 
   set subCategory(int value) {
     _subCategory = value;
-  }
-
-  set validated(bool value) {
-    _validated = value;
   }
 
   set postDate(DateTime value) {
