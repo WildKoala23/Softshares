@@ -40,7 +40,16 @@ class _POIState extends State<ForumCard> {
         child: Column(
           children: [
             widget.forum.validated == false
-                ? const Text('Awaiting validation')
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Awaiting validation',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  )
                 : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),

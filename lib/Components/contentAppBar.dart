@@ -28,7 +28,10 @@ class _contentAppBarState extends State<contentAppBar> {
               Share.share(
                   '_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
             },
-            icon: const Icon(Icons.share))
+            icon: const Icon(Icons.share)),
+        widget.pub.validated == false
+            ? IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+            : Container()
       ],
     );
   }
