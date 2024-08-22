@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/Components/eventCard.dart';
+import 'package:softshares/Components/forumCard.dart';
+import 'package:softshares/Components/publicationCard.dart';
 import 'package:softshares/Pages/signIn.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
-import 'package:softshares/providers/auth_provider.dart';
+import 'package:softshares/classes/event.dart';
+import 'package:softshares/classes/forums.dart';
+import 'package:softshares/classes/publication.dart';
 import '../Components/appBar.dart';
 import '../classes/user.dart';
 
@@ -21,6 +27,7 @@ class MyProfile extends StatefulWidget {
 class _MyHomePageState extends State<MyProfile> {
   SQLHelper bd = SQLHelper.instance;
   API api = API();
+  List<Publication> pubs = [];
 
   void rightCallback(context) {
     Navigator.pushNamed(context, '/settings');
@@ -28,13 +35,14 @@ class _MyHomePageState extends State<MyProfile> {
 
   Future getPosts() async {
     var data = await api.getUserPosts();
-    print(data);
+    pubs = data;
+    print(pubs.length);
   }
 
   @override
   void initState() {
     super.initState();
-    //getPosts();
+    getPosts();
   }
 
   void logOff() {
@@ -68,51 +76,104 @@ class _MyHomePageState extends State<MyProfile> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: MyAppBar(
         iconR: const Icon(Icons.settings),
         rightCallback: rightCallback,
         title: 'Profile',
       ),
-      body: Column(
-        children: [
-          profilePicture(colorScheme),
-          const SizedBox(
-            height: 10,
-          ),
-          userInfo(colorScheme),
-          const SizedBox(
-            height: 15,
-          ),
-          actionBtns(colorScheme),
-          const SizedBox(
-            height: 15,
-          ),
-          DefaultTabController(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            profilePicture(colorScheme),
+            const SizedBox(height: 10),
+            userInfo(colorScheme),
+            const SizedBox(height: 15),
+            actionBtns(colorScheme),
+            const SizedBox(height: 15),
+            DefaultTabController(
               length: 2,
-              child: TabBar(
-                labelColor: colorScheme.onPrimary,
-                indicatorColor: colorScheme.secondary,
-                splashFactory: NoSplash.splashFactory,
-                tabs: [
-                  Tab(
-                    child: Text(
-                      'My Posts',
-                      style: TextStyle(color: colorScheme.onSecondary),
+              child: Column(
+                children: [
+                  TabBar(
+                    labelColor: colorScheme.onPrimary,
+                    indicatorColor: colorScheme.secondary,
+                    splashFactory: NoSplash.splashFactory,
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          'My Posts',
+                          style: TextStyle(color: colorScheme.onSecondary),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Registered Events',
+                          style: TextStyle(color: colorScheme.onSecondary),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Wrap TabBarView in a Container with a fixed height
+                  Container(
+                    height: 400, // Adjust the height as needed
+                    child: TabBarView(
+                      children: [
+                        // Placeholder for my posts
+                        myPosts(colorScheme),
+                        // Placeholder for registered events
+                        const Center(child: Text('No Registered Events')),
+                      ],
                     ),
                   ),
-                  Tab(
-                    child: Text('Registered Events',
-                        style: TextStyle(color: colorScheme.onSecondary)),
-                  )
                 ],
-              ))
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
-      drawer: myDrawer(
-        areas: widget.areas,
-      ),
+      drawer: myDrawer(areas: widget.areas),
       bottomNavigationBar: const MyBottomBar(),
+    );
+  }
+
+  Widget myPosts(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.all(18.0),
+      child: FutureBuilder(
+        future: getPosts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (pubs.isEmpty) {
+              return Center(
+                  child: Text('No posts available',
+                      style: TextStyle(color: colorScheme.onSecondary)));
+            }
+
+            return ListView.builder(
+              itemCount: pubs.length,
+              itemBuilder: (context, index) {
+                final pub = pubs[index];
+
+                if (pub is Event) {
+                  return EventCard(event: pub);
+                } else if (pub is Forum) {
+                  return ForumCard(forum: pub);
+                } else if (pub is Publication) {
+                  return PublicationCard(pub: pub);
+                } else {
+                  return SizedBox.shrink(); // Handle unexpected types
+                }
+              },
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 
