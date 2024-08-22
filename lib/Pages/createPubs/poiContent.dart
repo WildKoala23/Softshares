@@ -281,7 +281,6 @@ class _POICreationState extends State<POICreation> {
                     Publication post = Publication(
                         null,
                         user,
-                        null,
                         descController.text,
                         titleController.text,
                         false,

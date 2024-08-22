@@ -174,7 +174,6 @@ class _ForumCreationState extends State<ForumCreation> {
                     Forum post = Forum(
                         null,
                         user,
-                        null,
                         descController.text,
                         titleController.text,
                         false,

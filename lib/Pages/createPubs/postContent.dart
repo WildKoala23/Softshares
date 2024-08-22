@@ -321,7 +321,6 @@ class _PostCreationState extends State<PostCreation> {
                     var post = Publication(
                         null,
                         user,
-                        null,
                         descController.text,
                         titleController.text,
                         false,

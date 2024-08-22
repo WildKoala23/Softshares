@@ -179,7 +179,6 @@ class API {
           final publication = Publication(
               eachPub['post_id'],
               publisherUser,
-              null,
               eachPub['content'],
               eachPub['title'],
               eachPub['validated'],
@@ -305,7 +304,6 @@ class API {
           final publication = Forum(
             eachPub['forum_id'],
             publisherUser,
-            null,
             eachPub['content'],
             eachPub['title'],
             eachPub['validated'],
@@ -361,16 +359,13 @@ class API {
           file = null;
         }
         User publisherUser = await getUser(eachPub['publisher_id']);
-        User? adminUser = eachPub['admin_id'] != null
-            ? await getUser(eachPub['admin_id'])
-            : null;
+
         DateTime creationDate = DateTime.parse(eachPub['creation_date']);
         DateTime eventDate = DateTime.parse(eachPub['event_date']);
         // Create Event object
         final publication = Event(
             eachPub['event_id'],
             publisherUser,
-            adminUser,
             eachPub['description'],
             eachPub['name'],
             eachPub['validated'],
@@ -442,7 +437,6 @@ class API {
             final publication = Publication(
                 eachPub['post_id'],
                 publisherUser,
-                null,
                 eachPub['content'],
                 eachPub['title'],
                 eachPub['validated'],
@@ -458,7 +452,6 @@ class API {
             final publication = Forum(
                 eachPub['forum_id'],
                 publisherUser,
-                null,
                 eachPub['content'],
                 eachPub['title'],
                 eachPub['validated'],
@@ -474,7 +467,6 @@ class API {
             final publication = Event(
                 eachPub['event_id'],
                 publisherUser,
-                null,
                 eachPub['description'],
                 eachPub['name'],
                 eachPub['validated'],
@@ -568,7 +560,6 @@ class API {
           final publication = Publication(
               eachPub['post_id'],
               publisherUser,
-              null,
               eachPub['content'],
               eachPub['title'],
               eachPub['validated'],
@@ -998,9 +989,6 @@ class API {
             ? File(eachPub['filepath'])
             : null; // Check if event has image
         User publisherUser = await getUser(eachPub['publisher_id']); // Get user
-        User? adminUser = eachPub['admin_id'] != null
-            ? await getUser(eachPub['admin_id'])
-            : null;
         DateTime creationDate = DateTime.parse(eachPub['creation_date']);
         DateTime eventDate = DateTime.parse(eachPub['event_date']);
         TimeOfDay eventStart = TimeOfDay(
@@ -1018,7 +1006,6 @@ class API {
         final publication = Event(
             eachPub['event_id'],
             publisherUser,
-            adminUser,
             eachPub['description'],
             eachPub['name'],
             eachPub['validated'],

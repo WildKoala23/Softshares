@@ -8,7 +8,6 @@ class Publication {
   final API api = API();
   int? _id;
   User _user;
-  User? _admin;
   String _desc, _title;
   bool _validated;
   DateTime _postDate;
@@ -21,7 +20,6 @@ class Publication {
   Publication(
     this._id,
     this._user,
-    this._admin,
     this._desc,
     this._title,
     this._validated,
@@ -34,7 +32,6 @@ class Publication {
   );
 
   User get user => _user;
-  User get admin => _admin!;
   String get desc => _desc;
   String get title => _title;
   int get subCategory => _subCategory;
@@ -45,10 +42,6 @@ class Publication {
 
   set user(User value) {
     _user = value;
-  }
-
-  set admin(User value) {
-    _admin = value;
   }
 
   set desc(String value) {

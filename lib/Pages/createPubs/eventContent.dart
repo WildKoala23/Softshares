@@ -398,7 +398,6 @@ class _EventCreationState extends State<EventCreation> {
                     Event post = Event(
                         null,
                         user,
-                        null,
                         descController.text,
                         titleController.text,
                         false,

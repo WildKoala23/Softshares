@@ -14,7 +14,6 @@ class Event extends Publication {
   Event(
     int? id,
     User user,
-    User? admin,
     String desc,
     String title,
     bool validated,
@@ -27,6 +26,6 @@ class Event extends Publication {
     this.recurring_path,
     this.event_start,
     this.event_end,
-  ) : super(id, user, admin, desc, title, validated, subCategory, postDate,
+  ) : super(id, user, desc, title, validated, subCategory, postDate,
             imgPath, location, null, null);
 }
