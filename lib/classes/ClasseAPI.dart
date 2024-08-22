@@ -161,11 +161,13 @@ class API {
       for (var eachPub in jsonData['data']) {
         //Filter posts with poi's
         if (eachPub['type'] == 'N') {
+          //print(eachPub);
           User publisherUser = await getUser(eachPub['publisher_id']);
           double? price =
               eachPub['price'] != null ? (eachPub['price'] as num) * 1.0 : null;
-          //double? rating = eachPub['score'] != null ? (eachPub['score'] as double) * 1.0 : null;
-          print('ID: ${publisherUser.id}\n Price: $price');
+          double? rating =
+              eachPub['score'] != null ? (eachPub['score'] as num) * 1.0 : null;
+          //print('ID: ${publisherUser.id}\n Price: $price');
           var file;
           if (eachPub['filepath'] != null) {
             file = File(eachPub['filepath']);
@@ -183,7 +185,7 @@ class API {
               DateTime.parse(eachPub['creation_date']),
               file,
               eachPub['p_location'],
-              null,
+              rating,
               price);
           await publication.getSubAreaName();
           publications.add(publication);
