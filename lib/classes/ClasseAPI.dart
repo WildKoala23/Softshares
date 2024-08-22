@@ -165,8 +165,10 @@ class API {
           User publisherUser = await getUser(eachPub['publisher_id']);
           double? price =
               eachPub['price'] != null ? (eachPub['price'] as num) * 1.0 : null;
-          double? rating =
-              eachPub['score'] != null ? (eachPub['score'] as num) * 1.0 : null;
+
+          double? rating = int.tryParse(eachPub['score']) != null
+              ? int.tryParse(eachPub['score'])! * 1.0
+              : null;
           //print('ID: ${publisherUser.id}\n Price: $price');
           var file;
           if (eachPub['filepath'] != null) {
