@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/Pages/filterPOIPage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
-import 'package:softshares/classes/user.dart';
 import '../Components/POICard.dart';
-
-User user1 = User(1, 'John', 'Doe', 'john.doe@example.com');
 
 class PointsOfInterest extends StatefulWidget {
   PointsOfInterest({super.key, required this.areas});
@@ -22,36 +20,87 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
   final API api = API();
   bool failedLoading = false;
   late Future futurePosts;
-  List<int> filter = [];
+  Map<String, dynamic> filters = {};
+
+  Future<void> getPubs(Map<String, dynamic> filters) async {
+    listPoi = [];
+    print('Filters: $filters');
+
+    // Get type of publications from specific area
+    var data = await api.getAllPoI();
+
+    if (filters.isNotEmpty) {
+      // Initialize a set to track seen publications and avoid duplicates
+      Set<Publication> seenPubs = {};
+
+      // Filter by rating
+      if (filters.containsKey('rating') && filters['rating'] != null) {
+        var filterRatings = filters['rating'] as List<dynamic>;
+        filterRatings =
+            filterRatings.map((rating) => rating.toString()).toList();
+
+        // Use a temporary set to filter by rating
+        Set<Publication> tempPubs = {};
+        seenPubs.forEach((pub) {
+          if (pub.aval != null &&
+              filterRatings.contains(pub.aval!.toInt().toString())) {
+            tempPubs.add(pub);
+          }
+        });
+
+        // Update seenPubs with filtered results by rating
+        seenPubs = tempPubs;
+      }
+
+      // Convert the set to a list for final output
+
+      listPoi = seenPubs.toList();
+    } else {
+      listPoi = data;
+    }
+  }
 
   void rightCallback(context) {
     print('search');
   }
 
-  void leftCallback(context) {
-    print('Filter');
-  }
+  void leftCallback(context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FilterPoiPage(
+          filters: filters,
+        ),
+      ),
+    );
 
-  Future getPoI() async {
-    try {
-      listPoi = await api.getAllPoI();
-      return true;
-    } catch (e) {
-      throw e;
+    if (result != null && result is Map<String, dynamic>) {
+      print('Received filters: $result');
+
+      if (result.entries.isNotEmpty) {
+        filters['rating'] = result['rating'];
+        filters['price'] = result['price'];
+      } else {
+        filters = {};
+      }
+
+      setState(() {
+        getPubs(filters);
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
-    futurePosts = getPoI();
+    futurePosts = getPubs(filters);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        iconL: const Icon(Icons.filter_alt_outlined),
+        iconL: const Icon(Icons.filter_alt),
         leftCallback: leftCallback,
         title: 'Points of Interest',
         iconR: const Icon(Icons.search),
@@ -79,7 +128,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
                     ElevatedButton(
                         onPressed: () async {
                           setState(() {
-                            futurePosts = getPoI();
+                            futurePosts = getPubs(filters);
                           });
                         },
                         child: const Text('Try Again'))

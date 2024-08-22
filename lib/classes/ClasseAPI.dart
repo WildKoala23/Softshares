@@ -972,6 +972,8 @@ class API {
     Map<DateTime, List<Event>> events = {};
     int officeId = box.read('selectedCity');
 
+    print('Here');
+
     try {
       String? jwtToken = await getToken();
 
@@ -987,7 +989,7 @@ class API {
       var jsonData = jsonDecode(response.body);
 
       for (var eachPub in jsonData['data']) {
-        print(eachPub);
+        //print(eachPub);
         var file = eachPub['filepath'] != null
             ? File(eachPub['filepath'])
             : null; // Check if event has image

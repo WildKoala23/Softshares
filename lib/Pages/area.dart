@@ -5,7 +5,7 @@ import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/eventCard.dart';
 import 'package:softshares/Components/forumCard.dart';
 import 'package:softshares/Components/publicationCard.dart';
-import 'package:softshares/Pages/filterPage.dart';
+import 'package:softshares/Pages/filterPostsPage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
