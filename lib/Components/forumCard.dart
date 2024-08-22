@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/pubsPages/forumPage.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/publication.dart';
 
 class ForumCard extends StatefulWidget {
-  const ForumCard({super.key, required this.forum});
+  ForumCard({super.key, required this.forum, required this.areas});
 
   final Forum forum;
+     List<AreaClass> areas;
 
   @override
   State<ForumCard> createState() => _POIState();
@@ -31,6 +33,7 @@ class _POIState extends State<ForumCard> {
           MaterialPageRoute(
             builder: (context) => ForumPage(
               forum: widget.forum,
+              areas: widget.areas
             ),
           ),
         );

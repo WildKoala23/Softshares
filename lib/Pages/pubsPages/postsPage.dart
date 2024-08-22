@@ -5,13 +5,15 @@ import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
 class PostPage extends StatefulWidget {
-  const PostPage({super.key, required this.publication});
+  PostPage({super.key, required this.publication, required this.areas});
 
   final Publication publication;
+  List<AreaClass> areas;
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -53,7 +55,7 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: contentAppBar(pub: widget.publication,),
+      appBar: contentAppBar(pub: widget.publication, areas: widget.areas,),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(

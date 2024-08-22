@@ -157,11 +157,11 @@ class _MyHomePageState extends State<MyProfile> {
                 final pub = pubs[index];
 
                 if (pub is Event) {
-                  return EventCard(event: pub);
+                  return EventCard(event: pub, areas: widget.areas);
                 } else if (pub is Forum) {
-                  return ForumCard(forum: pub);
+                  return ForumCard(forum: pub, areas: widget.areas);
                 } else if (pub is Publication) {
-                  return PublicationCard(pub: pub);
+                  return PublicationCard(pub: pub, areas: widget.areas);
                 } else {
                   return SizedBox.shrink(); // Handle unexpected types
                 }

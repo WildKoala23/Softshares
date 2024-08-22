@@ -6,13 +6,15 @@ import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
 class POIPage extends StatefulWidget {
-  const POIPage({super.key, required this.poi});
+  POIPage({super.key, required this.poi, required this.areas});
 
   final Publication poi;
+    List<AreaClass> areas;
 
   @override
   State<POIPage> createState() => _POIPageState();
@@ -68,7 +70,7 @@ class _POIPageState extends State<POIPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: contentAppBar(pub: widget.poi,),
+      appBar: contentAppBar(pub: widget.poi, areas: widget.areas,),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(

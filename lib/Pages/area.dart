@@ -207,7 +207,7 @@ class _MyAreaState extends State<Area> {
             return ListView.builder(
               itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return ForumCard(forum: allPubs[index] as Forum);
+                return ForumCard(forum: allPubs[index] as Forum, areas: widget.areas,);
               },
             );
           }
@@ -234,7 +234,7 @@ class _MyAreaState extends State<Area> {
             return ListView.builder(
               itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return EventCard(event: allPubs[index] as Event);
+                return EventCard(event: allPubs[index] as Event, areas: widget.areas);
               },
             );
           }
@@ -261,7 +261,7 @@ class _MyAreaState extends State<Area> {
             return ListView.builder(
               itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return PublicationCard(pub: allPubs[index]);
+                return PublicationCard(pub: allPubs[index], areas: widget.areas);
               },
             );
           }

@@ -143,7 +143,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
             return (ListView.builder(
                 itemCount: listPoi.length,
                 itemBuilder: (contex, index) {
-                  return (POICard(pointOfInterest: listPoi[index]));
+                  return (POICard(pointOfInterest: listPoi[index],areas: widget.areas));
                 }));
           } else {
             return (const Center(

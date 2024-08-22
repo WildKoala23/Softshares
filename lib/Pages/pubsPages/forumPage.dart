@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
-import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/user.dart';
 
 class ForumPage extends StatefulWidget {
-  const ForumPage({super.key, required this.forum});
+  ForumPage({super.key, required this.forum, required this.areas});
 
   final Forum forum;
+  List<AreaClass> areas;
 
   @override
   State<ForumPage> createState() => _ForumPageState();
@@ -53,7 +54,7 @@ class _ForumPageState extends State<ForumPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: contentAppBar(pub: widget.forum),
+      appBar: contentAppBar(pub: widget.forum, areas: widget.areas,),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(

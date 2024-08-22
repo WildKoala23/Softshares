@@ -129,11 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     final pub = posts[index];
                     switch (pub) {
                       case Event _:
-                        return EventCard(event: pub);
+                        return EventCard(event: pub, areas: widget.areas);
                       case Forum _:
-                        return ForumCard(forum: pub);
+                        return ForumCard(forum: pub, areas: widget.areas);
                       case Publication _:
-                        return PublicationCard(pub: pub);
+                        return PublicationCard(pub: pub, areas: widget.areas);
                     }
                   })),
             );

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/pubsPages/poiPage.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 
 class POICard extends StatefulWidget {
-  const POICard({super.key, required this.pointOfInterest});
+   POICard({super.key, required this.pointOfInterest, required this.areas});
 
   final Publication pointOfInterest;
+     List<AreaClass> areas;
 
   @override
   State<POICard> createState() => _POIState();
@@ -24,6 +26,7 @@ class _POIState extends State<POICard> {
           MaterialPageRoute(
             builder: (context) => POIPage(
               poi: widget.pointOfInterest,
+              areas: widget.areas
             ),
           ),
         );

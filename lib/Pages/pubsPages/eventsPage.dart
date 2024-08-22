@@ -5,13 +5,15 @@ import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/Pages/registerEvent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
 
 class EventPage extends StatefulWidget {
-  const EventPage({super.key, required this.event});
+  EventPage({super.key, required this.event, required this.areas});
 
   final Event event;
+    List<AreaClass> areas;
 
   @override
   State<EventPage> createState() => _EventPageState();
@@ -62,6 +64,7 @@ class _EventPageState extends State<EventPage> {
     return Scaffold(
       appBar: contentAppBar(
         pub: widget.event,
+        areas: widget.areas,
       ),
       body: DefaultTabController(
         length: 2,

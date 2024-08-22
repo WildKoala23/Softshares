@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/pubsPages/postsPage.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 
 class PublicationCard extends StatefulWidget {
-  const PublicationCard({super.key, required this.pub});
+  PublicationCard({super.key, required this.pub, required this.areas});
 
   final Publication pub;
+     List<AreaClass> areas;
 
   @override
   State<PublicationCard> createState() => _PubState();
@@ -27,7 +29,7 @@ class _PubState extends State<PublicationCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PostPage(publication: widget.pub),
+            builder: (context) => PostPage(publication: widget.pub, areas: widget.areas,),
           ),
         );
       },

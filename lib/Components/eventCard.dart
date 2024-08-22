@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/pubsPages/eventsPage.dart';
+import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
 
 class EventCard extends StatefulWidget {
-  const EventCard({super.key, required this.event});
+  EventCard({super.key, required this.event, required this.areas});
 
   final Event event;
+     List<AreaClass> areas;
 
   @override
   State<EventCard> createState() => _EventCardState();
@@ -24,6 +26,7 @@ class _EventCardState extends State<EventCard> {
           MaterialPageRoute(
             builder: (context) => EventPage(
               event: widget.event,
+              areas: widget.areas
             ),
           ),
         );
