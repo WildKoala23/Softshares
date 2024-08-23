@@ -15,7 +15,7 @@ import 'Pages/createPub.dart';
 import 'Pages/customFieldTextForm.dart';
 import 'Pages/customRadioBtnForm.dart';
 import 'Pages/editProfile.dart';
-import 'Pages/login.dart';
+import 'Pages/alreadyLoggedIn.dart';
 import 'Pages/notifications.dart';
 import 'Pages/pointsOfInterest.dart';
 import 'Pages/signIn.dart';
