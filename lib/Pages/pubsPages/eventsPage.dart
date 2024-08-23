@@ -276,7 +276,7 @@ class _EventPageState extends State<EventPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Register(id: widget.event.id)),
+                        builder: (context) => Register(id: widget.event.id!)),
                   );
                 },
                 style: ElevatedButton.styleFrom(
