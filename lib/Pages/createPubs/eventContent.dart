@@ -267,7 +267,7 @@ class _EventCreationState extends State<EventCreation> {
                       Column(
                         children: [
                           Text(
-                            '${start_time.hour}:${start_time.minute}',
+                            '${start_time.hour}:${start_time.minute.toString().padLeft(2, '0')}',
                             style: const TextStyle(fontSize: 24),
                           ),
                           ElevatedButton(
@@ -293,7 +293,7 @@ class _EventCreationState extends State<EventCreation> {
                       Column(
                         children: [
                           Text(
-                            '${end_time.hour}:${end_time.minute}',
+                            '${end_time.hour}:${end_time.minute.toString().padLeft(2, '0')}',
                             style: const TextStyle(fontSize: 24),
                           ),
                           ElevatedButton(
@@ -389,7 +389,8 @@ class _EventCreationState extends State<EventCreation> {
                 onPressed: () async {
                   if (_eventKey.currentState!.validate() &&
                       _selectedImage != null &&
-                      location != null && start_time != end_time) {
+                      location != null &&
+                      start_time != end_time) {
                     User user = (await bd.getUser())!;
                     Event post = Event(
                         null,

@@ -283,7 +283,7 @@ class _EditEventState extends State<EditEvent> {
                           Column(
                             children: [
                               Text(
-                                '${start_time.hour}:${start_time.minute}',
+                                '${start_time.hour}:${start_time.minute.toString().padLeft(2, '0')}',
                                 style: const TextStyle(fontSize: 24),
                               ),
                               ElevatedButton(
@@ -310,7 +310,7 @@ class _EditEventState extends State<EditEvent> {
                           Column(
                             children: [
                               Text(
-                                '${end_time.hour}:${end_time.minute}',
+                                '${end_time.hour}:${end_time.minute.toString().padLeft(2, '0')}',
                                 style: const TextStyle(fontSize: 24),
                               ),
                               ElevatedButton(
