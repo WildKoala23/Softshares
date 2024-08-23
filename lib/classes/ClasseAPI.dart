@@ -39,7 +39,7 @@ class API {
       throw Exception('Failed to retrieve refreshToken');
     }
 
-    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
+    var response = await http.patch(Uri.http(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
