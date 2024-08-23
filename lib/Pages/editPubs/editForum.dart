@@ -39,8 +39,16 @@ class _EditForumState extends State<EditForum> {
     titleController.text = widget.pub.title;
     descController.text = widget.pub.desc;
     super.initState();
-    selectedArea = widget.areas[0];
-    selectedSubArea = selectedArea.subareas![0];
+    for (var area in widget.areas) {
+      if (area.subareas != null) {
+        for (var subArea in area.subareas!) {
+          if (subArea.id == widget.pub.subCategory) {
+            selectedArea = area;
+            selectedSubArea = subArea;
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -181,8 +189,8 @@ class _EditForumState extends State<EditForum> {
                     onPressed: () async {
                       if (_forumKey.currentState!.validate()) {
                         User user = (await bd.getUser())!;
-                        Forum post = Forum(
-                            null,
+                        Forum forum = Forum(
+                            widget.pub.id,
                             user,
                             descController.text,
                             titleController.text,
@@ -190,14 +198,14 @@ class _EditForumState extends State<EditForum> {
                             selectedSubArea.id,
                             DateTime.now());
                         try {
-                          await api.createForum(post);
+                          await api.editForum(forum);
                         } catch (e) {
                           await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Error creating post'),
+                              title: const Text('Error editing post'),
                               content: const Text(
-                                  'An error occurred while creating the Post'),
+                                  'An error occurred while editing the Post'),
                               actions: [
                                 TextButton(
                                   onPressed: () {

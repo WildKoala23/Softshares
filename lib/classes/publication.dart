@@ -5,24 +5,24 @@ import 'package:softshares/classes/user.dart';
 
 class Publication {
   final API api = API();
-  int? _id;
+  int? id;
   User _user;
   String _desc, _title;
   bool? validated;
   DateTime _postDate;
-  int _subCategory;
+  int subCategory;
   late String subAreaName;
   String? location;
   File? img;
   double? aval, price;
 
   Publication(
-    this._id,
+    this.id,
     this._user,
     this._desc,
     this._title,
     this.validated,
-    this._subCategory,
+    this.subCategory,
     this._postDate,
     this.img,
     this.location,
@@ -33,8 +33,6 @@ class Publication {
   User get user => _user;
   String get desc => _desc;
   String get title => _title;
-  int get subCategory => _subCategory;
-  int get id => _id!;
 
   DateTime get datePost => _postDate;
 
@@ -48,10 +46,6 @@ class Publication {
 
   set title(String value) {
     _title = value;
-  }
-
-  set subCategory(int value) {
-    _subCategory = value;
   }
 
   set postDate(DateTime value) {
