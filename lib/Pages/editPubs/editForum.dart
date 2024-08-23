@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
-import 'package:softshares/Pages/createPubs/eventContent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';

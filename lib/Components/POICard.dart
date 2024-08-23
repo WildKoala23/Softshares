@@ -4,10 +4,10 @@ import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
 
 class POICard extends StatefulWidget {
-   POICard({super.key, required this.pointOfInterest, required this.areas});
+  POICard({super.key, required this.pointOfInterest, required this.areas});
 
   final Publication pointOfInterest;
-     List<AreaClass> areas;
+  List<AreaClass> areas;
 
   @override
   State<POICard> createState() => _POIState();
@@ -24,10 +24,8 @@ class _POIState extends State<POICard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => POIPage(
-              poi: widget.pointOfInterest,
-              areas: widget.areas
-            ),
+            builder: (context) =>
+                POIPage(poi: widget.pointOfInterest, areas: widget.areas),
           ),
         );
       },
@@ -36,7 +34,16 @@ class _POIState extends State<POICard> {
         child: Column(
           children: [
             widget.pointOfInterest.validated == false
-                ? const Text('Awaiting validation')
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Awaiting validation',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  )
                 : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
@@ -93,13 +100,15 @@ class _POIState extends State<POICard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // If title is bigger than 30 chars, cut it
-            widget.pointOfInterest.title.length > 15 ? Text(
-              widget.pointOfInterest.title.substring(0, 15) + '....',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ):Text(
-              widget.pointOfInterest.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            widget.pointOfInterest.title.length > 15
+                ? Text(
+                    widget.pointOfInterest.title.substring(0, 15) + '....',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    widget.pointOfInterest.title,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
             Text(
               widget.pointOfInterest.subAreaName,
               style: TextStyle(color: colorScheme.onTertiary, fontSize: 16),

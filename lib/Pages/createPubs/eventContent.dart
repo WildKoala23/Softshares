@@ -47,7 +47,7 @@ class _EventCreationState extends State<EventCreation> {
   String? dateOpt;
 
   //Variables to help checking if the event is recurrent or not
-  List<String> recurrentOpt = ["Weekly", "Monthly"];
+  List<String> recurrentOpt = ["Weekly", "Monthly", "yearly"];
   bool recurrent = false;
   late String recurrentValue;
   TimeOfDay start_time = TimeOfDay.now();
@@ -60,12 +60,8 @@ class _EventCreationState extends State<EventCreation> {
     super.initState();
     selectedArea = widget.areas[0];
     selectedSubArea = selectedArea.subareas![0];
-    currentSlideValue = 3;
     recurrentValue = recurrentOpt.first;
-    currentPriceValue = 3;
     dateOpt = 'Date';
-    nonPrice = true;
-    nonRating = true;
   }
 
   @override
@@ -393,7 +389,7 @@ class _EventCreationState extends State<EventCreation> {
                 onPressed: () async {
                   if (_eventKey.currentState!.validate() &&
                       _selectedImage != null &&
-                      location != null) {
+                      location != null && start_time != end_time) {
                     User user = (await bd.getUser())!;
                     Event post = Event(
                         null,
@@ -427,7 +423,7 @@ class _EventCreationState extends State<EventCreation> {
                       builder: (context) => AlertDialog(
                         title: const Text('Non valid inputs'),
                         content: const Text(
-                            'Please check if all inputs are valid (image/location)'),
+                            'Please check if all inputs are valid (image/location/time)'),
                         actions: [
                           TextButton(
                             onPressed: () {

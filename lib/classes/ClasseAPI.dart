@@ -288,6 +288,15 @@ class API {
     }
     // Get user created events
     for (var event in events) {
+      TimeOfDay eventStart = TimeOfDay(
+        hour: int.parse(event['start_time'].split(":")[0]),
+        minute: int.parse(event['start_time'].split(":")[1]),
+      );
+
+      TimeOfDay eventEnd = TimeOfDay(
+        hour: int.parse(event['end_time'].split(":")[0]),
+        minute: int.parse(event['end_time'].split(":")[1]),
+      );
       var file;
       if (event['filepath'] != null) {
         file = File(event['filepath']);
@@ -312,8 +321,8 @@ class API {
           eventDate,
           event['recurring'],
           event['recurring_pattern']?.toString(),
-          null,
-          null);
+          eventStart,
+          eventEnd);
       print('Object created -> ${publication.id}');
       await publication.getSubAreaName();
       publications.add(publication);
@@ -415,6 +424,16 @@ class API {
 
         DateTime creationDate = DateTime.parse(eachPub['creation_date']);
         DateTime eventDate = DateTime.parse(eachPub['event_date']);
+
+        TimeOfDay eventStart = TimeOfDay(
+          hour: int.parse(eachPub['start_time'].split(":")[0]),
+          minute: int.parse(eachPub['start_time'].split(":")[1]),
+        );
+
+        TimeOfDay eventEnd = TimeOfDay(
+          hour: int.parse(eachPub['end_time'].split(":")[0]),
+          minute: int.parse(eachPub['end_time'].split(":")[1]),
+        );
         // Create Event object
         final publication = Event(
             eachPub['event_id'],
@@ -429,8 +448,8 @@ class API {
             eventDate,
             eachPub['recurring'],
             eachPub['recurring_pattern']?.toString(),
-            null,
-            null);
+            eventStart,
+            eventEnd);
         print('Object created -> ${publication.id}');
         await publication.getSubAreaName();
         publications.add(publication);
@@ -847,6 +866,56 @@ class API {
     }
   }
 
+  Future editEvent(Event event) async {
+    var office = box.read('selectedCity');
+    String? jwtToken = await getToken();
+
+    String? path;
+    String eventStart =
+        '${event.event_start!.hour.toString().padLeft(2, '0')}:${event.event_start!.minute.toString().padLeft(2, '0')}:00';
+    String eventEnd =
+        '${event.event_end!.hour.toString().padLeft(2, '0')}:${event.event_end!.minute.toString().padLeft(2, '0')}:00';
+    var recurring_aux = jsonEncode(event.recurring_path);
+
+    if (event.img != null) {
+      path = await uploadPhoto(event.img!);
+    }
+
+    try {
+      var response = await http
+          .patch(Uri.http(baseUrl, '/api/event/edit/${event.id}'), body: {
+        'subAreaId': event.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': event.user.id.toString(),
+        'name': event.title,
+        'description': event.desc,
+        'filePath': path.toString(),
+        'eventDate':
+            event.eventDate.toIso8601String(), //Convert DateTime to string
+        'location': event.location.toString(),
+        'recurring': event.recurring.toString(),
+        'recurring_pattern': recurring_aux,
+        'startTime': eventStart,
+        'endTime': eventEnd
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      print(response.statusCode);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return editEvent(event);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('edit Event');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   Future createForum(Forum forum) async {
     var office = box.read('selectedCity');
     String? jwtToken = await getToken();
@@ -902,7 +971,7 @@ class API {
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return createForum(forum);
+      return editForum(forum);
       // Re-throwing the exception after handling it
     } catch (e, s) {
       print('edit Forum');

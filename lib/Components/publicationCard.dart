@@ -7,7 +7,7 @@ class PublicationCard extends StatefulWidget {
   PublicationCard({super.key, required this.pub, required this.areas});
 
   final Publication pub;
-     List<AreaClass> areas;
+  List<AreaClass> areas;
 
   @override
   State<PublicationCard> createState() => _PubState();
@@ -29,7 +29,10 @@ class _PubState extends State<PublicationCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PostPage(publication: widget.pub, areas: widget.areas,),
+            builder: (context) => PostPage(
+              publication: widget.pub,
+              areas: widget.areas,
+            ),
           ),
         );
       },
@@ -38,7 +41,16 @@ class _PubState extends State<PublicationCard> {
         child: Column(
           children: [
             widget.pub.validated == false
-                ? const Text('Awaiting validation')
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Awaiting validation',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  )
                 : Container(),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),

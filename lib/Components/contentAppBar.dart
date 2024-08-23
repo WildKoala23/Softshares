@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/Pages/editPubs/editEvent.dart';
 import 'package:softshares/Pages/editPubs/editForum.dart';
+import 'package:softshares/Pages/homepage.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:share_plus/share_plus.dart';
@@ -36,11 +39,27 @@ class _contentAppBarState extends State<contentAppBar> {
         widget.pub.validated == false
             ? IconButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditForum(pub: widget.pub as Forum, areas: widget.areas,)),
-                  );
+                  switch (widget.pub) {
+                    case Event _:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditEvent(pub: widget.pub as Event, areas: widget.areas)),
+                      );
+                      break;
+                    case Forum _:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditForum(
+                                  pub: widget.pub as Forum,
+                                  areas: widget.areas,
+                                )),
+                      );
+                      break;
+                    case Publication _:
+                      break;
+                  }
                 },
                 icon: const Icon(Icons.edit))
             : Container()
