@@ -54,7 +54,10 @@ class _ForumPageState extends State<ForumPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: contentAppBar(pub: widget.forum, areas: widget.areas,),
+      appBar: contentAppBar(
+        pub: widget.forum,
+        areas: widget.areas,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
@@ -75,9 +78,14 @@ class _ForumPageState extends State<ForumPage> {
                         ),
                       ),
                     ),
-                    Text(
-                      widget.forum.desc,
-                      style: TextStyle(fontSize: 18),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.forum.desc,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                     const Divider(
                       color: Colors.black,
@@ -137,8 +145,9 @@ class _ForumPageState extends State<ForumPage> {
                   label: Text(
                     'Characters: $_charCount',
                     style: TextStyle(
-                      color:
-                          _charCount > _charLimit ? Colors.red : Colors.black,
+                      color: _charCount > _charLimit
+                          ? Colors.red
+                          : colorScheme.onPrimary,
                     ),
                   ),
                   suffixIcon: IconButton(

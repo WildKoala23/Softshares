@@ -889,7 +889,7 @@ class API {
         'officeID': office.toString(),
         'subAreaId': forum.subCategory.toString(),
         'title': forum.title,
-        'description': forum.desc,
+        'content': forum.desc,
         'publisher_id': forum.user.id.toString(),
       }, headers: {
         'Authorization': 'Bearer $jwtToken'

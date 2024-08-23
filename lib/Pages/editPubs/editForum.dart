@@ -106,6 +106,9 @@ class _EditForumState extends State<EditForum> {
                     style: TextStyle(fontSize: 22),
                   ),
                   TextFormField(
+                    onChanged: (text) {
+                      descController.text = text;
+                    },
                     textCapitalization: TextCapitalization.sentences,
                     controller: descController,
                     decoration: const InputDecoration(
@@ -221,7 +224,7 @@ class _EditForumState extends State<EditForum> {
                         Navigator.pushNamed(context, '/home');
                       }
                     },
-                    child: Text('Create Forum',
+                    child: Text('Edit Forum',
                         style: TextStyle(color: colorScheme.onPrimary)),
                   ),
                 ],
