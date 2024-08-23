@@ -20,6 +20,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import 'sign_in_result.dart';
+import 'facebook_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = GetIt.I<FirebaseMessaging>();
@@ -145,7 +146,10 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<User?> signInWithFacebook() async {
+  Future<SignInResult?> signInWithFacebook() async {
+    //var baseUrl = 'backendpint-w3vz.onrender.com';
+    var baseUrl = '10.0.2.2:8000';
+
     final LoginResult result = await FacebookAuth.instance.login();
 
     final AuthCredential facebookAuthCredential =
@@ -153,7 +157,30 @@ class AuthProvider with ChangeNotifier {
 
     final UserCredential userCredential = await FirebaseAuth.instance
         .signInWithCredential(facebookAuthCredential);
-    return userCredential.user;
+
+    // Get the ID token for the user
+    String? idToken = await userCredential.user!.getIdToken();
+//TODO
+    // Send the ID token to your backend
+    final response = await http.post(
+      Uri.http(baseUrl, '/api/auth/login_google'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'idToken': idToken}),
+    );
+
+    if (response.statusCode == 200) {
+      // Handle the response from the backend
+      print(response.body);
+      handleLoginSuccess();
+      // Returning both the user and the response
+      return SignInResult(
+        user: userCredential.user,
+        response: response,
+      );
+    } else {
+      print('Failed to authenticate with backend');
+      return null;
+    }
   }
 
   void handleLoginSuccess() async {
