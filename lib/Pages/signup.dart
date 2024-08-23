@@ -16,11 +16,11 @@ class _SignUpState extends State<SignUp> {
   API api = API();
   SQLHelper bd = SQLHelper.instance;
   Map<String, int> citiesMap = {
-         'Tomar': 1,
-         'Viseu': 2,
-         'Fundão': 3,
-         'Portoalegre': 4,
-         'Vila real': 5
+    'Tomar': 1,
+    'Viseu': 2,
+    'Fundão': 3,
+    'Portoalegre': 4,
+    'Vila real': 5
   };
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -73,16 +73,16 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(bottom: 30.0, top: 10.0),
                     child: Column(
                       children: [
-                        facebookBtn(colorScheme),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        googleBtn(colorScheme),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        appleBtn(colorScheme),
-                        myDivider(colorScheme),
+                        // facebookBtn(colorScheme),
+                        // const SizedBox(
+                        //   height: 25,
+                        // ),
+                        // googleBtn(colorScheme),
+                        // const SizedBox(
+                        //   height: 25,
+                        // ),
+                        // appleBtn(colorScheme),
+                        //myDivider(colorScheme),
                         firstNameField(colorScheme),
                         lastNameField(colorScheme),
                         emailField(colorScheme),
