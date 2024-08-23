@@ -39,7 +39,7 @@ class API {
       throw Exception('Failed to retrieve refreshToken');
     }
 
-    var response = await http.patch(Uri.http(baseUrl, '/api/auth/refresh-token'),
+    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
@@ -884,26 +884,26 @@ class API {
     var office = box.read('selectedCity');
 
     try {
-    var response = await http
-        .post(Uri.http(baseUrl, '/api/forum/edit/${forum.id}'), body: {
-      'officeID': office.toString(),
-      'subAreaId': forum.subCategory.toString(),
-      'title': forum.title,
-      'description': forum.desc,
-      'publisher_id': forum.user.id.toString(),
-    }, headers: {
-      'Authorization': 'Bearer $jwtToken'
-    });
-    if (response.statusCode == 401) {
-      throw InvalidTokenExceptionClass('token access expired');
-    }
-    print(response.statusCode);
-    print(response.body);
+      var response = await http
+          .patch(Uri.http(baseUrl, '/api/forum/edit/${forum.id}'), body: {
+        'officeID': office.toString(),
+        'subAreaId': forum.subCategory.toString(),
+        'title': forum.title,
+        'description': forum.desc,
+        'publisher_id': forum.user.id.toString(),
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      print(response.statusCode);
+      print(response.body);
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
       return createForum(forum);
-    // Re-throwing the exception after handling it
+      // Re-throwing the exception after handling it
     } catch (e, s) {
       print('edit Forum');
       print('Stack trace:\n $s');
