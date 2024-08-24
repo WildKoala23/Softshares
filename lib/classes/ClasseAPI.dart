@@ -751,6 +751,50 @@ class API {
     }
   }
 
+  Future editPost(Publication post) async {
+    var office = box.read('selectedCity');
+    String? jwtToken = await getToken();
+
+    String? path;
+
+    if (post.img != null) {
+      path = await uploadPhoto(post.img!);
+    }
+
+    int? price = post.price?.toInt();
+    int? rating = post.aval?.toInt();
+
+    try {
+      var response = await http
+          .patch(Uri.http(baseUrl, '/api/post/edit/${post.id}'), body: {
+        'subAreaId': post.subCategory.toString(),
+        'officeId': office.toString(),
+        'publisher_id': post.user.id.toString(),
+        'title': post.title,
+        'content': post.desc,
+        'filePath': path.toString(),
+        'pLocation': post.location.toString(),
+        'price': price.toString(),
+        'rating': rating.toString()
+      }, headers: {
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      print(response.statusCode);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return editPost(post);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('edit Event');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   // Create dynamic form related to specific event
   Future<void> createForm(int id, dynamic jsonData) async {
     String? jwtToken = await getToken();

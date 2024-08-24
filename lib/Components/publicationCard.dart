@@ -71,7 +71,7 @@ class _PubState extends State<PublicationCard> {
                       // Handles images not existing
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: Color.fromARGB(255, 150, 216, 255),
+                          color: const Color.fromARGB(255, 150, 216, 255),
                           height: 120,
                         );
                       },

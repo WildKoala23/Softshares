@@ -36,6 +36,7 @@ class _PostPageState extends State<PostPage> {
     super.initState();
     getComments();
     commentCx.addListener(_updateCharCount);
+    print('Price: ${widget.publication.price}');
   }
 
   void _updateCharCount() {
@@ -55,7 +56,10 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: contentAppBar(pub: widget.publication, areas: widget.areas,),
+      appBar: contentAppBar(
+        pub: widget.publication,
+        areas: widget.areas,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
@@ -179,8 +183,9 @@ class _PostPageState extends State<PostPage> {
                   label: Text(
                     'Characters: $_charCount',
                     style: TextStyle(
-                      color:
-                          _charCount > _charLimit ? Colors.red : Colors.black,
+                      color: _charCount > _charLimit
+                          ? Colors.red
+                          : colorScheme.onPrimary,
                     ),
                   ),
                   suffixIcon: IconButton(

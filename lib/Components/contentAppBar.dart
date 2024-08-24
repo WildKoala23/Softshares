@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/editPubs/editEvent.dart';
 import 'package:softshares/Pages/editPubs/editForum.dart';
+import 'package:softshares/Pages/editPubs/postEdit.dart';
 import 'package:softshares/Pages/homepage.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
@@ -44,7 +45,8 @@ class _contentAppBarState extends State<contentAppBar> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EditEvent(pub: widget.pub as Event, areas: widget.areas)),
+                            builder: (context) => EditEvent(
+                                pub: widget.pub as Event, areas: widget.areas)),
                       );
                       break;
                     case Forum _:
@@ -58,6 +60,13 @@ class _contentAppBarState extends State<contentAppBar> {
                       );
                       break;
                     case Publication _:
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditPost(
+                                    post: widget.pub,
+                                    areas: widget.areas,
+                                  )));
                       break;
                   }
                 },

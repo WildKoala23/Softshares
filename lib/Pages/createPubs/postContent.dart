@@ -33,7 +33,7 @@ class _PostCreationState extends State<PostCreation> {
   late double? currentRatingValue;
   late double? currentPriceValue;
 
-  late String? location;
+  String? location;
 
   //Variables to en/disable rating and price sliders when not necessary
   late bool nonRating;
@@ -327,7 +327,7 @@ class _PostCreationState extends State<PostCreation> {
                         selectedSubArea.id,
                         DateTime.now(),
                         _selectedImage,
-                        null,
+                        location,
                         currentRatingValue,
                         currentPriceValue);
                     try {
