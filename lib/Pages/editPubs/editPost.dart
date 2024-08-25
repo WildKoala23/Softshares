@@ -337,24 +337,37 @@ class _EditPostState extends State<EditPost> {
                     onPressed: () async {
                       if (_postKey.currentState!.validate()) {
                         User user = (await bd.getUser())!;
-                        if (nonPrice == false) currentPriceValue = null;
-                        if (nonRating == false) currentRatingValue = null;
-                        print('Price: $currentPriceValue');
-                        print('Rating: $currentRatingValue');
-                        var post = Publication(
-                            widget.post.id,
-                            user,
-                            descController.text,
-                            titleController.text,
-                            false,
-                            selectedSubArea.id,
-                            DateTime.now(),
-                            _selectedImage,
-                            location,
-                            currentRatingValue,
-                            currentPriceValue);
+
+                        String? title =
+                            titleController.text == widget.post.title
+                                ? null
+                                : titleController.text;
+                        String? desc = descController.text == widget.post.desc
+                            ? null
+                            : descController.text;
+                        String? filePath = _selectedImage?.path;
+                        String? loc =
+                            location == widget.post.location ? null : location;
+                        int? price =
+                            nonPrice ? currentPriceValue?.toInt() : null;
+                        int? rating =
+                            nonRating ? currentRatingValue?.toInt() : null;
+                        int? subAreaId =
+                            selectedSubArea.id == widget.post.subCategory
+                                ? null
+                                : selectedSubArea.id;
                         try {
-                          await api.editPost(post);
+                          await api.editPost(
+                            postId: widget.post.id!,
+                            title: title,
+                            desc: desc,
+                            filePath: filePath,
+                            location: loc,
+                            price: price,
+                            rating: rating,
+                            subAreaId: subAreaId,
+                            publisherId: user.id,
+                          );
                         } catch (e) {
                           await showDialog(
                             context: context,

@@ -44,6 +44,7 @@ class API {
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
+
       print('HERERRERERERER WEYAIOAIEDOASJDFCWRIKAFGHNERPLIGHJERTIGH');
     } else if (response.statusCode != 200) {
       throw Exception('Failed to refresh token');
@@ -752,34 +753,38 @@ class API {
     }
   }
 
-  Future editPost(Publication post) async {
-    var office = box.read('selectedCity');
+  Future editPost({
+    required int postId,
+    String? title,
+    String? desc,
+    String? filePath,
+    String? location,
+    int? price,
+    int? rating,
+    int? subAreaId,
+    required int publisherId,
+  }) async {
     String? jwtToken = await getToken();
-
-    String? path;
-
-    if (post.img != null) {
-      path = await uploadPhoto(post.img!);
-    }
-
-    int? price = post.price?.toInt();
-    int? rating = post.aval?.toInt();
+    var office = box.read('selectedCity');
+    Map<String, String> body = {
+      'officeId': office.toString(),
+      'publisher_id': publisherId.toString(),
+      if (subAreaId != null) 'subAreaId': subAreaId.toString(),
+      if (title != null) 'title': title,
+      if (desc != null) 'content': desc,
+      if (filePath != null) 'filePath': filePath,
+      if (location != null) 'pLocation': location,
+      if (price != null) 'price': price.toString(),
+      if (rating != null) 'rating': rating.toString(),
+    };
 
     try {
-      var response = await http
-          .patch(Uri.http(baseUrl, '/api/post/edit/${post.id}'), body: {
-        'subAreaId': post.subCategory.toString(),
-        'officeId': office.toString(),
-        'publisher_id': post.user.id.toString(),
-        'title': post.title,
-        'content': post.desc,
-        'filePath': path.toString(),
-        'pLocation': post.location.toString(),
-        'price': price.toString(),
-        'rating': rating.toString()
-      }, headers: {
-        'Authorization': 'Bearer $jwtToken'
-      });
+      var response = await http.patch(
+        Uri.http(baseUrl, '/api/post/edit/$postId'),
+        body: body,
+        headers: {'Authorization': 'Bearer $jwtToken'},
+      );
+
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -787,10 +792,19 @@ class API {
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return editPost(post);
-      // Re-throwing the exception after handling it
+      return editPost(
+        postId: postId,
+        title: title,
+        desc: desc,
+        filePath: filePath,
+        location: location,
+        price: price,
+        rating: rating,
+        subAreaId: subAreaId,
+        publisherId: publisherId,
+      );
     } catch (e, s) {
-      print('edit Event');
+      print('edit Post');
       print('Stack trace:\n $s');
       rethrow;
     }
@@ -911,40 +925,46 @@ class API {
     }
   }
 
-  Future editEvent(Event event) async {
-    var office = box.read('selectedCity');
+  Future editEvent({
+    required int eventId,
+    String? title,
+    String? desc,
+    String? path,
+    DateTime? eventDate,
+    String? location,
+    bool? recurring,
+    String? recurringPattern,
+    TimeOfDay? eventStart,
+    TimeOfDay? eventEnd,
+    int? subAreaId,
+    required int publisherId,
+    int? officeId,
+  }) async {
     String? jwtToken = await getToken();
-
-    String? path;
-    String eventStart =
-        '${event.event_start!.hour.toString().padLeft(2, '0')}:${event.event_start!.minute.toString().padLeft(2, '0')}:00';
-    String eventEnd =
-        '${event.event_end!.hour.toString().padLeft(2, '0')}:${event.event_end!.minute.toString().padLeft(2, '0')}:00';
-    var recurring_aux = jsonEncode(event.recurring_path);
-
-    if (event.img != null) {
-      path = await uploadPhoto(event.img!);
-    }
+    var office = box.read('selectedCity');
+    // Prepare the request body
+    Map<String, String> body = {
+      if (subAreaId != null) 'subAreaId': subAreaId.toString(),
+      'officeId': office.toString(),
+      'publisher_id': publisherId.toString(),
+      if (title != null) 'name': title,
+      if (desc != null) 'description': desc,
+      if (path != null) 'filePath': path,
+      if (eventDate != null) 'eventDate': eventDate.toIso8601String(),
+      if (location != null) 'location': location,
+      if (recurring != null) 'recurring': recurring.toString(),
+      if (recurringPattern != null) 'recurring_pattern': recurringPattern,
+      if (eventStart != null) 'startTime': eventStart.toString(),
+      if (eventEnd != null) 'endTime': eventEnd.toString(),
+    };
 
     try {
-      var response = await http
-          .patch(Uri.http(baseUrl, '/api/event/edit/${event.id}'), body: {
-        'subAreaId': event.subCategory.toString(),
-        'officeId': office.toString(),
-        'publisher_id': event.user.id.toString(),
-        'name': event.title,
-        'description': event.desc,
-        'filePath': path.toString(),
-        'eventDate':
-            event.eventDate.toIso8601String(), //Convert DateTime to string
-        'location': event.location.toString(),
-        'recurring': event.recurring.toString(),
-        'recurring_pattern': recurring_aux,
-        'startTime': eventStart,
-        'endTime': eventEnd
-      }, headers: {
-        'Authorization': 'Bearer $jwtToken'
-      });
+      var response = await http.patch(
+        Uri.http(baseUrl, '/api/event/edit/$eventId'),
+        body: body,
+        headers: {'Authorization': 'Bearer $jwtToken'},
+      );
+
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -952,8 +972,20 @@ class API {
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return editEvent(event);
-      // Re-throwing the exception after handling it
+      return editEvent(
+        eventId: eventId,
+        title: title,
+        desc: desc,
+        path: path,
+        eventDate: eventDate,
+        location: location,
+        recurring: recurring,
+        recurringPattern: recurringPattern,
+        eventStart: eventStart,
+        eventEnd: eventEnd,
+        subAreaId: subAreaId,
+        publisherId: publisherId,
+      ); // Re-try with refreshed token
     } catch (e, s) {
       print('edit Event');
       print('Stack trace:\n $s');
@@ -993,21 +1025,31 @@ class API {
     }
   }
 
-  Future editForum(Forum forum) async {
+  Future editForum({
+    required int forumId,
+    String? title,
+    String? desc,
+    int? subAreaId,
+    required int publisherId,
+  }) async {
     String? jwtToken = await getToken();
     var office = box.read('selectedCity');
+    // Prepare the request body
+    Map<String, String> body = {
+      'officeID': office.toString(),
+      if (subAreaId != null) 'subAreaId': subAreaId.toString(),
+      if (title != null) 'title': title,
+      if (desc != null) 'content': desc,
+      'publisher_id': publisherId.toString(),
+    };
 
     try {
-      var response = await http
-          .patch(Uri.http(baseUrl, '/api/forum/edit/${forum.id}'), body: {
-        'officeID': office.toString(),
-        'subAreaId': forum.subCategory.toString(),
-        'title': forum.title,
-        'content': forum.desc,
-        'publisher_id': forum.user.id.toString(),
-      }, headers: {
-        'Authorization': 'Bearer $jwtToken'
-      });
+      var response = await http.patch(
+        Uri.http(baseUrl, '/api/forum/edit/$forumId'),
+        body: body,
+        headers: {'Authorization': 'Bearer $jwtToken'},
+      );
+
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -1016,8 +1058,13 @@ class API {
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return editForum(forum);
-      // Re-throwing the exception after handling it
+      return editForum(
+        forumId: forumId,
+        title: title,
+        desc: desc,
+        subAreaId: subAreaId,
+        publisherId: publisherId,
+      ); // Re-try with refreshed token
     } catch (e, s) {
       print('edit Forum');
       print('Stack trace:\n $s');

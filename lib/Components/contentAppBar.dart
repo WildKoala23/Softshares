@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Pages/editPubs/editEvent.dart';
 import 'package:softshares/Pages/editPubs/editForum.dart';
-import 'package:softshares/Pages/editPubs/postEdit.dart';
+import 'package:softshares/Pages/editPubs/editPost.dart';
 import 'package:softshares/Pages/homepage.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';

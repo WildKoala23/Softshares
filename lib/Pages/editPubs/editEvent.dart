@@ -50,15 +50,37 @@ class _EditEventState extends State<EditEvent> {
 
   final _eventKey = GlobalKey<FormState>();
 
+  late String initialTitle;
+  late String initialDesc;
+  late DateTime initialDate;
+  late TimeOfDay initialStartTime;
+  late TimeOfDay initialEndTime;
+  late AreaClass initialSubArea;
+  late bool initialRecurrent;
+
   @override
   void initState() {
-    dateController.text = widget.pub.eventDate.toString().split(" ")[0];
-    start_time = widget.pub.event_start!;
-    end_time = widget.pub.event_end!;
-    recurrentValue = recurrentOpt.first;
-    titleController.text = widget.pub.title;
-    descController.text = widget.pub.desc;
     super.initState();
+
+    initialTitle = widget.pub.title;
+    initialDesc = widget.pub.desc;
+    initialDate = widget.pub.eventDate!;
+    initialStartTime = widget.pub.event_start!;
+    initialEndTime = widget.pub.event_end!;
+    initialSubArea = widget.areas
+        .firstWhere((area) => area.subareas!
+            .any((subArea) => subArea.id == widget.pub.subCategory))
+        .subareas!
+        .firstWhere((subArea) => subArea.id == widget.pub.subCategory);
+    initialRecurrent = widget.pub.recurring;
+
+    dateController.text = initialDate.toString().split(" ")[0];
+    start_time = initialStartTime;
+    end_time = initialEndTime;
+    recurrentValue = recurrentOpt.first;
+    titleController.text = initialTitle;
+    descController.text = initialDesc;
+
     for (var area in widget.areas) {
       if (area.subareas != null) {
         for (var subArea in area.subareas!) {
@@ -406,25 +428,66 @@ class _EditEventState extends State<EditEvent> {
                         backgroundColor: colorScheme.primary),
                     onPressed: () async {
                       if (_eventKey.currentState!.validate()) {
-                        print(dateController.text);
                         User user = (await bd.getUser())!;
-                        Event post = Event(
-                            widget.pub.id,
-                            user,
-                            descController.text,
-                            titleController.text,
-                            false,
-                            selectedSubArea.id,
-                            DateTime.now(),
-                            _selectedImage,
-                            location,
-                            DateTime.parse(dateController.text),
-                            recurrent,
-                            recurrentValue,
-                            start_time,
-                            end_time);
+
+                        String? desc = descController.text == initialDesc
+                            ? null
+                            : descController.text;
+                        String? title = titleController.text == initialTitle
+                            ? null
+                            : titleController.text;
+                        String? imgPath = _selectedImage?.path;
+                        String? loc = location;
+                        DateTime? date = DateTime.parse(dateController.text)
+                                .isAtSameMomentAs(initialDate)
+                            ? null
+                            : DateTime.parse(dateController.text);
+                        bool? recur = widget.pub.recurring == initialRecurrent
+                            ? null
+                            : widget.pub.recurring;
+                        String? recurVal = recurrentValue == recurrentOpt.first
+                            ? null
+                            : recurrentValue;
+                        TimeOfDay? startTime =
+                            start_time == initialStartTime ? null : start_time;
+                        TimeOfDay? endTime =
+                            end_time == initialEndTime ? null : end_time;
+                        int? subArea = selectedSubArea.id == initialSubArea.id
+                            ? null
+                            : selectedSubArea.id;
+
+                        // Event post = Event(
+                        //   widget.pub.id,
+                        //   user,
+                        //   desc,
+                        //   title,
+                        //   false,
+                        //   subArea,
+                        //   DateTime.now(),
+                        //   _selectedImage,
+                        //   loc,
+                        //   date,
+                        //   recur,
+                        //   recurVal,
+                        //   startTime,
+                        //   endTime,
+                        // );
+
                         try {
-                          await api.editEvent(post);
+                          await api.editEvent(
+                            eventId: widget.pub.id!,
+                            title: title,
+                            desc: desc,
+                            path: imgPath,
+                            eventDate: date,
+                            location: loc,
+                            recurring: recur,
+                            recurringPattern: recurVal,
+                            eventStart: startTime,
+                            eventEnd: endTime,
+                            subAreaId: subArea,
+                            publisherId: user.id,
+                          );
                         } catch (e) {
                           await showDialog(
                             context: context,

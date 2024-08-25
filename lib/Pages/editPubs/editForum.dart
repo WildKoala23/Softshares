@@ -191,16 +191,27 @@ class _EditForumState extends State<EditForum> {
                     onPressed: () async {
                       if (_forumKey.currentState!.validate()) {
                         User user = (await bd.getUser())!;
-                        Forum forum = Forum(
-                            widget.pub.id,
-                            user,
-                            descController.text,
-                            titleController.text,
-                            false,
-                            selectedSubArea.id,
-                            DateTime.now());
+
+                        // Compare the current values with the initial values
+                        String? title = titleController.text == widget.pub.title
+                            ? null
+                            : titleController.text;
+                        String? desc = descController.text == widget.pub.desc
+                            ? null
+                            : descController.text;
+                        int? subAreaId =
+                            selectedSubArea.id == widget.pub.subCategory
+                                ? null
+                                : selectedSubArea.id;
+
                         try {
-                          await api.editForum(forum);
+                          await api.editForum(
+                            forumId: widget.pub.id!,
+                            title: title,
+                            desc: desc,
+                            subAreaId: subAreaId,
+                            publisherId: user.id,
+                          );
                         } catch (e) {
                           await showDialog(
                             context: context,
