@@ -47,7 +47,7 @@ class _EventCreationState extends State<EventCreation> {
   String? dateOpt;
 
   //Variables to help checking if the event is recurrent or not
-  List<String> recurrentOpt = ["Weekly", "Monthly", "yearly"];
+  List<String> recurrentOpt = ["Weekly", "Monthly", "Yearly"];
   bool recurrent = false;
   late String recurrentValue;
   TimeOfDay start_time = TimeOfDay.now();
@@ -193,7 +193,7 @@ class _EventCreationState extends State<EventCreation> {
               Row(
                 children: [
                   const Text(
-                    'Recurrent (weekly/monthly):',
+                    'Recurrent:',
                     style: TextStyle(fontSize: 22),
                   ),
                   const SizedBox(height: 30),

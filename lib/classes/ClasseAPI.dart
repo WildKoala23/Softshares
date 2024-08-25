@@ -629,7 +629,6 @@ class API {
           file = null;
         }
         if (eachPub['type'] == 'P') {
-          
           double? rating = double.tryParse(eachPub['score']);
           print(rating);
           User publisherUser = await getUser(eachPub['publisher_id']);
@@ -1299,11 +1298,51 @@ class API {
 
           // Add occurrences for a reasonable future range (e.g., 6 months)
           for (int i = 1; i <= 6; i++) {
-            recurrenceDate = recurrenceDate.add(Duration(days: 31));
+            recurrenceDate = DateTime(
+              recurrenceDate.year,
+              recurrenceDate.month + 1,
+              recurrenceDate.day,
+            );
+
+            // Break if the recurrenceDate exceeds the next year
             if (recurrenceDate.year > DateTime.now().year + 1) break;
 
+            // Create a new DateTime object with the new month
             DateTime recurrenceDay = DateTime(
-                recurrenceDate.year, recurrenceDate.month, recurrenceDate.day);
+              recurrenceDate.year,
+              recurrenceDate.month,
+              recurrenceDate.day,
+            );
+
+            // Add the publication to the events map
+            events[recurrenceDay] ??= [];
+            events[recurrenceDay]!.add(publication);
+          }
+        }
+        //Handle recurring events -> yearly
+        else if (publication.recurring_path == 'Yearly') {
+          DateTime recurrenceDate = eventDate;
+
+          // Add occurrences for a reasonable future range (e.g., 6 years)
+          for (int i = 1; i <= 6; i++) {
+            // Add one year to the recurrence date
+            recurrenceDate = DateTime(
+              recurrenceDate.year + 1,
+              recurrenceDate.month,
+              recurrenceDate.day,
+            );
+
+            // Break if the recurrenceDate exceeds the next year
+            if (recurrenceDate.year > DateTime.now().year + 1) break;
+
+            // Create a new DateTime object with the new year
+            DateTime recurrenceDay = DateTime(
+              recurrenceDate.year,
+              recurrenceDate.month,
+              recurrenceDate.day,
+            );
+
+            // Add the publication to the events map
             events[recurrenceDay] ??= [];
             events[recurrenceDay]!.add(publication);
           }
@@ -1545,7 +1584,7 @@ class API {
       headers: {'Authorization': 'Bearer $jwtToken'},
       body: {
         'fcmToken': fcmtoken.toString(),
-        'userId': user!.id.toString(),
+        'userId': user.id.toString(),
       },
     );
 
