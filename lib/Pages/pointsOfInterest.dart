@@ -29,6 +29,8 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
     // Get type of publications from specific area
     var data = await api.getAllPoI();
 
+    listPoi = data;
+
     if (filters.isNotEmpty) {
       // Initialize a set to track seen publications and avoid duplicates
       Set<Publication> seenPubs = {};
@@ -41,12 +43,14 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
 
         // Use a temporary set to filter by rating
         Set<Publication> tempPubs = {};
-        seenPubs.forEach((pub) {
+        for (var pub in listPoi) {
+          if (pub.aval != null){
+          }
           if (pub.aval != null &&
               filterRatings.contains(pub.aval!.toInt().toString())) {
             tempPubs.add(pub);
           }
-        });
+        }
 
         // Update seenPubs with filtered results by rating
         seenPubs = tempPubs;
@@ -55,9 +59,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
       // Convert the set to a list for final output
 
       listPoi = seenPubs.toList();
-    } else {
-      listPoi = data;
-    }
+    } 
   }
 
   void rightCallback(context) {
@@ -79,7 +81,6 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
 
       if (result.entries.isNotEmpty) {
         filters['rating'] = result['rating'];
-        filters['price'] = result['price'];
       } else {
         filters = {};
       }
@@ -109,51 +110,36 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
       drawer: myDrawer(
         areas: widget.areas,
       ),
-      body: FutureBuilder(
-        future: futurePosts,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              print('OOHO :(');
-              return (Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.cloud_off),
-                    const Text(
-                        'Failed connection to server. Please check your connection'),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            futurePosts = getPubs(filters);
-                          });
-                        },
-                        child: const Text('Try Again'))
-                  ],
-                ),
-              ));
-            } else if (listPoi.isEmpty) {
-              return (const Center(
-                child: Text('No posts found'),
-              ));
-            }
-            return (ListView.builder(
-                itemCount: listPoi.length,
-                itemBuilder: (contex, index) {
-                  return (POICard(pointOfInterest: listPoi[index],areas: widget.areas));
-                 
-                }));
-          } else {
-            return (const Center(
-              child: CircularProgressIndicator(),
-            ));
-          }
-        },
-      ),
+      body: pubContent(),
       bottomNavigationBar: const MyBottomBar(),
+    );
+  }
+
+  FutureBuilder<dynamic> pubContent() {
+    return FutureBuilder(
+      future: getPubs(filters),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          if (listPoi.isEmpty) {
+            return const Center(
+              child: Text(
+                'No posts found',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: listPoi.length,
+              itemBuilder: (context, index) {
+                return (POICard(
+                    pointOfInterest: listPoi[index], areas: widget.areas));
+              },
+            );
+          }
+        }
+      },
     );
   }
 }

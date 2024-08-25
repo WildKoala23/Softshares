@@ -44,15 +44,6 @@ class _FilterPoiPage extends State<FilterPoiPage> {
               ),
             ),
             RatingFilter(filters: widget.filters),
-            const Padding(
-              padding: EdgeInsets.only(bottom: 14.0, top: 75),
-              child: SizedBox(
-                child: Text(
-                  'Price',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -71,7 +62,6 @@ class RatingFilter extends StatefulWidget {
 class _RatingFilterState extends State<RatingFilter> {
   // Define the map to track button selection states
   final Map<String, bool> isSelected = {
-    'None': false,
     '1': false,
     '2': false,
     '3': false,
