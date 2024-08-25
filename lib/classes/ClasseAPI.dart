@@ -168,9 +168,7 @@ class API {
           double? price =
               eachPub['price'] != null ? (eachPub['price'] as num) * 1.0 : null;
 
-          double? rating = int.tryParse(eachPub['score']) != null
-              ? int.tryParse(eachPub['score'])! * 1.0
-              : null;
+          double? rating = double.tryParse(eachPub['score']);
           //print('ID: ${publisherUser.id}\n Price: $price');
           var file;
           if (eachPub['filepath'] != null) {
@@ -612,7 +610,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/dynamic/all-content-per/$officeId'),
+          Uri.http(baseUrl, '/api/dynamic/posts-by-city/$officeId'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -621,8 +619,9 @@ class API {
         throw InvalidTokenExceptionClass('token access expired');
       }
       var jsonData = jsonDecode(response.body);
+      print(jsonData);
 
-      for (var eachPub in jsonData['posts']) {
+      for (var eachPub in jsonData['data']) {
         var file;
         if (eachPub['filepath'] != null) {
           file = File(eachPub['filepath']);
@@ -630,6 +629,9 @@ class API {
           file = null;
         }
         if (eachPub['type'] == 'P') {
+          
+          double? rating = double.tryParse(eachPub['score']);
+          print(rating);
           User publisherUser = await getUser(eachPub['publisher_id']);
           final publication = Publication(
               eachPub['post_id'],
@@ -641,8 +643,10 @@ class API {
               DateTime.parse(eachPub['creation_date']),
               file,
               eachPub['p_location'],
-              eachPub['rating'],
-              eachPub['price']);
+              rating,
+              null);
+
+          print(publication.aval);
           await publication.getSubAreaName();
           list.add(publication);
         }
