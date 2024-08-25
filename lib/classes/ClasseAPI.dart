@@ -1275,6 +1275,16 @@ class API {
     }
   }
 
+  Future likeComment(int id) async {
+    String? jwtToken = await getToken();
+
+    var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
+  }
+
   Future getComents(
     Publication pub,
   ) async {
@@ -1312,7 +1322,8 @@ class API {
         Comment comment = Comment(
             user: user,
             comment: eachComment['content'],
-            likes: eachComment['likes']);
+            likes: eachComment['likes'],
+            id: eachComment['comment_id']);
         comments.add(comment);
       }
 

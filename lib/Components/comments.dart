@@ -62,6 +62,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             onPressed: () {},
                             tooltip: 'Like',
                           ),
+                          Text(widget.comment.likes.toString())
                           // IconButton(
                           //   icon: const Icon(Icons.thumb_down_alt_outlined),
                           //   onPressed: () {},
