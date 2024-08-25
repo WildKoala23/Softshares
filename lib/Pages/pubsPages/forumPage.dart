@@ -5,6 +5,7 @@ import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/commentClass.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -22,7 +23,7 @@ class _ForumPageState extends State<ForumPage> {
   API api = API();
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
-  Map<User, String> comments = {};
+  List<Comment> comments = [];
   int _charCount = 0;
   final int _charLimit = 500;
 
@@ -115,14 +116,8 @@ class _ForumPageState extends State<ForumPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
-                              User user = comments.keys.elementAt(index);
-                              String comment = comments[user]!;
                               return CommentWidget(
-                                userFirstName: user.firstname,
-                                userLastName: user.lastName,
-                                comment: comment,
-                                colorScheme: colorScheme,
-                                onReply: (String) {},
+                                comment: comments[index],
                               );
                             },
                           ),

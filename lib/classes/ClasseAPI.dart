@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/commentClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:http/http.dart' as http;
@@ -1277,7 +1278,7 @@ class API {
   Future getComents(
     Publication pub,
   ) async {
-    Map<User, String> comments = {};
+    List<Comment> comments = [];
 
     late String type;
     switch (pub) {
@@ -1300,14 +1301,19 @@ class API {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
           });
+      print(response.body);
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
       var jsonData = jsonDecode(response.body);
 
-      for (var comment in jsonData['data']) {
-        User user = await getUser(comment['publisher_id']);
-        comments[user] = comment['content'];
+      for (var eachComment in jsonData['data']) {
+        User user = await getUser(eachComment['publisher_id']);
+        Comment comment = Comment(
+            user: user,
+            comment: eachComment['content'],
+            likes: eachComment['likes']);
+        comments.add(comment);
       }
 
       return comments;

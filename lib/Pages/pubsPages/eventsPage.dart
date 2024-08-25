@@ -6,6 +6,7 @@ import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/Pages/registerEvent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/commentClass.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -13,7 +14,7 @@ class EventPage extends StatefulWidget {
   EventPage({super.key, required this.event, required this.areas});
 
   final Event event;
-    List<AreaClass> areas;
+  List<AreaClass> areas;
 
   @override
   State<EventPage> createState() => _EventPageState();
@@ -37,7 +38,7 @@ class _EventPageState extends State<EventPage> {
     mapController = controller;
   }
 
-  Map<User, String> comments = {};
+  List<Comment> comments = [];
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.event);
@@ -142,15 +143,8 @@ class _EventPageState extends State<EventPage> {
                                             const NeverScrollableScrollPhysics(),
                                         itemCount: comments.length,
                                         itemBuilder: (context, index) {
-                                          User user =
-                                              comments.keys.elementAt(index);
-                                          String comment = comments[user]!;
                                           return CommentWidget(
-                                            userFirstName: user.firstname,
-                                            userLastName: user.lastName,
-                                            comment: comment,
-                                            colorScheme: colorScheme,
-                                            onReply: (String) {},
+                                            comment: comments[index],
                                           );
                                         },
                                       ),

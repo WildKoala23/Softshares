@@ -7,6 +7,7 @@ import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/commentClass.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -26,9 +27,11 @@ class _POIPageState extends State<POIPage> {
   API api = API();
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
-  Map<User, String> comments = {};
+  List<Comment> comments = [];
   late int _remainingChars;
   final int _charLimit = 500;
+
+
   Future<void> getComments() async {
     comments = await api.getComents(widget.poi);
     setState(() {}); // Ensure the UI updates after fetching comments
@@ -171,14 +174,8 @@ class _POIPageState extends State<POIPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
-                              User user = comments.keys.elementAt(index);
-                              String comment = comments[user]!;
                               return CommentWidget(
-                                userFirstName: user.firstname,
-                                userLastName: user.lastName,
-                                comment: comment,
-                                colorScheme: colorScheme,
-                                onReply: (String) {},
+                                comment: comments[index],
                               );
                             },
                           ),
