@@ -1367,12 +1367,23 @@ class API {
 
   Future likeComment(int id) async {
     String? jwtToken = await getToken();
+    User? user = await bd.getUser();
 
-    var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
+    try {
+      var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
+          body: jsonEncode({
+            'commentID': id.toString(),
+            'userID': user!.id.toString(),
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 
   Future getComents(

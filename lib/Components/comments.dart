@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 import '../classes/commentClass.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -16,6 +17,7 @@ class CommentWidget extends StatefulWidget {
 class _CommentWidgetState extends State<CommentWidget> {
   bool _isReplying = false;
   final TextEditingController _replyController = TextEditingController();
+  API api = API();
 
   void _toggleReplying() {
     setState(() {
@@ -59,7 +61,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.thumb_up_alt_outlined),
-                            onPressed: () {},
+                            onPressed: () async {
+                              await api.likeComment(widget.comment.id);
+                              setState(() {
+                                
+                              });
+                            },
                             tooltip: 'Like',
                           ),
                           Text(widget.comment.likes.toString())
