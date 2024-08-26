@@ -868,11 +868,39 @@ class API {
         }
       }
       Field field = Field(
-          name: item['field_name'], type: item['field_type'], options: options);
+          name: item['field_name'], type: item['field_type'], options: options, id: item['field_id']);
       formItens.add(field);
     }
 
     return formItens;
+  }
+
+  Future sendFormAnswer(int eventId, dynamic answers) async {
+    String? jwtToken = await getToken();
+
+    try {
+      User? user = await bd.getUser();
+
+      // Prepare the JSON data
+      var jsonData = jsonEncode(answers);
+
+      var response = await http.post(
+        Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user!.id}'),
+        headers: {
+          'Content-Type':
+              'application/json', // This tells the server the body is in JSON format
+          'Authorization': 'Bearer $jwtToken',
+        },
+        body: jsonEncode({
+          'answersJson': answers}), // Directly pass the JSON string as the body
+      );
+
+      print(response.statusCode);
+      print(response.body);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 
   Future createEvent(Event event) async {

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
-import 'package:softshares/Pages/customFieldTextForm.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/fieldClass.dart';
 
@@ -16,21 +15,26 @@ class Register extends StatefulWidget {
   State<Register> createState() => _RegisterState();
 }
 
+List<Map<String, dynamic>> jsonForm = [];
+
 class _RegisterState extends State<Register> {
   final API api = API();
   List<Field> fields = [];
   List<Widget> widgets = [];
-  Map<String, List<String>> formItens = {};
+  Map<String, TextEditingController> answers = {};
   List<TextEditingController> controllers = [];
   var responses = [];
   bool loaded = false;
 
   void buildForm() {
     List<Widget> aux = [];
-    List<TextEditingController> aux_cx = [];
+    //List<TextEditingController> aux_cx = [];
     for (var item in fields) {
+      print(item.id);
       TextEditingController cx = TextEditingController();
-      aux_cx.add(cx);
+      answers[item.id.toString()] = cx;
+
+      //aux_cx.add(cx);
       switch (item.type) {
         case 'Text':
           aux.add(customTextField(
@@ -62,10 +66,9 @@ class _RegisterState extends State<Register> {
       }
     }
     setState(() {
-      controllers = aux_cx;
+      //controllers = aux_cx;
       widgets = aux;
     });
-    print(controllers.length);
   }
 
   Future<void> getForm() async {
@@ -74,6 +77,15 @@ class _RegisterState extends State<Register> {
     setState(() {
       loaded = true;
     });
+  }
+
+  // Create jsonObject to send to server
+  void addInfo(String id, TextEditingController options) {
+    var object = {
+      "ANSWERS": options.text,
+      "field_id": id,
+    };
+    jsonForm.add(object);
   }
 
   @override
@@ -122,17 +134,18 @@ class _RegisterState extends State<Register> {
                   backgroundColor:
                       MaterialStateProperty.all<Color>(colorScheme.primary),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
-                    // Ensure setState is used if there are state changes
-                    print(controllers.length);
-                    for (var controller in controllers) {
-                      // print(controller.text);
-                      responses.add(controller.text);
-                    }
+                    //Ensure setState is used if there are state changes
+
+                    answers.forEach((k, v) => addInfo(k, v));
+
                     print('RESPONSES');
                     print(jsonEncode(responses));
                   });
+                  print(responses);
+                  var data = jsonEncode(jsonForm);
+                  await api.sendFormAnswer(widget.id, data);
                 },
                 child: const Text('Register'),
               ),

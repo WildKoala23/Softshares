@@ -2,11 +2,13 @@
 
 class Field {
   String name, type;
+  int id;
   List<String>? options;
 
-    Field({
+  Field({
     required this.name,
     required this.type,
     this.options,
+    required this.id
   });
 }
