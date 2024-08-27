@@ -17,6 +17,7 @@ class CommentWidget extends StatefulWidget {
 class _CommentWidgetState extends State<CommentWidget> {
   bool _isReplying = false;
   final TextEditingController _replyController = TextEditingController();
+  final TextEditingController _reportController = TextEditingController();
   API api = API();
 
   void _toggleReplying() {
@@ -63,9 +64,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             icon: const Icon(Icons.thumb_up_alt_outlined),
                             onPressed: () async {
                               await api.likeComment(widget.comment.id);
-                              setState(() {
-                                
-                              });
+                              setState(() {});
                             },
                             tooltip: 'Like',
                           ),
@@ -85,7 +84,18 @@ class _CommentWidgetState extends State<CommentWidget> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.report_problem_rounded),
-                      onPressed: () {},
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(builder:
+                                (BuildContext context, StateSetter setState) {
+                              return formBottomSheet(
+                                  setState, context, colorScheme);
+                            });
+                          },
+                        );
+                      },
                       tooltip: 'Report',
                     ),
                     // IconButton(
@@ -127,6 +137,85 @@ class _CommentWidgetState extends State<CommentWidget> {
       ),
     );
   }
+
+SingleChildScrollView formBottomSheet(
+    StateSetter setState, BuildContext context, ColorScheme colorScheme) {
+  return SingleChildScrollView(
+    padding: EdgeInsets.only(
+      bottom: MediaQuery.of(context).viewInsets.bottom,
+    ),
+    child: Container(
+      padding: const EdgeInsets.all(20.0), // Adds padding to the content inside the container
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        borderRadius: const BorderRadius.all(Radius.circular(30)),
+        color: colorScheme.primaryContainer,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Report Issue",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+          const SizedBox(
+              height: 10), // Adds space between the title and the description
+          Text(
+            "Please describe the issue you encountered:",
+            style: TextStyle(
+              fontSize: 16,
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+          const SizedBox(
+              height: 10), // Adds space between the description and the TextField
+          TextField(
+            controller: _reportController,
+            maxLines: 4,
+            decoration: InputDecoration(
+              hintText: "Enter your report here...",
+              filled: true,
+              fillColor: colorScheme.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20), // Adds space between the TextField and the buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  // Handle the report submission
+                },
+                child: Text(
+                  'Send report',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   @override
   void dispose() {
