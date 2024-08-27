@@ -3,10 +3,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/Pages/pubsPages/checkAnswers.dart';
 import 'package:softshares/Pages/registerEvent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/commentClass.dart';
+import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -24,8 +26,11 @@ class _EventPageState extends State<EventPage> {
   late GoogleMapController mapController;
   late LatLng local;
   API api = API();
+  SQLHelper bd = SQLHelper.instance;
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
+  bool isEventCreator = false;
+  bool userRegistered = true;
 
   LatLng convertCoord(String location) {
     List<String> coords = location.split(" ");
@@ -45,6 +50,19 @@ class _EventPageState extends State<EventPage> {
     setState(() {});
   }
 
+  Future isCreator() async {
+    User? user = await bd.getUser();
+    if (user!.id == widget.event.user.id) {
+      isEventCreator = true;
+    }
+  }
+
+  Future isRegistered() async {
+    if (isEventCreator) return;
+    User? user = await bd.getUser();
+    userRegistered = await api.isRegistered(user!.id, widget.event.id!);
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -56,6 +74,8 @@ class _EventPageState extends State<EventPage> {
     super.initState();
     local = convertCoord(widget.event.location!);
     getComments();
+    isCreator();
+    isRegistered();
   }
 
   @override
@@ -88,107 +108,106 @@ class _EventPageState extends State<EventPage> {
               child: TabBarView(
                 children: [
                   eventOverview(colorScheme),
-                  Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                cardHeader(colorScheme),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8.0, bottom: 5.0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      widget.event.title,
-                                      style: TextStyle(fontSize: 22),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  widget.event.desc,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                const Divider(
-                                  color: Colors.black,
-                                  height: 30,
-                                  thickness: 2,
-                                  indent: 10,
-                                  endIndent: 10,
-                                ),
-                                comments.isEmpty
-                                    ? const Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Icon(
-                                              Icons.sentiment_dissatisfied,
-                                              size: 50,
-                                            ),
-                                            Text(
-                                              'So empty',
-                                              style: TextStyle(fontSize: 24),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: comments.length,
-                                        itemBuilder: (context, index) {
-                                          return CommentWidget(
-                                            comment: comments[index],
-                                          );
-                                        },
-                                      ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Form(
-                          key: _commentKey,
-                          child: TextFormField(
-                            textCapitalization: TextCapitalization.sentences,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter comment';
-                              }
-                              return null;
-                            },
-                            controller: commentCx,
-                            decoration: InputDecoration(
-                              label: const Text('Add comment'),
-                              suffixIcon: IconButton(
-                                onPressed: () async {
-                                  if (_commentKey.currentState!.validate()) {
-                                    await api.createComment(
-                                        widget.event, commentCx.text);
-                                    commentCx.clear();
-                                    await getComments(); // Fetch comments again
-                                  }
-                                },
-                                icon: const Icon(Icons.send),
-                              ),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide()),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                  userRegistered == true ? forumContent(colorScheme) : const Center(child: Text('Please register to see content'),)
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Padding forumContent(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.all(18.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  cardHeader(colorScheme),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 5.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.event.title,
+                        style: TextStyle(fontSize: 22),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    widget.event.desc,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const Divider(
+                    color: Colors.black,
+                    height: 30,
+                    thickness: 2,
+                    indent: 10,
+                    endIndent: 10,
+                  ),
+                  comments.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.sentiment_dissatisfied,
+                                size: 50,
+                              ),
+                              Text(
+                                'So empty',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: comments.length,
+                          itemBuilder: (context, index) {
+                            return CommentWidget(
+                              comment: comments[index],
+                            );
+                          },
+                        ),
+                ],
+              ),
+            ),
+          ),
+          Form(
+            key: _commentKey,
+            child: TextFormField(
+              textCapitalization: TextCapitalization.sentences,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter comment';
+                }
+                return null;
+              },
+              controller: commentCx,
+              decoration: InputDecoration(
+                label: const Text('Add comment'),
+                suffixIcon: IconButton(
+                  onPressed: () async {
+                    if (_commentKey.currentState!.validate()) {
+                      await api.createComment(widget.event, commentCx.text);
+                      commentCx.clear();
+                      await getComments(); // Fetch comments again
+                    }
+                  },
+                  icon: const Icon(Icons.send),
+                ),
+                border: const OutlineInputBorder(borderSide: BorderSide()),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -265,22 +284,40 @@ class _EventPageState extends State<EventPage> {
             const SizedBox(height: 50),
             Align(
               alignment: Alignment.center,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Register(id: widget.event.id!)),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
-                ),
-                child: Text(
-                  'Register for Event',
-                  style: TextStyle(color: colorScheme.onPrimary),
-                ),
-              ),
+              child: isEventCreator == false
+                  ? ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Register(id: widget.event.id!)),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                      ),
+                      child: Text(
+                        'Register for Event',
+                        style: TextStyle(color: colorScheme.onPrimary),
+                      ),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CheckAnswers(id: widget.event.id!)),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                      ),
+                      child: Text(
+                        'Check answers',
+                        style: TextStyle(color: colorScheme.onPrimary),
+                      ),
+                    ),
             ),
           ],
         ),

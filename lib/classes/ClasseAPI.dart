@@ -868,7 +868,10 @@ class API {
         }
       }
       Field field = Field(
-          name: item['field_name'], type: item['field_type'], options: options, id: item['field_id']);
+          name: item['field_name'],
+          type: item['field_type'],
+          options: options,
+          id: item['field_id']);
       formItens.add(field);
     }
 
@@ -881,9 +884,6 @@ class API {
     try {
       User? user = await bd.getUser();
 
-      // Prepare the JSON data
-      var jsonData = jsonEncode(answers);
-
       var response = await http.post(
         Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user!.id}'),
         headers: {
@@ -892,11 +892,38 @@ class API {
           'Authorization': 'Bearer $jwtToken',
         },
         body: jsonEncode({
-          'answersJson': answers}), // Directly pass the JSON string as the body
+          'answersJson': answers
+        }), // Directly pass the JSON string as the body
       );
 
       print(response.statusCode);
       print(response.body);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<bool> isRegistered(int id, int eventID) async {
+    String? jwtToken = await getToken();
+
+    try {
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/event/get-participants/$eventID'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken',
+          });
+
+      var jsonData = jsonDecode(response.body);
+      // print('DATATATATATATA');
+      // print(jsonData);
+      for (var user in jsonData['data']) {
+        if (user['user_id'] == id) {
+          return true;
+        }
+      }
+      return false;
     } catch (e) {
       print(e);
       rethrow;
