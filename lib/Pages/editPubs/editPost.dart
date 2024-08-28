@@ -10,6 +10,7 @@ import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class EditPost extends StatefulWidget {
   EditPost({super.key, required this.post, required this.areas});
@@ -336,7 +337,7 @@ class _EditPostState extends State<EditPost> {
                         backgroundColor: colorScheme.primary),
                     onPressed: () async {
                       if (_postKey.currentState!.validate()) {
-                        User user = (await bd.getUser())!;
+                        User user = (AuthProvider().user)!;
 
                         String? title =
                             titleController.text == widget.post.title

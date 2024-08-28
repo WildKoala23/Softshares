@@ -14,6 +14,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:softshares/classes/fieldClass.dart';
+import 'package:softshares/providers/auth_provider.dart';
 import '../env.dart';
 
 //import files
@@ -893,7 +894,7 @@ class API {
     String? jwtToken = await getToken();
 
     try {
-      User? user = await bd.getUser();
+      User? user = AuthProvider().user;
 
       var response = await http.post(
         Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user!.id}'),
@@ -1433,7 +1434,7 @@ class API {
 
   Future likeComment(int id) async {
     String? jwtToken = await getToken();
-    User? user = await bd.getUser();
+    User? user = AuthProvider().user;
 
     try {
       var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
@@ -1454,7 +1455,7 @@ class API {
 
   Future reportComment(int id, String report) async {
     String? jwtToken = await getToken();
-    User? user = await bd.getUser();
+    User? user = AuthProvider().user;
 
     try {
       var response = await http.post(Uri.http(baseUrl, '/api/comment/report-coment'),
@@ -1545,7 +1546,7 @@ class API {
     try {
       String? jwtToken = await getToken();
       // var _id = await getID();
-      User? user = await bd.getUser();
+      User? user = AuthProvider().user;
       // print('in comments: $_id');
       // print(_id.runtimeType);
       var response = await http

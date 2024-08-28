@@ -5,6 +5,7 @@ import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class EditForum extends StatefulWidget {
   EditForum({super.key, required this.pub, required this.areas});
@@ -190,7 +191,7 @@ class _EditForumState extends State<EditForum> {
                         backgroundColor: colorScheme.primary),
                     onPressed: () async {
                       if (_forumKey.currentState!.validate()) {
-                        User user = (await bd.getUser())!;
+                        User user = (AuthProvider().user)!;
 
                         // Compare the current values with the initial values
                         String? title = titleController.text == widget.pub.title

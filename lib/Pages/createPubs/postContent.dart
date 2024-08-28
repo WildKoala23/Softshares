@@ -8,6 +8,7 @@ import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class PostCreation extends StatefulWidget {
   PostCreation({super.key, required this.areas});
@@ -313,7 +314,7 @@ class _PostCreationState extends State<PostCreation> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_postKey.currentState!.validate()) {
-                    User user = (await bd.getUser())!;
+                    User user = (AuthProvider().user)!;
                     if (nonPrice == false) currentPriceValue = null;
                     if (nonRating == false) currentRatingValue = null;
                     print('Price: ${currentPriceValue}');

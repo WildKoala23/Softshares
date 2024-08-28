@@ -11,6 +11,7 @@ import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class EditEvent extends StatefulWidget {
   EditEvent({super.key, required this.pub, required this.areas});
@@ -428,7 +429,7 @@ class _EditEventState extends State<EditEvent> {
                         backgroundColor: colorScheme.primary),
                     onPressed: () async {
                       if (_eventKey.currentState!.validate()) {
-                        User user = (await bd.getUser())!;
+                        User user = (AuthProvider().user)!;
 
                         String? desc = descController.text == initialDesc
                             ? null

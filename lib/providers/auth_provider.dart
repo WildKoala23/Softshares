@@ -75,14 +75,6 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setUser() async {
-    try {
-      _user = await bd.getUser();
-    } catch (e) {
-      _user = null;
-    }
-  }
-
   Future<void> checkLoginStatus() async {
     String? jwtToken = await api.getToken();
     if (jwtToken != null) {

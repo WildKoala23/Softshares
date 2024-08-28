@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:softshares/classes/publication.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 import '../../classes/db.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class _POICreationState extends State<POICreation> {
   List<AreaClass> subAreas = [];
 
   Future getUser() async {
-    user = (await bd.getUser())!;
+    user = (AuthProvider().user)!;
   }
 
   @override

@@ -12,6 +12,7 @@ import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class EventCreation extends StatefulWidget {
   EventCreation({super.key, required this.areas});
@@ -391,7 +392,7 @@ class _EventCreationState extends State<EventCreation> {
                       _selectedImage != null &&
                       location != null &&
                       start_time != end_time) {
-                    User user = (await bd.getUser())!;
+                    User user = (AuthProvider().user)!;
                     Event post = Event(
                         null,
                         user,

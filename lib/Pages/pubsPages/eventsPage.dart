@@ -11,6 +11,7 @@ import 'package:softshares/classes/commentClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class EventPage extends StatefulWidget {
   EventPage({super.key, required this.event, required this.areas});
@@ -51,7 +52,7 @@ class _EventPageState extends State<EventPage> {
   }
 
   Future isCreator() async {
-    User? user = await bd.getUser();
+    User? user = AuthProvider().user;
     if (user!.id == widget.event.user.id) {
       isEventCreator = true;
     }
@@ -59,7 +60,7 @@ class _EventPageState extends State<EventPage> {
 
   Future isRegistered() async {
     if (isEventCreator) return;
-    User? user = await bd.getUser();
+    User? user = AuthProvider().user;
     userRegistered = await api.isRegistered(user!.id, widget.event.id!);
   }
 

@@ -5,6 +5,7 @@ import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 
 class ForumCreation extends StatefulWidget {
   ForumCreation({super.key, required this.areas});
@@ -170,7 +171,7 @@ class _ForumCreationState extends State<ForumCreation> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_forumKey.currentState!.validate()) {
-                    User user = (await bd.getUser())!;
+                    User user = (AuthProvider().user)!;
                     Forum post = Forum(
                         null,
                         user,
