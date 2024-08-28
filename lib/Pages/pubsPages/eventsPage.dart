@@ -32,7 +32,7 @@ class _EventPageState extends State<EventPage> {
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   bool isEventCreator = false;
-  bool userRegistered = true;
+  bool userRegistered = false;
   final box = GetStorage();
 
   LatLng convertCoord(String location) {
@@ -62,8 +62,10 @@ class _EventPageState extends State<EventPage> {
 
   Future isRegistered() async {
     if (isEventCreator) return;
-    User? user = await api.getUser(box.read('id'));
+    User user = await api.getUser(box.read('id'));
+    print(user.id);
     userRegistered = await api.isRegistered(user.id, widget.event.id!);
+    print('IS USER REGISTERED????? ${userRegistered}');
   }
 
   @override
@@ -77,8 +79,8 @@ class _EventPageState extends State<EventPage> {
     super.initState();
     local = convertCoord(widget.event.location!);
     getComments();
-    //isCreator();
-    //isRegistered();
+    isCreator();
+    isRegistered();
   }
 
   @override
@@ -111,7 +113,11 @@ class _EventPageState extends State<EventPage> {
               child: TabBarView(
                 children: [
                   eventOverview(colorScheme),
-                  userRegistered == true ? forumContent(colorScheme) : const Center(child: Text('Please register to see content'),)
+                  userRegistered == true
+                      ? forumContent(colorScheme)
+                      : const Center(
+                          child: Text('Please register to see content'),
+                        )
                 ],
               ),
             ),
@@ -310,7 +316,8 @@ class _EventPageState extends State<EventPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CheckAnswers(id: widget.event.id!)),
+                              builder: (context) =>
+                                  CheckAnswers(id: widget.event.id!)),
                         );
                       },
                       style: ElevatedButton.styleFrom(

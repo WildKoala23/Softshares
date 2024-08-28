@@ -4,10 +4,6 @@ import 'package:softshares/Components/formAppBar.dart';
 class customCheckboxForm extends StatefulWidget {
   customCheckboxForm({super.key});
 
-  final Color containerColor = const Color(0xFFFEF7FF);
-  final Color appBarColor = const Color(0xff80ADD7);
-  final Color appBarFont = const Color(0xFFFFFFFF);
-  final Color mainColor = const Color(0xff80ADD7);
 
   @override
   State<customCheckboxForm> createState() => _CustomCheckboxFormState();

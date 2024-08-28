@@ -917,6 +917,38 @@ class API {
     }
   }
 
+  Future editForm(int id, dynamic jsonData) async {
+    String? jwtToken = await getToken();
+
+    // Print raw and encoded JSON data for debugging
+    print('Raw: $jsonData');
+    print('Decode: ${jsonDecode(jsonData)}');
+    print('Encode: ${jsonEncode(jsonData)}');
+
+    try {
+      // Ensure jsonData is a JSON-encoded string
+      final jsonDataString = jsonEncode(jsonData);
+
+      var response = await http.patch(
+        Uri.http(baseUrl, '/api/form/edit-form-fields/event/$id'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json' // Set content type to JSON
+        },
+        body: jsonEncode(
+            {'eventID': id.toString(), 'customFieldsJson': jsonDataString}),
+      );
+
+      // Print response information for debugging
+      print('Dynamic form created successfully');
+      print('Response: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    } catch (e) {
+      print('Something went wrong (createForm())');
+      print('Error: $e');
+    }
+  }
+
   Future<bool> isRegistered(int id, int eventID) async {
     String? jwtToken = await getToken();
 
@@ -929,8 +961,8 @@ class API {
           });
 
       var jsonData = jsonDecode(response.body);
-      // print('DATATATATATATA');
-      // print(jsonData);
+      print('DATATATATATATA');
+      print(jsonData);
       for (var user in jsonData['data']) {
         if (user['user_id'] == id) {
           return true;

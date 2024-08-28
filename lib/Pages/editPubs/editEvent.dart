@@ -7,6 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/widget/search_widget.dart';
 import 'package:softshares/Components/appBar.dart';
+import 'package:softshares/Pages/editPubs/editForms.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
@@ -125,6 +126,22 @@ class _EditEventState extends State<EditEvent> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.report,
+                        color: colorScheme.error,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Expanded(
+                          child: Text(
+                        'Only alter what you want to update\nIf you only want to change the form, proceed to next page',
+                        style: TextStyle(color: colorScheme.error),
+                      ))
+                    ],
+                  ),
                   const Text(
                     'Title',
                     style: TextStyle(fontSize: 22),
@@ -459,23 +476,6 @@ class _EditEventState extends State<EditEvent> {
                             ? null
                             : selectedSubArea.id;
 
-                        // Event post = Event(
-                        //   widget.pub.id,
-                        //   user,
-                        //   desc,
-                        //   title,
-                        //   false,
-                        //   subArea,
-                        //   DateTime.now(),
-                        //   _selectedImage,
-                        //   loc,
-                        //   date,
-                        //   recur,
-                        //   recurVal,
-                        //   startTime,
-                        //   endTime,
-                        // );
-
                         try {
                           await api.editEvent(
                             eventId: widget.pub.id!,
@@ -510,10 +510,15 @@ class _EditEventState extends State<EditEvent> {
                             ),
                           );
                         }
-                        Navigator.pushNamed(context, '/home');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => editForm(
+                                      id: widget.pub.id!,
+                                    )));
                       }
                     },
-                    child: Text('Edit Event',
+                    child: Text('Edit form',
                         style: TextStyle(color: colorScheme.onPrimary)),
                   ),
                 ],
