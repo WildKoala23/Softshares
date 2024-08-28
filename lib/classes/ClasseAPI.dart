@@ -898,15 +898,34 @@ class API {
       User? user = await getUser(box.read('id'));
 
       var response = await http.post(
-        Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user!.id}'),
+        Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user.id}'),
         headers: {
           'Content-Type':
-              'application/json', // This tells the server the body is in JSON format
+              'application/json',
           'Authorization': 'Bearer $jwtToken',
         },
         body: jsonEncode({
           'answersJson': answers
-        }), // Directly pass the JSON string as the body
+        }), 
+      );
+
+      print(response.statusCode);
+      print(response.body);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future removeField(int eventID, int fieldID) async {
+    String? jwtToken = await getToken();
+    try {
+      var response = await http.delete(
+        Uri.http(baseUrl, '/api/form/delete-field/$eventID/$fieldID'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
       );
 
       print(response.statusCode);

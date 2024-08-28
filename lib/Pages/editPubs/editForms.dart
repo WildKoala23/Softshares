@@ -5,6 +5,7 @@ import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/Pages/createPubs/createForm.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/fieldClass.dart';
@@ -23,14 +24,17 @@ const List<String> options = [
   "Text/Numeric Input",
 ];
 
-List<Map<String, dynamic>> jsonForm = [];
+List<Map<String, dynamic>> jsonFormEdits = [];
+List<Map<String, dynamic>> jsonFormNew = [];
 
 class _MyWidgetState extends State<editForm> {
   String currentOption = options[0];
   final API api = API();
-  List<Field> fields = [];
+  List<Field> existingFields = [];
   List<Widget> widgets = [];
   bool loaded = false;
+  //Check the greater ID number to start giving id's from there
+  late int lastId;
 
   void addItemToList(Widget item) {
     setState(() {
@@ -39,36 +43,49 @@ class _MyWidgetState extends State<editForm> {
   }
 
   // Create jsonObject to send to server
-  void addInfo(int id, String label, List<String>? options, String type) {
-    var object = {
-      "field_id": id,
-      "field_name": label,
-      "field_type": type,
-      "field_value": jsonEncode(options), //options.toString(),
-      "max_value": null,
-      "min_value": null
-    };
-    jsonForm.add(object);
+  void addInfo(int? id, String label, List<String>? options, String type) {
+    var object;
+    if (id != null) {
+      object = {
+        "field_id": id,
+        "field_name": label,
+        "field_type": type,
+        "field_value": jsonEncode(options),
+        "max_value": null,
+        "min_value": null
+      };
+      jsonFormEdits.add(object);
+    } else {
+      object = {
+        "field_name": label,
+        "field_type": type,
+        "field_value": jsonEncode(options),
+        "max_value": null,
+        "min_value": null
+      };
+      jsonFormNew.add(object);
+    }
   }
 
   Future<void> updateForm() async {
     print(widget.id);
 
     // Convert jsonForm to JSON string
-    String data = jsonEncode(jsonForm);
-    print(data);
+    String editData = jsonEncode(jsonFormEdits);
+    String newData = jsonEncode(jsonFormNew);
 
     try {
-      await api.editForm(widget.id, data); // Pass data as a string
+      await api.editForm(widget.id, editData);
+      await api.createForm(widget.id, newData);
       print('Created form');
     } catch (e) {
-      print('Something went wrong (sendForm()):');
+      print('Something went wrong (updateForm()):');
       print(e);
     }
   }
 
   Future<void> getForm() async {
-    fields = await api.getForm(widget.id);
+    existingFields = await api.getForm(widget.id);
     buildForm();
     setState(() {
       loaded = true;
@@ -77,9 +94,8 @@ class _MyWidgetState extends State<editForm> {
 
   void buildForm() {
     List<Widget> aux = [];
-    for (var item in fields) {
-      addInfo(item.name, item.options, item.type);
-      //aux_cx.add(cx);
+    for (var item in existingFields) {
+      addInfo(item.id, item.name, item.options, item.type);
       print('TYPE: ${item.type}');
       switch (item.type) {
         case 'Text':
@@ -106,12 +122,15 @@ class _MyWidgetState extends State<editForm> {
             options: item.options!,
           ));
       }
+      print('ENTRIES: ');
+      for (var aux in jsonFormEdits) {
+        print(aux['field_id']);
+      }
     }
-    print('AUX: ${aux.length}');
+
     setState(() {
       widgets = aux;
     });
-    print('WIDGETS: ${widgets.length}');
   }
 
   @override
@@ -185,11 +204,32 @@ class _MyWidgetState extends State<editForm> {
                                               icon: Icon(Icons.delete,
                                                   color:
                                                       colorScheme.onSecondary),
-                                              onPressed: () {
-                                                setState(() {
-                                                  widgets.removeAt(index);
-                                                  jsonForm.removeAt(index);
-                                                });
+                                              onPressed: () async {
+                                                try {
+                                                  int? fieldId;
+                                                  if (index <
+                                                      jsonFormEdits.length) {
+                                                    fieldId =
+                                                        jsonFormEdits[index]
+                                                            ['field_id'];
+                                                    jsonFormEdits
+                                                        .removeAt(index);
+                                                  } else {
+                                                    jsonFormNew.removeAt(index);
+                                                  }
+
+                                                  setState(() {
+                                                    widgets.removeAt(index);
+                                                  });
+
+                                                  if (fieldId != null) {
+                                                    await api.removeField(
+                                                        widget.id, fieldId);
+                                                  }
+                                                } catch (e) {
+                                                  print(
+                                                      'Error removing field: $e');
+                                                }
                                               },
                                             ),
                                           ),
@@ -300,7 +340,8 @@ class _MyWidgetState extends State<editForm> {
                       item = customRadioBtn(
                           label: result["userLabel"],
                           options: result["options"]);
-                      addInfo(result["userLabel"], result["options"], "Radio");
+                      addInfo(null, result["userLabel"], result["options"],
+                          "Radio");
                     }
                     break;
                   case "Checkbox":
@@ -310,8 +351,8 @@ class _MyWidgetState extends State<editForm> {
                       item = customCheckbox(
                           label: result["userLabel"],
                           options: result["options"]);
-                      addInfo(
-                          result["userLabel"], result["options"], "Checkbox");
+                      addInfo(null, result["userLabel"], result["options"],
+                          "Checkbox");
                     }
 
                     break;
@@ -325,7 +366,7 @@ class _MyWidgetState extends State<editForm> {
                       String type =
                           result["numeric"] == true ? "Number" : "Text";
 
-                      addInfo(result["userLabel"], null, type);
+                      addInfo(null, result["userLabel"], null, type);
                     }
                     break;
                 }
