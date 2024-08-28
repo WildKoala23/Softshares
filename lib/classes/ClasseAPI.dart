@@ -104,11 +104,22 @@ class API {
 
       var jsonData = jsonDecode(response.body);
 
-      //print(jsonData['user']['office_id']);
+      print(jsonData['user']['office_id']);
 
       // If user is admin
       if (jsonData['user']['office_id'] == 0) {
         return -1;
+      }
+      if (jsonData['user']['office_id'] == null) {
+        var user = User(
+            jsonData['user']['user_id'],
+            jsonData['user']['first_name'],
+            jsonData['user']['last_name'],
+            jsonData['user']['email']);
+
+        print('here we are inside office_id=null');
+        print(user.toString());
+        return user;
       }
       //print('jsonData $jsonData');
       var user = User(

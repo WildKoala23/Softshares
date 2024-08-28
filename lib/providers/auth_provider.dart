@@ -20,7 +20,6 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import 'sign_in_result.dart';
-import 'facebook_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = GetIt.I<FirebaseMessaging>();
@@ -43,7 +42,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future login(String email, String password, bool keepSign) async {
-    var accessToken = await api.logInDb(email, password); // Example API call
+    var accessToken = await api.logInDb(email, password);
     _isLoggedIn = true;
 
     var user = await api.getUserLogged();
@@ -126,14 +125,25 @@ class AuthProvider with ChangeNotifier {
 
     // Send the ID token to your backend
     final response = await http.post(
-      Uri.http(baseUrl, '/api/auth/login_google'),
+      Uri.http(baseUrl, '/api/auth/login_sso'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'idToken': idToken}),
+      body: jsonEncode({'idToken': idToken, 'provider': 'google'}),
     );
 
     if (response.statusCode == 200) {
       // Handle the response from the backend
+      print("responseresponse from google SSO");
       print(response.body);
+      var user = await api.getUserLogged();
+      //If getUserLogged() returns -1, it means the user is admin
+      if (user == -1) {
+        return null;
+      }
+      _user = user;
+
+      // Load areas and cities data
+      await loadAreasAndCities();
+      notifyListeners();
       handleLoginSuccess();
       // Returning both the user and the response
       return SignInResult(
@@ -160,17 +170,30 @@ class AuthProvider with ChangeNotifier {
 
     // Get the ID token for the user
     String? idToken = await userCredential.user!.getIdToken();
-//TODO
+
     // Send the ID token to your backend
     final response = await http.post(
-      Uri.http(baseUrl, '/api/auth/login_google'),
+      Uri.http(baseUrl, '/api/auth/login_sso'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'idToken': idToken}),
+      body: jsonEncode({
+        'idToken': idToken,
+        'provider': 'facebook',
+      }),
     );
 
     if (response.statusCode == 200) {
       // Handle the response from the backend
       print(response.body);
+      var user = await api.getUserLogged();
+      //If getUserLogged() returns -1, it means the user is admin
+      if (user == -1) {
+        return null;
+      }
+      _user = user;
+
+      // Load areas and cities data
+      await loadAreasAndCities();
+      notifyListeners();
       handleLoginSuccess();
       // Returning both the user and the response
       return SignInResult(
@@ -210,4 +233,15 @@ class AuthProvider with ChangeNotifier {
       }
     }
   }
+}
+
+//
+String generateAppSecretProof(String accessToken, String appSecret) {
+  var key = utf8.encode(appSecret);
+  var bytes = utf8.encode(accessToken);
+
+  var hmacSha256 = Hmac(sha256, key);
+  var digest = hmacSha256.convert(bytes);
+
+  return digest.toString();
 }

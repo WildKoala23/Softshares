@@ -322,7 +322,7 @@ class _SignInState extends State<SignIn> {
             // AuthProvider().login(usernameController.text,
             //     passwordController.text, keepLog);
             print('we got here!');
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/chooseCity');
           } else {
             // Handle null response here
             _showErrorDialog('Login failed. Please try again.');
@@ -359,7 +359,29 @@ class _SignInState extends State<SignIn> {
           side: BorderSide(color: colorScheme.onTertiary),
           elevation: 0,
         ),
-        onPressed: () {},
+        onPressed: () async {
+          final result = await AuthProvider().signInWithFacebook();
+
+          print('onfacebookPressed');
+          print(result?.user);
+          print(result?.response.body);
+
+          var jsonData = jsonDecode(result!.response.body);
+
+          var jwtToken = await api.loginGoogle(jsonData);
+
+          if (jwtToken == -1) {
+            _showErrorDialog('Admin cannot login in the app');
+          } else if (jwtToken != null) {
+            // AuthProvider().login(usernameController.text,
+            //     passwordController.text, keepLog);
+            print('we got here!');
+            Navigator.pushNamed(context, '/chooseCity');
+          } else {
+            // Handle null response here
+            _showErrorDialog('Login failed. Please try again.');
+          }
+        },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
