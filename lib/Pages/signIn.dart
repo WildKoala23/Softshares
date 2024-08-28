@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:dev_icons/dev_icons.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
@@ -19,6 +20,7 @@ class _SignInState extends State<SignIn> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   API api = API();
+  final box = GetStorage();
   final _formkey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool hidePassword = true;
@@ -321,6 +323,10 @@ class _SignInState extends State<SignIn> {
           } else if (jwtToken != null) {
             // AuthProvider().login(usernameController.text,
             //     passwordController.text, keepLog);
+            var user = await api.getUserLogged();
+            if (user != null) {
+              box.write('id', user!.id);
+            }
             print('we got here!');
             Navigator.pushNamed(context, '/chooseCity');
           } else {
@@ -375,6 +381,10 @@ class _SignInState extends State<SignIn> {
           } else if (jwtToken != null) {
             // AuthProvider().login(usernameController.text,
             //     passwordController.text, keepLog);
+            var user = await api.getUserLogged();
+            if (user != null) {
+              box.write('id', user!.id);
+            }
             print('we got here!');
             Navigator.pushNamed(context, '/chooseCity');
           } else {
