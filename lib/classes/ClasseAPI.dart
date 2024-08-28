@@ -1441,6 +1441,28 @@ class API {
     }
   }
 
+  Future reportComment(int id, String report) async {
+    String? jwtToken = await getToken();
+    User? user = await bd.getUser();
+
+    try {
+      var response = await http.post(Uri.http(baseUrl, '/api/comment/report-coment'),
+          body: jsonEncode({
+            'commentID': id.toString(),
+            'reporterID': user!.id.toString(),
+            'observation': report
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
   Future getComents(
     Publication pub,
   ) async {

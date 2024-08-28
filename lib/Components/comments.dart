@@ -202,7 +202,7 @@ SingleChildScrollView formBottomSheet(
               ),
               ElevatedButton(
                 onPressed: () async {
-                  // Handle the report submission
+                  await api.reportComment(widget.comment.id, _reportController.text);
                 },
                 child: Text(
                   'Send report',
