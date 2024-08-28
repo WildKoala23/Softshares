@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/widget/search_widget.dart';
 import 'package:softshares/Components/appBar.dart';
@@ -26,6 +27,7 @@ class _EditPostState extends State<EditPost> {
   final _postKey = GlobalKey<FormState>();
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
+  final box = GetStorage();
 
   File? _selectedImage;
 
@@ -337,7 +339,7 @@ class _EditPostState extends State<EditPost> {
                         backgroundColor: colorScheme.primary),
                     onPressed: () async {
                       if (_postKey.currentState!.validate()) {
-                        User user = (AuthProvider().user)!;
+                        User user = await api.getUser(box.read('id'));
 
                         String? title =
                             titleController.text == widget.post.title

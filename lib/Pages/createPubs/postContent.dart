@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_map_location/search_map_location.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
@@ -23,6 +24,7 @@ class _PostCreationState extends State<PostCreation> {
   final _postKey = GlobalKey<FormState>();
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
+  final box = GetStorage();
 
   File? _selectedImage;
 
@@ -314,7 +316,7 @@ class _PostCreationState extends State<PostCreation> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_postKey.currentState!.validate()) {
-                    User user = (AuthProvider().user)!;
+                    User user = await api.getUser(box.read('id'));
                     if (nonPrice == false) currentPriceValue = null;
                     if (nonRating == false) currentRatingValue = null;
                     print('Price: ${currentPriceValue}');

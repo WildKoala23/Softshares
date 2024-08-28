@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -21,6 +22,7 @@ class _EditForumState extends State<EditForum> {
   final _forumKey = GlobalKey<FormState>();
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
+  final box = GetStorage();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
@@ -191,7 +193,7 @@ class _EditForumState extends State<EditForum> {
                         backgroundColor: colorScheme.primary),
                     onPressed: () async {
                       if (_forumKey.currentState!.validate()) {
-                        User user = (AuthProvider().user)!;
+                        User user = await api.getUser(box.read('id'));
 
                         // Compare the current values with the initial values
                         String? title = titleController.text == widget.pub.title

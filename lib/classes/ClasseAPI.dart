@@ -2,7 +2,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart' as fireAuth;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/commentClass.dart';
 import 'package:softshares/classes/db.dart';
@@ -11,11 +13,8 @@ import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 // jwt libraries
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:softshares/classes/fieldClass.dart';
 import 'package:softshares/providers/auth_provider.dart';
-import '../env.dart';
 
 //import files
 import 'utils.dart';
@@ -890,11 +889,13 @@ class API {
     return formItens;
   }
 
-  Future sendFormAnswer(int eventId, dynamic answers) async {
+  Future sendFormAnswer(
+    int eventId,
+    dynamic answers,
+  ) async {
     String? jwtToken = await getToken();
-
     try {
-      User? user = AuthProvider().user;
+      User? user = await getUser(box.read('id'));
 
       var response = await http.post(
         Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user!.id}'),
@@ -1434,7 +1435,7 @@ class API {
 
   Future likeComment(int id) async {
     String? jwtToken = await getToken();
-    User? user = AuthProvider().user;
+    User? user = await getUser(box.read('id'));
 
     try {
       var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
@@ -1455,10 +1456,11 @@ class API {
 
   Future reportComment(int id, String report) async {
     String? jwtToken = await getToken();
-    User? user = AuthProvider().user;
+    User? user = await getUser(box.read('id'));
 
     try {
-      var response = await http.post(Uri.http(baseUrl, '/api/comment/report-coment'),
+      var response = await http.post(
+          Uri.http(baseUrl, '/api/comment/report-coment'),
           body: jsonEncode({
             'commentID': id.toString(),
             'reporterID': user!.id.toString(),
@@ -1546,7 +1548,7 @@ class API {
     try {
       String? jwtToken = await getToken();
       // var _id = await getID();
-      User? user = AuthProvider().user;
+      User? user = await getUser(box.read('id'));
       // print('in comments: $_id');
       // print(_id.runtimeType);
       var response = await http

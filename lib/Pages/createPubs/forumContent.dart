@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
@@ -20,6 +21,7 @@ class _ForumCreationState extends State<ForumCreation> {
   final _forumKey = GlobalKey<FormState>();
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
+  final box = GetStorage();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
@@ -171,7 +173,7 @@ class _ForumCreationState extends State<ForumCreation> {
                     backgroundColor: colorScheme.primary),
                 onPressed: () async {
                   if (_forumKey.currentState!.validate()) {
-                    User user = (AuthProvider().user)!;
+                    User user = await api.getUser(box.read('id'));
                     Forum post = Forum(
                         null,
                         user,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
@@ -32,6 +33,7 @@ class _EventPageState extends State<EventPage> {
   final _commentKey = GlobalKey<FormState>();
   bool isEventCreator = false;
   bool userRegistered = true;
+  final box = GetStorage();
 
   LatLng convertCoord(String location) {
     List<String> coords = location.split(" ");
@@ -52,16 +54,16 @@ class _EventPageState extends State<EventPage> {
   }
 
   Future isCreator() async {
-    User? user = AuthProvider().user;
-    if (user!.id == widget.event.user.id) {
+    User user = await api.getUser(box.read('id'));
+    if (user.id == widget.event.user.id) {
       isEventCreator = true;
     }
   }
 
   Future isRegistered() async {
     if (isEventCreator) return;
-    User? user = AuthProvider().user;
-    userRegistered = await api.isRegistered(user!.id, widget.event.id!);
+    User? user = await api.getUser(box.read('id'));
+    userRegistered = await api.isRegistered(user.id, widget.event.id!);
   }
 
   @override
@@ -75,8 +77,8 @@ class _EventPageState extends State<EventPage> {
     super.initState();
     local = convertCoord(widget.event.location!);
     getComments();
-    isCreator();
-    isRegistered();
+    //isCreator();
+    //isRegistered();
   }
 
   @override

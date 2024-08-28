@@ -90,7 +90,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           builder: (BuildContext context) {
                             return StatefulBuilder(builder:
                                 (BuildContext context, StateSetter setState) {
-                              return formBottomSheet(
+                              return reportBottomSheet(
                                   setState, context, colorScheme);
                             });
                           },
@@ -138,7 +138,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     );
   }
 
-SingleChildScrollView formBottomSheet(
+SingleChildScrollView reportBottomSheet(
     StateSetter setState, BuildContext context, ColorScheme colorScheme) {
   return SingleChildScrollView(
     padding: EdgeInsets.only(
@@ -187,7 +187,7 @@ SingleChildScrollView formBottomSheet(
               ),
             ),
           ),
-          const SizedBox(height: 20), // Adds space between the TextField and the buttons
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -203,6 +203,7 @@ SingleChildScrollView formBottomSheet(
               ElevatedButton(
                 onPressed: () async {
                   await api.reportComment(widget.comment.id, _reportController.text);
+                  Navigator.pop(context);
                 },
                 child: Text(
                   'Send report',

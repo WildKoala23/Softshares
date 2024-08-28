@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/eventCard.dart';
@@ -7,7 +8,7 @@ import 'package:softshares/Components/publicationCard.dart';
 import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/forums.dart';
 import 'package:softshares/classes/publication.dart';
-import 'package:softshares/classes/user.dart';
+import 'package:softshares/providers/auth_provider.dart';
 import '../Components/appBar.dart';
 import '../Components/forumCard.dart';
 import '../classes/ClasseAPI.dart';
@@ -51,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    print(box.read('selectedCity'));
     super.initState();
     futurePosts = getPosts();
     _scrollController.addListener(() {

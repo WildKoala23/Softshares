@@ -25,13 +25,12 @@ class AuthProvider with ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = GetIt.I<FirebaseMessaging>();
   final FlutterSecureStorage storage = FlutterSecureStorage();
   final box = GetStorage();
-  u.User? _user;
+  u.User? user;
   bool _isLoggedIn = false;
   List<AreaClass> _areas = [];
   Map<String, int> _cities = {};
   SQLHelper bd = SQLHelper.instance;
   API api = API();
-  u.User? get user => _user;
   bool get isLoggedIn => _isLoggedIn;
   List<AreaClass> get areas => _areas;
   Map<String, int> get cities => _cities;
@@ -45,16 +44,18 @@ class AuthProvider with ChangeNotifier {
     var accessToken = await api.logInDb(email, password);
     _isLoggedIn = true;
 
-    var user = await api.getUserLogged();
-    //If getUserLogged() returns -1, it means the user is admin
+    user = await api.getUserLogged();
+    // If getUserLogged() returns -1, it means the user is admin
     if (user == -1) {
       return -1;
     }
-    _user = user;
+
+    box.write('id', user!.id);
 
     // If checkbox is selected
     if (keepSign) {
-      await bd.insertUser(user!.firstname, user.id, user.lastName, user.email);
+      await bd.insertUser(
+          user!.firstname, user!.id, user!.lastName, user!.email);
     }
 
     // Load areas and cities data
@@ -66,13 +67,21 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    _user = null;
+    user = null;
     _isLoggedIn = false;
     await api.logout();
     // Clear stored user data
     await storage.deleteAll();
 
     notifyListeners();
+  }
+
+  Future setUser() async {
+    try {
+      user = await bd.getUser();
+    } catch (e) {
+      user = null;
+    }
   }
 
   Future<void> checkLoginStatus() async {
@@ -131,7 +140,7 @@ class AuthProvider with ChangeNotifier {
       if (user == -1) {
         return null;
       }
-      _user = user;
+      user = user;
 
       // Load areas and cities data
       await loadAreasAndCities();
@@ -181,7 +190,7 @@ class AuthProvider with ChangeNotifier {
       if (user == -1) {
         return null;
       }
-      _user = user;
+      user = user;
 
       // Load areas and cities data
       await loadAreasAndCities();

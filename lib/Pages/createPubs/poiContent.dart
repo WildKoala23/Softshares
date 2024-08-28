@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/publication.dart';
 import 'package:softshares/providers/auth_provider.dart';
 
@@ -24,6 +25,7 @@ class _POICreationState extends State<POICreation> {
   final _poiKey = GlobalKey<FormState>();
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
+  final box = GetStorage();
 
   String? location;
 
@@ -46,7 +48,7 @@ class _POICreationState extends State<POICreation> {
   List<AreaClass> subAreas = [];
 
   Future getUser() async {
-    user = (AuthProvider().user)!;
+    user = await api.getUser(box.read('id'));
   }
 
   @override
