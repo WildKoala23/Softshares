@@ -39,8 +39,9 @@ class _MyWidgetState extends State<editForm> {
   }
 
   // Create jsonObject to send to server
-  void addInfo(String label, List<String>? options, String type) {
+  void addInfo(int id, String label, List<String>? options, String type) {
     var object = {
+      "field_id": id,
       "field_name": label,
       "field_type": type,
       "field_value": jsonEncode(options), //options.toString(),
