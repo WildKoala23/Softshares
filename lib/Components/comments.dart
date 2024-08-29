@@ -66,15 +66,17 @@ class _CommentWidgetState extends State<CommentWidget> {
                             onPressed: () async {
                               if (widget.liked == false) {
                                 await api.likeComment(widget.comment.id);
+                                widget.comment.likes += 1;
                                 print('LIKED');
                               } else {
                                 await api.unlikeComment(widget.comment.id);
+                                widget.comment.likes -= 1;
                                 print('UNLIKED');
                               }
 
                               setState(() {
                                 widget.liked = !widget.liked;
-                                widget.comment.likes += 1;
+                                
                               });
                             },
                             tooltip: 'Like',
