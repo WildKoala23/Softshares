@@ -1,11 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:softshares/Pages/chooseCityPage.dart';
-import 'package:softshares/Pages/recovery.dart';
-import 'package:softshares/Pages/settings.dart';
-import 'package:softshares/classes/db.dart';
-import 'package:softshares/classes/user.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_conf.dart';
 import 'classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
 import 'Pages/MyProfile.dart';
@@ -20,31 +20,26 @@ import 'Pages/notifications.dart';
 import 'Pages/pointsOfInterest.dart';
 import 'Pages/signIn.dart';
 import 'Pages/signup.dart';
+import 'Pages/settings.dart';
+import 'Pages/chooseCityPage.dart';
+import 'Pages/recovery.dart';
 import 'test.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:softshares/providers/auth_provider.dart';
-
-import 'package:softshares/classes/ClasseAPI.dart';
-//firebase
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get_it/get_it.dart';
-import 'firebase_options.dart';
+import 'package:softshares/classes/db.dart';
+import 'package:softshares/classes/user.dart';
 
 final storage = FlutterSecureStorage();
 // Initialize GetIt
 final getIt = GetIt.instance;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Initialize Firebase and FCM
+  await initializeFirebase();
 
+  // Load environment variables
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
 
@@ -58,24 +53,22 @@ void main() async {
   box.write('url', 'http://10.0.2.2:8000/api');
   User? user;
   bool logged;
+
   try {
     user = await db.getUser();
-    if (user != null) {
-      logged = true;
-    } else {
-      logged = false;
-    }
+    logged = user != null;
   } catch (e) {
     print(e);
     logged = false;
   }
 
   // Uncomment if you need to handle background messages
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   // Register dependencies
   getIt.registerSingleton<FirebaseMessaging>(FirebaseMessaging.instance);
   getIt.registerSingleton<AuthProvider>(AuthProvider());
+
   runApp(
     MultiProvider(
       providers: [
@@ -92,17 +85,10 @@ void main() async {
   );
 }
 
-// Uncomment if you need to handle background messages
-// Background message handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
-}
-
 class MyApp extends StatefulWidget {
   MyApp({super.key, required this.logged, required this.user});
-  bool logged;
-  User? user;
+  final bool logged;
+  final User? user;
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -123,8 +109,7 @@ class _MyAppState extends State<MyApp> {
           title: 'SoftShares',
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
-          initialRoute: widget.logged == true ? '/Login' : '/SignIn',
-          //initialRoute: '/test',
+          initialRoute: widget.logged ? '/Login' : '/SignIn',
           routes: {
             '/home': (context) => MyHomePage(areas: authProvider.areas),
             '/PointOfInterest': (context) =>
@@ -153,61 +138,4 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
-}
-
-void initializeFCM(bool log) async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  // Request permission to send notifications (necessary for iOS)
-  await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  API api = API();
-  // Check if the token is already stored locally
-  if (log) {
-    String? fcmtoken = await messaging.getToken();
-    if (fcmtoken != null) {
-      print("FCM Token: $fcmtoken");
-      var tk = await api.getToken();
-      print('AAAAAAAAAAAAAAA');
-      print(tk);
-      if (tk != null) {
-        // Only send the token if the user is logged in
-        API api = API();
-        await api.sendTokenToServer(fcmtoken);
-      } else {
-        print("User is not logged in, skipping FCM token send.");
-      }
-
-      api.saveToken(fcmtoken); // Save the token locally regardless
-    }
-  }
-
-  // Listen for token refresh and handle it
-  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-    print("FCM Token refreshed: $newToken");
-    var tk = await api.getToken();
-    if (tk != null) {
-      // Only send the token if the user is logged in
-      await api.sendTokenToServer(newToken);
-    } else {
-      print("User is not logged in, skipping FCM token send.");
-    }
-
-    api.saveToken(newToken); // Save the token locally regardless
-  });
-
-  // Listen for foreground messages
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("Message received: ${message.notification?.title}");
-    // Handle the message
-  });
-
-  // Handle notification clicks when the app is in the background or terminated
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('Message clicked!');
-    // Navigate to a specific screen based on the message
-  });
 }
