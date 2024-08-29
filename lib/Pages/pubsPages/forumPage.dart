@@ -24,6 +24,7 @@ class _ForumPageState extends State<ForumPage> {
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   List<Comment> comments = [];
+  List<int> likedComments = [];
   int _charCount = 0;
   final int _charLimit = 500;
 
@@ -33,14 +34,15 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   Future<void> getLikes() async {
-    await api.getComentsLikes(widget.forum);
+    var data = await api.getComentsLikes(widget.forum);
+    likedComments = data;
   }
 
   @override
   void initState() {
     super.initState();
     getComments();
-    //getLikes();
+    getLikes();
     commentCx.addListener(_updateCharCount);
   }
 
@@ -121,7 +123,9 @@ class _ForumPageState extends State<ForumPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
+                              bool liked = likedComments.contains(comments[index].id);
                               return CommentWidget(
+                                liked: liked,
                                 comment: comments[index],
                               );
                             },

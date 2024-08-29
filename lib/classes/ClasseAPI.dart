@@ -1575,6 +1575,27 @@ class API {
     }
   }
 
+  Future unlikeComment(int id) async {
+    String? jwtToken = await getToken();
+    //User? user = await getUser(box.read('id'));
+
+    try {
+      var response = await http.post(Uri.http(baseUrl, '/api/comment/remove-like'),
+          body: jsonEncode({
+            'commentID': id.toString(),
+            //'userID': user!.id.toString(),
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
   Future likeComment(int id) async {
     String? jwtToken = await getToken();
     //User? user = await getUser(box.read('id'));
@@ -1677,7 +1698,7 @@ class API {
   Future getComentsLikes(
     Publication pub,
   ) async {
-
+    List<int> likedComments = [];
     late String type;
     switch (pub) {
       case Forum _:
@@ -1706,11 +1727,11 @@ class API {
       }
       var jsonData = jsonDecode(response.body);
 
-      for (var eachComment in jsonData['data']) {
-        print(eachComment);
+      for (var eachID in jsonData['data']) {
+        likedComments.add(eachID);
       }
 
-      return jsonData['data'];
+      return likedComments;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();

@@ -34,6 +34,8 @@ class _EventPageState extends State<EventPage> {
   bool isEventCreator = false;
   bool userRegistered = false;
   final box = GetStorage();
+  List<int> likedComments = [];
+  List<Comment> comments = [];
 
   LatLng convertCoord(String location) {
     List<String> coords = location.split(" ");
@@ -46,7 +48,10 @@ class _EventPageState extends State<EventPage> {
     mapController = controller;
   }
 
-  List<Comment> comments = [];
+  Future<void> getLikes() async {
+    var data = await api.getComentsLikes(widget.event);
+    likedComments = data;
+  }
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.event);
@@ -65,7 +70,7 @@ class _EventPageState extends State<EventPage> {
     User user = await api.getUser(box.read('id'));
     print(user.id);
     userRegistered = await api.isRegistered(user.id, widget.event.id!);
-    print('IS USER REGISTERED????? ${userRegistered}');
+    print('IS USER REGISTERED????? $userRegistered');
   }
 
   @override
@@ -81,6 +86,7 @@ class _EventPageState extends State<EventPage> {
     getComments();
     isCreator();
     isRegistered();
+    getLikes();
   }
 
   @override
@@ -180,7 +186,10 @@ class _EventPageState extends State<EventPage> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: comments.length,
                           itemBuilder: (context, index) {
+                            bool liked =
+                                likedComments.contains(comments[index].id);
                             return CommentWidget(
+                              liked: liked,
                               comment: comments[index],
                             );
                           },

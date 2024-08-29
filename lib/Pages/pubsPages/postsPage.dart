@@ -27,12 +27,16 @@ class _PostPageState extends State<PostPage> {
   List<Comment> comments = [];
   int _charCount = 0;
   final int _charLimit = 500;
-
-
+  List<int> likedComments = [];
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.publication);
     setState(() {});
+  }
+
+  Future<void> getLikes() async {
+    var data = await api.getComentsLikes(widget.publication);
+    likedComments = data;
   }
 
   @override
@@ -41,6 +45,7 @@ class _PostPageState extends State<PostPage> {
     getComments();
     commentCx.addListener(_updateCharCount);
     print('Price: ${widget.publication.price}');
+    getLikes();
   }
 
   void _updateCharCount() {
@@ -117,7 +122,10 @@ class _PostPageState extends State<PostPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
+                              bool liked =
+                                  likedComments.contains(comments[index].id);
                               return CommentWidget(
+                                liked: liked,
                                 comment: comments[index],
                               );
                             },

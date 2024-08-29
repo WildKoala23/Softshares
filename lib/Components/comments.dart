@@ -4,11 +4,10 @@ import '../classes/commentClass.dart';
 
 class CommentWidget extends StatefulWidget {
   Comment comment;
+  bool liked;
 
-  CommentWidget({
-    Key? key,
-    required this.comment,
-  }) : super(key: key);
+  CommentWidget({Key? key, required this.comment, required this.liked})
+      : super(key: key);
 
   @override
   _CommentWidgetState createState() => _CommentWidgetState();
@@ -61,9 +60,18 @@ class _CommentWidgetState extends State<CommentWidget> {
                       Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.thumb_up_alt_outlined),
+                            icon: widget.liked == false
+                                ? const Icon(Icons.thumb_up_alt_outlined)
+                                : const Icon(Icons.thumb_up_alt),
                             onPressed: () async {
-                              await api.likeComment(widget.comment.id);
+                              if (widget.liked == false) {
+                                await api.likeComment(widget.comment.id);
+                                print('LIKED');
+                              } else {
+                                await api.unlikeComment(widget.comment.id);
+                                print('UNLIKED');
+                              }
+
                               setState(() {});
                             },
                             tooltip: 'Like',
@@ -138,85 +146,88 @@ class _CommentWidgetState extends State<CommentWidget> {
     );
   }
 
-SingleChildScrollView reportBottomSheet(
-    StateSetter setState, BuildContext context, ColorScheme colorScheme) {
-  return SingleChildScrollView(
-    padding: EdgeInsets.only(
-      bottom: MediaQuery.of(context).viewInsets.bottom,
-    ),
-    child: Container(
-      padding: const EdgeInsets.all(20.0), // Adds padding to the content inside the container
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        borderRadius: const BorderRadius.all(Radius.circular(30)),
-        color: colorScheme.primaryContainer,
+  SingleChildScrollView reportBottomSheet(
+      StateSetter setState, BuildContext context, ColorScheme colorScheme) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Report Issue",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onPrimaryContainer,
-            ),
-          ),
-          const SizedBox(
-              height: 10), // Adds space between the title and the description
-          Text(
-            "Please describe the issue you encountered:",
-            style: TextStyle(
-              fontSize: 16,
-              color: colorScheme.onPrimaryContainer,
-            ),
-          ),
-          const SizedBox(
-              height: 10), // Adds space between the description and the TextField
-          TextField(
-            controller: _reportController,
-            maxLines: 4,
-            decoration: InputDecoration(
-              hintText: "Enter your report here...",
-              filled: true,
-              fillColor: colorScheme.surface,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
+      child: Container(
+        padding: const EdgeInsets.all(
+            20.0), // Adds padding to the content inside the container
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
+          color: colorScheme.primaryContainer,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Report Issue",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onPrimaryContainer,
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(color: colorScheme.onPrimary),
+            const SizedBox(
+                height: 10), // Adds space between the title and the description
+            Text(
+              "Please describe the issue you encountered:",
+              style: TextStyle(
+                fontSize: 16,
+                color: colorScheme.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(
+                height:
+                    10), // Adds space between the description and the TextField
+            TextField(
+              controller: _reportController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: "Enter your report here...",
+                filled: true,
+                fillColor: colorScheme.surface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
                 ),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  await api.reportComment(widget.comment.id, _reportController.text);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'Send report',
-                  style: TextStyle(color: colorScheme.onPrimary),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                ElevatedButton(
+                  onPressed: () async {
+                    await api.reportComment(
+                        widget.comment.id, _reportController.text);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Send report',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   @override
   void dispose() {

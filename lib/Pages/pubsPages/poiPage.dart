@@ -28,6 +28,7 @@ class _POIPageState extends State<POIPage> {
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   List<Comment> comments = [];
+    List<int> likedComments = [];
   late int _remainingChars;
   final int _charLimit = 500;
 
@@ -54,6 +55,11 @@ class _POIPageState extends State<POIPage> {
     mapController = controller;
   }
 
+    Future<void> getLikes() async {
+    var data = await api.getComentsLikes(widget.poi);
+    likedComments = data;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +67,7 @@ class _POIPageState extends State<POIPage> {
     _remainingChars = _charLimit;
     getComments();
     commentCx.addListener(_updateCharCount);
+        getLikes();
   }
 
   void _updateCharCount() {
@@ -174,7 +181,9 @@ class _POIPageState extends State<POIPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
+                              bool liked = likedComments.contains(comments[index].id);
                               return CommentWidget(
+                                liked: liked,
                                 comment: comments[index],
                               );
                             },
