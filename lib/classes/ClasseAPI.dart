@@ -1580,7 +1580,8 @@ class API {
     //User? user = await getUser(box.read('id'));
 
     try {
-      var response = await http.post(Uri.http(baseUrl, '/api/comment/remove-like'),
+      var response = await http.delete(
+          Uri.http(baseUrl, '/api/comment/remove-like'),
           body: jsonEncode({
             'commentID': id.toString(),
             //'userID': user!.id.toString(),
@@ -1590,6 +1591,7 @@ class API {
             'Authorization': 'Bearer $jwtToken'
           });
       print(response.statusCode);
+      print(response.body);
     } catch (e) {
       print(e);
       rethrow;
