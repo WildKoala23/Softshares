@@ -68,7 +68,7 @@ class _SignInState extends State<SignIn> {
                         const SizedBox(height: 25),
                         googleBtn(colorScheme),
                         const SizedBox(height: 25),
-                        appleBtn(colorScheme),
+                        //appleBtn(colorScheme),
                         myDivider(colorScheme),
                         userTextfield(colorScheme),
                         passwordFieldtext(colorScheme),

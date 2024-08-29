@@ -27,7 +27,8 @@ class MyProfile extends StatefulWidget {
 class _MyHomePageState extends State<MyProfile> {
   SQLHelper bd = SQLHelper.instance;
   API api = API();
-  List<Publication> pubs = [];
+  List<Publication> myPubs = [];
+  List<Event> registerEvents = [];
 
   void rightCallback(context) {
     Navigator.pushNamed(context, '/settings');
@@ -35,14 +36,23 @@ class _MyHomePageState extends State<MyProfile> {
 
   Future getPosts() async {
     var data = await api.getUserPosts();
-    pubs = data;
-    print(pubs.length);
+    myPubs = data;
+    print(myPubs.length);
+  }
+
+  Future getRegisteredEvents() async {
+    var data = await api.getUserRegistered();
+    registerEvents = data;
+    print(registerEvents.length);
   }
 
   @override
   void initState() {
     super.initState();
-    getPosts();
+    // print('POSTS:');
+    // getPosts();
+    // print('REGISTERED');
+    // getRegisteredEvents();
   }
 
   void logOff() {
@@ -123,7 +133,7 @@ class _MyHomePageState extends State<MyProfile> {
                         // Placeholder for my posts
                         myPosts(colorScheme),
                         // Placeholder for registered events
-                        const Center(child: Text('No Registered Events')),
+                        myRegistered(colorScheme)
                       ],
                     ),
                   ),
@@ -145,16 +155,16 @@ class _MyHomePageState extends State<MyProfile> {
         future: getPosts(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (pubs.isEmpty) {
+            if (myPubs.isEmpty) {
               return Center(
                   child: Text('No posts available',
                       style: TextStyle(color: colorScheme.onSecondary)));
             }
 
             return ListView.builder(
-              itemCount: pubs.length,
+              itemCount: myPubs.length,
               itemBuilder: (context, index) {
-                final pub = pubs[index];
+                final pub = myPubs[index];
 
                 if (pub is Event) {
                   return EventCard(event: pub, areas: widget.areas);
@@ -165,6 +175,38 @@ class _MyHomePageState extends State<MyProfile> {
                 } else {
                   return SizedBox.shrink(); // Handle unexpected types
                 }
+              },
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget myRegistered(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.all(18.0),
+      child: FutureBuilder(
+        future: getRegisteredEvents(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            print(registerEvents.length);
+            if (registerEvents.isEmpty) {
+              return Center(
+                  child: Text('No registered events',
+                      style: TextStyle(color: colorScheme.onSecondary)));
+            }
+
+            return ListView.builder(
+              itemCount: registerEvents.length,
+              itemBuilder: (context, index) {
+                final pub = registerEvents[index];
+
+                return EventCard(event: pub, areas: widget.areas);
               },
             );
           } else {

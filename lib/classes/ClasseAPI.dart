@@ -219,139 +219,211 @@ class API {
     }
   }
 
-  Future<List<Publication>> getUserPosts() async {
-    List<Publication> publications = [];
-
-    // try {
-    String? jwtToken = await getToken();
-    // Check if the token is not null before proceeding
-    if (jwtToken == null) {
-      print('Failed to retrieve JWT token');
-      throw Exception('Failed to retrieve JWT Token');
-    }
-
-    var response = await http.get(Uri.http(baseUrl, '/api/user/get-content'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
-    if (response.statusCode == 401) {
-      throw InvalidTokenExceptionClass('token access expired');
-    }
-
-    var jsonData = jsonDecode(response.body);
-    var type = jsonData['data'];
-
-    // Extract posts, forums, and events
-    List<dynamic> posts = type['posts'];
-    List<dynamic> forums = type['forums'];
-    List<dynamic> events = type['events'];
-
-    // print('inside json data $jsonData');
-    //Get user created posts
-    for (var post in posts) {
-      //Filter posts with poi's
-      User publisherUser = await getUser(post['publisher_id']);
-      double? price =
-          post['price'] != null ? (post['price'] as num) * 1.0 : null;
-      double? rating =
-          post['score'] != null ? int.tryParse(post['score'])! * 1.0 : null;
-      //print('ID: ${publisherUser.id}\n Price: $price');
-      var file;
-      if (post['filepath'] != null) {
-        file = File(post['filepath']);
-      } else {
-        file = null;
+  Future getUserRegistered() async {
+    List<Event> publications = [];
+    try {
+      String? jwtToken = await getToken();
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/user/get-registered-events'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
       }
-      final publication = Publication(
-          post['post_id'],
-          publisherUser,
-          post['content'],
-          post['title'],
-          post['validated'],
-          post['sub_area_id'],
-          DateTime.parse(post['creation_date']),
-          file,
-          post['p_location'],
-          rating,
-          price);
-      await publication.getSubAreaName();
-      publications.add(publication);
-    }
-    //Get user created forums
-    for (var forum in forums) {
-      if (forum['event_id'] == null) {
-        User publisherUser = await getUser(forum['publisher_id']);
-        final publication = Forum(
-          forum['forum_id'],
-          publisherUser,
-          forum['content'],
-          forum['title'],
-          forum['validated'],
-          forum['sub_area_id'],
-          DateTime.parse(
-            forum['creation_date'],
-          ),
+
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+
+      for (var event in jsonData['data']) {
+        TimeOfDay eventStart = TimeOfDay(
+          hour: int.parse(event['Start Time'].split(":")[0]),
+          minute: int.parse(event['Start Time'].split(":")[1]),
         );
+
+        TimeOfDay eventEnd = TimeOfDay(
+          hour: int.parse(event['End Time'].split(":")[0]),
+          minute: int.parse(event['End Time'].split(":")[1]),
+        );
+        var file;
+        if (event['filepath'] != null) {
+          file = File(event['filepath']);
+        } else {
+          file = null;
+        }
+        User publisherUser = await getUser(box.read('id'));
+
+        DateTime creationDate = DateTime.parse(event['creation_date']);
+        DateTime eventDate = DateTime.parse(event['Date']);
+        // Create Event object
+        final publication = Event(
+            event['event_id'],
+            publisherUser,
+            event['EventDescription'],
+            event['EventName'],
+            event['validated'],
+            event['sub_area_id'],
+            creationDate,
+            file,
+            event['Location'],
+            eventDate,
+            event['recurring'],
+            event['recurring_pattern']?.toString(),
+            eventStart,
+            eventEnd);
+        print('Object created -> ${publication.id}');
         await publication.getSubAreaName();
         publications.add(publication);
       }
-    }
-    // Get user created events
-    for (var event in events) {
-      TimeOfDay eventStart = TimeOfDay(
-        hour: int.parse(event['start_time'].split(":")[0]),
-        minute: int.parse(event['start_time'].split(":")[1]),
-      );
 
-      TimeOfDay eventEnd = TimeOfDay(
-        hour: int.parse(event['end_time'].split(":")[0]),
-        minute: int.parse(event['end_time'].split(":")[1]),
-      );
-      var file;
-      if (event['filepath'] != null) {
-        file = File(event['filepath']);
-      } else {
-        file = null;
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getUserRegistered();
+    } catch (err, s) {
+      print('inside get registered posts $err');
+      print('Stack trace:\n $s');
+      rethrow; // rethrow the error if needed or handle it accordingly
+    }
+  }
+
+  Future<List<Publication>> getUserPosts() async {
+    List<Publication> publications = [];
+
+    try {
+      String? jwtToken = await getToken();
+      // Check if the token is not null before proceeding
+      if (jwtToken == null) {
+        print('Failed to retrieve JWT token');
+        throw Exception('Failed to retrieve JWT Token');
       }
-      User publisherUser = await getUser(event['publisher_id']);
 
-      DateTime creationDate = DateTime.parse(event['creation_date']);
-      DateTime eventDate = DateTime.parse(event['event_date']);
-      // Create Event object
-      final publication = Event(
-          event['event_id'],
-          publisherUser,
-          event['description'],
-          event['name'],
-          event['validated'],
-          event['sub_area_id'],
-          creationDate,
-          file,
-          event['event_location'],
-          eventDate,
-          event['recurring'],
-          event['recurring_pattern']?.toString(),
-          eventStart,
-          eventEnd);
-      print('Object created -> ${publication.id}');
-      await publication.getSubAreaName();
-      publications.add(publication);
+      var response = await http.get(Uri.http(baseUrl, '/api/user/get-content'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      var type = jsonData['data'];
+
+      // Extract posts, forums, and events
+      List<dynamic> posts = type['posts'];
+      List<dynamic> forums = type['forums'];
+      List<dynamic> events = type['events'];
+
+      // print('inside json data $jsonData');
+      //Get user created posts
+      for (var post in posts) {
+        //Filter posts with poi's
+        User publisherUser = await getUser(post['publisher_id']);
+        double? price =
+            post['price'] != null ? (post['price'] as num) * 1.0 : null;
+        double? rating =
+            post['score'] != null ? int.tryParse(post['score'])! * 1.0 : null;
+        //print('ID: ${publisherUser.id}\n Price: $price');
+        var file;
+        if (post['filepath'] != null) {
+          file = File(post['filepath']);
+        } else {
+          file = null;
+        }
+        final publication = Publication(
+            post['post_id'],
+            publisherUser,
+            post['content'],
+            post['title'],
+            post['validated'],
+            post['sub_area_id'],
+            DateTime.parse(post['creation_date']),
+            file,
+            post['p_location'],
+            rating,
+            price);
+        await publication.getSubAreaName();
+        publications.add(publication);
+      }
+      //Get user created forums
+      for (var forum in forums) {
+        if (forum['event_id'] == null) {
+          User publisherUser = await getUser(forum['publisher_id']);
+          final publication = Forum(
+            forum['forum_id'],
+            publisherUser,
+            forum['content'],
+            forum['title'],
+            forum['validated'],
+            forum['sub_area_id'],
+            DateTime.parse(
+              forum['creation_date'],
+            ),
+          );
+          await publication.getSubAreaName();
+          publications.add(publication);
+        }
+      }
+      // Get user created events
+      for (var event in events) {
+        TimeOfDay eventStart = TimeOfDay(
+          hour: int.parse(event['start_time'].split(":")[0]),
+          minute: int.parse(event['start_time'].split(":")[1]),
+        );
+
+        TimeOfDay eventEnd = TimeOfDay(
+          hour: int.parse(event['end_time'].split(":")[0]),
+          minute: int.parse(event['end_time'].split(":")[1]),
+        );
+        var file;
+        if (event['filepath'] != null) {
+          file = File(event['filepath']);
+        } else {
+          file = null;
+        }
+        User publisherUser = await getUser(event['publisher_id']);
+
+        DateTime creationDate = DateTime.parse(event['creation_date']);
+        DateTime eventDate = DateTime.parse(event['event_date']);
+        // Create Event object
+        final publication = Event(
+            event['event_id'],
+            publisherUser,
+            event['description'],
+            event['name'],
+            event['validated'],
+            event['sub_area_id'],
+            creationDate,
+            file,
+            event['event_location'],
+            eventDate,
+            event['recurring'],
+            event['recurring_pattern']?.toString(),
+            eventStart,
+            eventEnd);
+        print('Object created -> ${publication.id}');
+        await publication.getSubAreaName();
+        publications.add(publication);
+      }
+      //Sort for most recent first
+      publications.sort((a, b) => b.datePost.compareTo(a.datePost));
+
+      return publications;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getPosts();
+      //Re-throwing the exception after handling it
+    } catch (err, s) {
+      print('inside get all posts $err');
+      print('Stack trace:\n $s');
+      rethrow; // rethrow the error if needed or handle it accordingly
     }
-    //Sort for most recent first
-    publications.sort((a, b) => b.datePost.compareTo(a.datePost));
-
-    return publications;
-    // } on InvalidTokenExceptionClass catch (e) {
-    //   print('Caught an InvalidTokenExceptionClass: $e');
-    //   await refreshAccessToken();
-    //   return getPosts();
-    // Re-throwing the exception after handling it
-    // } catch (err, s) {
-    //   print('inside get all posts $err');
-    //   print('Stack trace:\n $s');
-    //   rethrow; // rethrow the error if needed or handle it accordingly
-    // }
   }
 
   Future<List<Forum>> getForums() async {
@@ -900,13 +972,10 @@ class API {
       var response = await http.post(
         Uri.http(baseUrl, '/api/form/add-answers/$eventId/${user.id}'),
         headers: {
-          'Content-Type':
-              'application/json',
+          'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
         },
-        body: jsonEncode({
-          'answersJson': answers
-        }), 
+        body: jsonEncode({'answersJson': answers}),
       );
 
       print(response.statusCode);
@@ -1524,6 +1593,50 @@ class API {
       print(response.statusCode);
     } catch (e) {
       print(e);
+      rethrow;
+    }
+  }
+
+  Future getLikesContent(Publication pub, String type) async {
+    List<Comment> comments = [];
+
+    late String type;
+    switch (pub) {
+      case Forum _:
+        type = 'forum';
+        break;
+      case Event _:
+        type = 'forum';
+        break;
+      default:
+        type = 'post';
+    }
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+          Uri.http(baseUrl,
+              '/api/comment/get-likes-per-content/content/$type/id/${pub.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      print(response.body);
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+
+      return comments;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getComents(pub);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('error getting comments');
+      print('Stack trace:\n $s');
       rethrow;
     }
   }
