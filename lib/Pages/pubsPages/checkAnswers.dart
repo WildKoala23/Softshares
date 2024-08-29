@@ -27,6 +27,7 @@ class _CheckAnswersState extends State<CheckAnswers> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -53,7 +54,48 @@ class _CheckAnswersState extends State<CheckAnswers> {
               return ListView.builder(
                   itemCount: participants.length,
                   itemBuilder: (context, index) {
-                    return Text(participants[index].firstname);
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: colorScheme.primary,
+                                  child: Text(
+                                    participants[index]
+                                        .firstname[0]
+                                        .toUpperCase(),
+                                    style:
+                                        TextStyle(color: colorScheme.onPrimary),
+                                  ),
+                                ),
+                                const SizedBox(width: 12.0),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${participants[index].firstname} ${participants[index].lastName}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   });
             } else {
               return const Center(
@@ -63,5 +105,4 @@ class _CheckAnswersState extends State<CheckAnswers> {
           },
         ));
   }
-
 }
