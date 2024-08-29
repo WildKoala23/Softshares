@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
@@ -15,7 +16,7 @@ class POIPage extends StatefulWidget {
   POIPage({super.key, required this.poi, required this.areas});
 
   final Publication poi;
-    List<AreaClass> areas;
+  List<AreaClass> areas;
 
   @override
   State<POIPage> createState() => _POIPageState();
@@ -28,10 +29,10 @@ class _POIPageState extends State<POIPage> {
   TextEditingController commentCx = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   List<Comment> comments = [];
-    List<int> likedComments = [];
+  List<int> likedComments = [];
   late int _remainingChars;
   final int _charLimit = 500;
-
+  var box = GetStorage();
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.poi);
@@ -55,7 +56,7 @@ class _POIPageState extends State<POIPage> {
     mapController = controller;
   }
 
-    Future<void> getLikes() async {
+  Future<void> getLikes() async {
     var data = await api.getComentsLikes(widget.poi);
     likedComments = data;
   }
@@ -67,7 +68,7 @@ class _POIPageState extends State<POIPage> {
     _remainingChars = _charLimit;
     getComments();
     commentCx.addListener(_updateCharCount);
-        getLikes();
+    getLikes();
   }
 
   void _updateCharCount() {
@@ -80,7 +81,10 @@ class _POIPageState extends State<POIPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: contentAppBar(pub: widget.poi, areas: widget.areas,),
+      appBar: contentAppBar(
+        pub: widget.poi,
+        areas: widget.areas,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(
@@ -112,7 +116,7 @@ class _POIPageState extends State<POIPage> {
                                     BorderRadius.all(Radius.circular(8)),
                                 child: Image.network(
                                     fit: BoxFit.cover,
-                                    'https://backendpint-w3vz.onrender.com/uploads/${widget.poi.img!.path}',
+                                    '${box.read('url')}/uploads/${widget.poi.img!.path}',
                                     //Handles images not existing
                                     errorBuilder: (context, error, stackTrace) {
                                   return Container(
@@ -181,7 +185,8 @@ class _POIPageState extends State<POIPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
-                              bool liked = likedComments.contains(comments[index].id);
+                              bool liked =
+                                  likedComments.contains(comments[index].id);
                               return CommentWidget(
                                 liked: liked,
                                 comment: comments[index],

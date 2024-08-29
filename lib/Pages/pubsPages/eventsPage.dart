@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
-import 'package:softshares/Pages/pubsPages/checkAnswers.dart';
+import 'package:softshares/Pages/checkAnswers.dart';
 import 'package:softshares/Pages/registerEvent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -257,12 +257,11 @@ class _EventPageState extends State<EventPage> {
                       height: 120,
                       width: double.infinity,
                       child: Image.network(
-                        'https://backendpint-w3vz.onrender.com/uploads/${widget.event.img!.path}',
+                        '${box.read('url')}/uploads/${widget.event.img!.path}',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
                             color: const Color.fromARGB(255, 255, 204, 150),
-                            height: 120,
                           );
                         },
                       ),

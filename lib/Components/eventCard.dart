@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Pages/pubsPages/eventsPage.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/event.dart';
@@ -15,6 +16,7 @@ class EventCard extends StatefulWidget {
 
 class _EventCardState extends State<EventCard> {
   bool saved = false;
+  var box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +51,28 @@ class _EventCardState extends State<EventCard> {
               padding: const EdgeInsets.fromLTRB(14.0, 20.0, 14.0, 20.0),
               child: cardHeader(colorScheme),
             ),
-            Container(
-              color: Color.fromARGB(255, 255, 204, 150),
-              height: 120,
-            ),
+            //If image == null, put color instead
+            widget.event.img == null
+                ? Container(
+                    color: Color.fromARGB(255, 150, 255, 190),
+                    height: 120,
+                  )
+                : Container(
+                    height: 120,
+                    width: double
+                        .infinity, // Ensures the image covers the full width
+                    child: Image.network(
+                      '${box.read('url')}/uploads/${widget.event.img!.path}',
+                      fit: BoxFit.cover,
+                      // Handles images not existing
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color.fromARGB(255, 255, 204, 150),
+                          height: 120,
+                        );
+                      },
+                    ),
+                  ),
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: textContent(colorScheme),

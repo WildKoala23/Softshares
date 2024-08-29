@@ -40,7 +40,8 @@ class API {
       throw Exception('Failed to retrieve refreshToken');
     }
 
-    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
+    var response = await http.post(
+        Uri.http(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
@@ -185,8 +186,12 @@ class API {
           var file;
           if (eachPub['filepath'] != null) {
             file = File(eachPub['filepath']);
+            print('I have an image');
+            print(eachPub['filepath']);
+            print(file.toString());
           } else {
             file = null;
+            print('I have not');
           }
           final publication = Publication(
               eachPub['post_id'],
@@ -749,8 +754,11 @@ class API {
 
   //This function is used everytime a user creates something with an image
   Future uploadPhoto(File img) async {
-    String baseUrl = 'http://backendpint-w3vz.onrender.com/upload/upload';
     String? jwtToken = await getToken();
+
+    //String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
+    String baseUrl = 'http://10.0.2.2:8000/api/upload/upload';
+    //String baseUrl = 'http://backendpint-909f.onrender.com/upload/upload';
 
     // Check if the file exists
     if (await img.exists()) {
@@ -769,6 +777,7 @@ class API {
         final streamedResponse = await request.send();
 
         final response = await http.Response.fromStream(streamedResponse);
+
         if (response.statusCode == 401) {
           throw InvalidTokenExceptionClass('token access expired');
         }
@@ -779,6 +788,8 @@ class API {
         } else {
           print('Failed to upload file. Status code: ${response.statusCode}');
           print(response.body);
+          print('Redirect Location: ${response.headers['location']}');
+
         }
       } on InvalidTokenExceptionClass catch (e) {
         print('Caught an InvalidTokenExceptionClass: $e');
@@ -807,8 +818,8 @@ class API {
     int? rating = pub.aval?.toInt();
 
     try {
-      var response =
-          await http.post(Uri.http(baseUrl, '/api/post/create'), body: {
+      // Create a map for the request body
+      Map<String, String> body = {
         'subAreaId': pub.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': pub.user.id.toString(),
@@ -816,11 +827,20 @@ class API {
         'content': pub.desc,
         'filePath': path.toString(),
         'pLocation': pub.location.toString(),
-        'price': price.toString(),
-        'rating': rating.toString()
-      }, headers: {
-        'Authorization': 'Bearer $jwtToken'
-      });
+        'rating': rating.toString(),
+      };
+
+      // Add price to the body only if it's not null
+      if (price != null) {
+        body['price'] = price.toString();
+      }
+
+      var response = await http.post(
+        Uri.http(baseUrl, '/api/post/create'),
+        body: body,
+        headers: {'Authorization': 'Bearer $jwtToken'},
+      );
+
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -934,11 +954,11 @@ class API {
   Future getForm(int id) async {
     String? jwtToken = await getToken();
     List<Field> formItens = [];
-    var response = await http.get(Uri.http(baseUrl, '/api/form/event-form/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken'
-        });
+    var response = await http
+        .get(Uri.http(baseUrl, '/api/form/event-form/$id'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    });
     // print('Response status: ${response.statusCode}');
     var jsonData = jsonDecode(response.body);
     print('FORM:');
@@ -1091,6 +1111,25 @@ class API {
       rethrow;
     }
   }
+
+  // Future getUserAnswer(int id) async {
+  //   String? jwtToken = await getToken();
+
+  //   try {
+  //     var response = await http.get(
+  //         Uri.http(baseUrl, '/api/event/get-event-answers-for-user/$id'),
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': 'Bearer $jwtToken',
+  //         });
+
+  //     var jsonData = jsonDecode(response.body);
+  //     print(jsonData);
+  //   } catch (e) {
+  //     print(e);
+  //     rethrow;
+  //   }
+  // }
 
   Future createEvent(Event event) async {
     var office = box.read('selectedCity');
@@ -1330,6 +1369,24 @@ class API {
       print('create POI');
       print('Stack trace:\n $s');
       rethrow;
+    }
+  }
+
+  Future getCities() async {
+    String? jwtToken = await getToken();
+
+    try {
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/categories/get-areas'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -1610,7 +1667,8 @@ class API {
     //User? user = await getUser(box.read('id'));
 
     try {
-      var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
+      var response = await http.post(
+          Uri.http(baseUrl, '/api/comment/add-like'),
           body: jsonEncode({
             'commentID': id.toString(),
             //'userID': user!.id.toString(),

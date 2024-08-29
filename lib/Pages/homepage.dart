@@ -88,9 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        iconL: const Icon(Icons.notifications),
-        leftCallback: leftCallback,
-        iconR: const Icon(Icons.search),
+        iconR: const Icon(Icons.notifications),
         rightCallback: rightCallback,
         title: 'Homepage',
       ),

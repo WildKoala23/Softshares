@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Pages/pubsPages/poiPage.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
@@ -15,6 +16,7 @@ class POICard extends StatefulWidget {
 
 class _POIState extends State<POICard> {
   bool saved = false;
+  var box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class _POIState extends State<POICard> {
                     width: double
                         .infinity, // Ensures the image covers the full width
                     child: Image.network(
-                      'https://backendpint-w3vz.onrender.com/uploads/${widget.pointOfInterest.img!.path}',
+                      '${box.read('url')}/uploads/${widget.pointOfInterest.img!.path}',
                       fit: BoxFit.cover,
                       // Handles images not existing
                       errorBuilder: (context, error, stackTrace) {

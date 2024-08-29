@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Pages/pubsPages/postsPage.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/publication.dart';
@@ -15,6 +16,7 @@ class PublicationCard extends StatefulWidget {
 
 class _PubState extends State<PublicationCard> {
   bool saved = false;
+  var box = GetStorage();
 
   @override
   void initState() {
@@ -66,7 +68,7 @@ class _PubState extends State<PublicationCard> {
                     width: double
                         .infinity, // Ensures the image covers the full width
                     child: Image.network(
-                      'https://backendpint-w3vz.onrender.com/uploads/${widget.pub.img!.path}',
+                      '${box.read('url')}/uploads/${widget.pub.img!.path}',
                       fit: BoxFit.cover,
                       // Handles images not existing
                       errorBuilder: (context, error, stackTrace) {

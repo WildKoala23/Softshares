@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
@@ -28,6 +29,7 @@ class _PostPageState extends State<PostPage> {
   int _charCount = 0;
   final int _charLimit = 500;
   List<int> likedComments = [];
+  var box = GetStorage();
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.publication);
@@ -90,6 +92,29 @@ class _PostPageState extends State<PostPage> {
                         ),
                       ),
                     ),
+                    widget.publication.img != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                              width: double.infinity,
+                              height: 120,
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                child: Image.network(
+                                    fit: BoxFit.cover,
+                                    '${box.read('url')}/uploads/${widget.publication.img!.path}',
+                                    //Handles images not existing
+                                    errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: const Color.fromARGB(
+                                        255, 150, 216, 255),
+                                  );
+                                }),
+                              ),
+                            ),
+                          )
+                        : Container(),
                     Text(
                       widget.publication.desc,
                       style: TextStyle(fontSize: 18),

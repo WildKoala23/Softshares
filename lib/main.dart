@@ -38,6 +38,7 @@ final storage = FlutterSecureStorage();
 final getIt = GetIt.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
 
   // Initialize Firebase
   await Firebase.initializeApp(
@@ -48,6 +49,13 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   SQLHelper db = SQLHelper.instance;
+  final box = GetStorage();
+  //Machado
+  //box.write('url', 'http://backendpint-909f.onrender.com/api');
+  //Filipe
+  //box.write('url', 'https://backendpint-w3vz.onrender.com/api');
+  //Mine
+  box.write('url', 'http://10.0.2.2:8000/api');
   User? user;
   bool logged;
   try {
