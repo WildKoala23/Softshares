@@ -1076,7 +1076,7 @@ class API {
           });
 
       var jsonData = jsonDecode(response.body);
-      print('DATATATATATATA');
+      print('xxxxxxxxxxxxxxxxxxx');
       print(jsonData);
       return false;
     } catch (e) {
@@ -1677,7 +1677,6 @@ class API {
   Future getComentsLikes(
     Publication pub,
   ) async {
-
     late String type;
     switch (pub) {
       case Forum _:

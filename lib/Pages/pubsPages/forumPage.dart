@@ -40,7 +40,7 @@ class _ForumPageState extends State<ForumPage> {
   void initState() {
     super.initState();
     getComments();
-    //getLikes();
+    getLikes();
     commentCx.addListener(_updateCharCount);
   }
 

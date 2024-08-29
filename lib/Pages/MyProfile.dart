@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyProfile> {
                         // Placeholder for my posts
                         myPosts(colorScheme),
                         // Placeholder for registered events
-                        //myRegistered(colorScheme)
+                        myRegistered(colorScheme)
                       ],
                     ),
                   ),
