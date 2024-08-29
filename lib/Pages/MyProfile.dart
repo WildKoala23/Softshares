@@ -46,15 +46,6 @@ class _MyHomePageState extends State<MyProfile> {
     print(registerEvents.length);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // print('POSTS:');
-    // getPosts();
-    // print('REGISTERED');
-    // getRegisteredEvents();
-  }
-
   void logOff() {
     showDialog<void>(
         context: context,
@@ -133,7 +124,7 @@ class _MyHomePageState extends State<MyProfile> {
                         // Placeholder for my posts
                         myPosts(colorScheme),
                         // Placeholder for registered events
-                        myRegistered(colorScheme)
+                        //myRegistered(colorScheme)
                       ],
                     ),
                   ),

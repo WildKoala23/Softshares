@@ -1064,6 +1064,27 @@ class API {
     }
   }
 
+  Future<bool> getParticipants(int eventID) async {
+    String? jwtToken = await getToken();
+
+    try {
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/event/get-participants/$eventID'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken',
+          });
+
+      var jsonData = jsonDecode(response.body);
+      print('DATATATATATATA');
+      print(jsonData);
+      return false;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
   Future createEvent(Event event) async {
     var office = box.read('selectedCity');
     String? jwtToken = await getToken();
@@ -1598,50 +1619,6 @@ class API {
     }
   }
 
-  Future getLikesContent(Publication pub, String type) async {
-    List<Comment> comments = [];
-
-    late String type;
-    switch (pub) {
-      case Forum _:
-        type = 'forum';
-        break;
-      case Event _:
-        type = 'forum';
-        break;
-      default:
-        type = 'post';
-    }
-    try {
-      String? jwtToken = await getToken();
-
-      var response = await http.get(
-          Uri.http(baseUrl,
-              '/api/comment/get-likes-per-content/content/$type/id/${pub.id}'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
-      print(response.body);
-      if (response.statusCode == 401) {
-        throw InvalidTokenExceptionClass('token access expired');
-      }
-      var jsonData = jsonDecode(response.body);
-      print(jsonData);
-
-      return comments;
-    } on InvalidTokenExceptionClass catch (e) {
-      print('Caught an InvalidTokenExceptionClass: $e');
-      await refreshAccessToken();
-      return getComents(pub);
-      // Re-throwing the exception after handling it
-    } catch (e, s) {
-      print('error getting comments');
-      print('Stack trace:\n $s');
-      rethrow;
-    }
-  }
-
   Future getComents(
     Publication pub,
   ) async {
@@ -1700,7 +1677,6 @@ class API {
   Future getComentsLikes(
     Publication pub,
   ) async {
-    List<Comment> comments = [];
 
     late String type;
     switch (pub) {
@@ -1741,7 +1717,7 @@ class API {
       return getComents(pub);
       // Re-throwing the exception after handling it
     } catch (e, s) {
-      print('error getting comments');
+      print('error getting likes');
       print('Stack trace:\n $s');
       rethrow;
     }
