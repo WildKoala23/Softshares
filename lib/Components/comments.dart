@@ -72,7 +72,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 print('UNLIKED');
                               }
 
-                              setState(() {});
+                              setState(() {
+                                widget.liked = !widget.liked;
+                                widget.comment.likes += 1;
+                              });
                             },
                             tooltip: 'Like',
                           ),
