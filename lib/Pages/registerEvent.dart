@@ -136,19 +136,58 @@ class _RegisterState extends State<Register> {
                 ),
                 onPressed: () async {
                   setState(() {
-                    //Ensure setState is used if there are state changes
-
+                    // Ensure setState is used if there are state changes
                     answers.forEach((k, v) => addInfo(k, v));
-
                     print('RESPONSES');
                     print(jsonEncode(responses));
                   });
+
                   print(responses);
                   var data = jsonEncode(jsonForm);
-                  await api.sendFormAnswer(widget.id, data);
+
+                  try {
+                    await api.sendFormAnswer(widget.id, data);
+                    // Show confirmation dialog after successful registration
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Registration Successful'),
+                          content: const Text(
+                              'Your form has been successfully submitted.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pushNamed('/home');
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Registration Failed'),
+                          content: Text('An error occurred: $e'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 child: const Text('Register'),
-              ),
+              )
             ],
           ),
         ),

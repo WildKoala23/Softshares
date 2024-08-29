@@ -52,10 +52,12 @@ class AuthProvider with ChangeNotifier {
 
     box.write('id', user!.id);
 
+    String? aux_email = user!.email;
+
     // If checkbox is selected
     if (keepSign) {
       await bd.insertUser(
-          user!.firstname, user!.id, user!.lastName, user!.email);
+          user!.firstname, user!.id, user!.lastName, aux_email!);
     }
 
     // Load areas and cities data

@@ -1,6 +1,6 @@
 class User {
-  String _firstname, _lastName, _email;
-  String? _profileImg;
+  String _firstname, _lastName;
+  String? _profileImg, _email;
   int _id;
 
   User(this._id, this._firstname, this._lastName, this._email);
@@ -8,7 +8,7 @@ class User {
   // Getters
   String get firstname => _firstname;
   String get lastName => _lastName;
-  String get email => _email;
+  String? get email => _email;
   String? get profileImg => _profileImg;
   int get id => _id;
 

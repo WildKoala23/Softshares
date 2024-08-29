@@ -1064,8 +1064,9 @@ class API {
     }
   }
 
-  Future<bool> getParticipants(int eventID) async {
+  Future getParticipants(int eventID) async {
     String? jwtToken = await getToken();
+    List<User> participants = [];
 
     try {
       var response = await http.get(
@@ -1078,7 +1079,13 @@ class API {
       var jsonData = jsonDecode(response.body);
       print('xxxxxxxxxxxxxxxxxxx');
       print(jsonData);
-      return false;
+
+      for (var eachUser in jsonData['data']) {
+        User user = User(eachUser['user_id'], eachUser['first_name'],
+            eachUser['last_name'], null);
+        participants.add(user);
+      }
+      return participants;
     } catch (e) {
       print(e);
       rethrow;
