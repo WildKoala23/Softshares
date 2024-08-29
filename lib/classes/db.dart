@@ -35,8 +35,9 @@ class SQLHelper {
         version: 1,
         onCreate: _createDB,
       );
-    } catch (e) {
+    } catch (e, s) {
       print('Database initialization error: $e');
+      print("stacktrace: $s");
       rethrow;
     }
   }

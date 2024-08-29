@@ -92,7 +92,8 @@ class API {
   Future getUserLogged() async {
     try {
       String? jwtToken = await getToken();
-
+      print('inside getUserloggggged');
+      print(jwtToken);
       var response = await http
           .get(Uri.http(baseUrl, '/api/auth/get-user-by-token/'), headers: {
         'Content-Type': 'application/json',
@@ -104,7 +105,7 @@ class API {
 
       var jsonData = jsonDecode(response.body);
 
-      print(jsonData['user']['office_id']);
+      //print(jsonData['user']['office_id']);
 
       // If user is admin
       if (jsonData['user']['office_id'] == 0) {
@@ -1555,13 +1556,13 @@ class API {
 
   Future likeComment(int id) async {
     String? jwtToken = await getToken();
-    User? user = await getUser(box.read('id'));
+    //User? user = await getUser(box.read('id'));
 
     try {
       var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
           body: jsonEncode({
             'commentID': id.toString(),
-            'userID': user!.id.toString(),
+            //'userID': user!.id.toString(),
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -1696,6 +1697,56 @@ class API {
     }
   }
 
+  Future getComentsLikes(
+    Publication pub,
+  ) async {
+    List<Comment> comments = [];
+
+    late String type;
+    switch (pub) {
+      case Forum _:
+        type = 'forum';
+        break;
+      case Event _:
+        type = 'forum';
+        break;
+      default:
+        type = 'post';
+    }
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+          Uri.http(baseUrl,
+              '/api/comment/get-likes-per-content/content/$type/id/${pub.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      print(response.body);
+
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      var jsonData = jsonDecode(response.body);
+
+      for (var eachComment in jsonData['data']) {
+        print(eachComment);
+      }
+
+      return jsonData['data'];
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getComents(pub);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('error getting comments');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   Future createComment(Publication pub, String comment) async {
     late String type;
 
@@ -1712,7 +1763,7 @@ class API {
     try {
       String? jwtToken = await getToken();
       // var _id = await getID();
-      User? user = await getUser(box.read('id'));
+      //  User? user = await getUser(box.read('id'));
       // print('in comments: $_id');
       // print(_id.runtimeType);
       var response = await http
@@ -1721,7 +1772,7 @@ class API {
       }, body: {
         'contentID': pub.id.toString(),
         'contentType': type,
-        'userID': user!.id.toString(),
+        // 'userID': user!.id.toString(),
         'commentText': comment
       });
       if (response.statusCode == 401) {
@@ -1741,7 +1792,7 @@ class API {
       return createComment(pub, comment);
       // Re-throwing the exception after handling it
     } catch (e, s) {
-      print('error creating comment');
+      print('error creating comment $e');
       print('Stack trace:\n $s');
       rethrow;
     }

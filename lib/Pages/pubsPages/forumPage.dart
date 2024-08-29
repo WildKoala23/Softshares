@@ -32,10 +32,15 @@ class _ForumPageState extends State<ForumPage> {
     setState(() {});
   }
 
+  Future<void> getLikes() async {
+    await api.getComentsLikes(widget.forum);
+  }
+
   @override
   void initState() {
     super.initState();
     getComments();
+    getLikes();
     commentCx.addListener(_updateCharCount);
   }
 

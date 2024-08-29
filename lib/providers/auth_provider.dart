@@ -135,12 +135,6 @@ class AuthProvider with ChangeNotifier {
       // Handle the response from the backend
       print("responseresponse from google SSO");
       print(response.body);
-      var user = await api.getUserLogged();
-      //If getUserLogged() returns -1, it means the user is admin
-      if (user == -1) {
-        return null;
-      }
-      user = user;
 
       // Load areas and cities data
       await loadAreasAndCities();
@@ -185,12 +179,6 @@ class AuthProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       // Handle the response from the backend
       print(response.body);
-      var user = await api.getUserLogged();
-      //If getUserLogged() returns -1, it means the user is admin
-      if (user == -1) {
-        return null;
-      }
-      user = user;
 
       // Load areas and cities data
       await loadAreasAndCities();
