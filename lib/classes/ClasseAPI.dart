@@ -1112,24 +1112,24 @@ class API {
     }
   }
 
-  // Future getUserAnswer(int id) async {
-  //   String? jwtToken = await getToken();
+  Future getUserAnswer(int eventID, ) async {
+    String? jwtToken = await getToken();
+    User user = await getUser(box.read('id'));
 
-  //   try {
-  //     var response = await http.get(
-  //         Uri.http(baseUrl, '/api/event/get-event-answers-for-user/$id'),
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': 'Bearer $jwtToken',
-  //         });
-
-  //     var jsonData = jsonDecode(response.body);
-  //     print(jsonData);
-  //   } catch (e) {
-  //     print(e);
-  //     rethrow;
-  //   }
-  // }
+    try {
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/event/get-event-answers-for-user/$eventID/${user.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken',
+          });
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 
   Future createEvent(Event event) async {
     var office = box.read('selectedCity');

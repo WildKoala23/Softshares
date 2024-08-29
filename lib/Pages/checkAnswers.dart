@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/user.dart';
 
@@ -14,6 +15,7 @@ class CheckAnswers extends StatefulWidget {
 class _CheckAnswersState extends State<CheckAnswers> {
   API api = API();
   List<User> participants = [];
+  var box = GetStorage();
 
   Future getParticipants() async {
     var data = await api.getParticipants(widget.id);
@@ -21,7 +23,7 @@ class _CheckAnswersState extends State<CheckAnswers> {
   }
 
   Future checkUserAnswer() async {
-    //await api.getUserAnswer(id);
+    await api.getUserAnswer(widget.id);
   }
 
   @override
@@ -60,7 +62,7 @@ class _CheckAnswersState extends State<CheckAnswers> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        //checkUserAnswer(participants[index].id);
+                        checkUserAnswer();
                       },
                       child: Card(
                         margin: const EdgeInsets.symmetric(
