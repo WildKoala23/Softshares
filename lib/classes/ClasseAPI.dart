@@ -40,8 +40,7 @@ class API {
       throw Exception('Failed to retrieve refreshToken');
     }
 
-    var response = await http.post(
-        Uri.http(baseUrl, '/api/auth/refresh-token'),
+    var response = await http.post(Uri.http(baseUrl, '/api/auth/refresh-token'),
         body: {'refreshToken': refreshToken});
     if (response.statusCode != 401) {
       // Add logic
@@ -789,7 +788,6 @@ class API {
           print('Failed to upload file. Status code: ${response.statusCode}');
           print(response.body);
           print('Redirect Location: ${response.headers['location']}');
-
         }
       } on InvalidTokenExceptionClass catch (e) {
         print('Caught an InvalidTokenExceptionClass: $e');
@@ -954,11 +952,11 @@ class API {
   Future getForm(int id) async {
     String? jwtToken = await getToken();
     List<Field> formItens = [];
-    var response = await http
-        .get(Uri.http(baseUrl, '/api/form/event-form/$id'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $jwtToken'
-    });
+    var response = await http.get(Uri.http(baseUrl, '/api/form/event-form/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        });
     // print('Response status: ${response.statusCode}');
     var jsonData = jsonDecode(response.body);
     print('FORM:');
@@ -1112,13 +1110,16 @@ class API {
     }
   }
 
-  Future getUserAnswer(int eventID, ) async {
+  Future getUserAnswer(
+    int eventID,
+  ) async {
     String? jwtToken = await getToken();
     User user = await getUser(box.read('id'));
 
     try {
       var response = await http.get(
-          Uri.http(baseUrl, '/api/event/get-event-answers-for-user/$eventID/${user.id}'),
+          Uri.http(baseUrl,
+              '/api/form/get-event-answers-for-user/$eventID/${user.id}'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken',
@@ -1667,8 +1668,7 @@ class API {
     //User? user = await getUser(box.read('id'));
 
     try {
-      var response = await http.post(
-          Uri.http(baseUrl, '/api/comment/add-like'),
+      var response = await http.post(Uri.http(baseUrl, '/api/comment/add-like'),
           body: jsonEncode({
             'commentID': id.toString(),
             //'userID': user!.id.toString(),
