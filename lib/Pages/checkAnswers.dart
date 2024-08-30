@@ -49,6 +49,7 @@ class _CheckAnswersState extends State<CheckAnswers> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) {
+                print(snapshot.error);
                 return const Center(
                   child: Text('Something went wrong :(\n Try again'),
                 );

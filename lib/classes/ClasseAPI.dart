@@ -1101,8 +1101,7 @@ class API {
       print(jsonData);
 
       for (var eachUser in jsonData['data']) {
-        User user = User(eachUser['user_id'], eachUser['first_name'],
-            eachUser['last_name'], null);
+        User user = await getUser(eachUser['user_id']);
         participants.add(user);
       }
       return participants;
@@ -1149,7 +1148,6 @@ class API {
       path = await uploadPhoto(event.img!);
     }
     try {
-
       Map<String, String> body = {
         'subAreaId': event.subCategory.toString(),
         'officeId': office.toString(),
@@ -1167,12 +1165,10 @@ class API {
 
       // Add recurring pattern to the body only if it's a recurring event
       if (event.recurring == true) {
-        body['recurring_pattern'] =  jsonEncode(event.recurring_path); 
+        body['recurring_pattern'] = jsonEncode(event.recurring_path);
       }
-      var response =
-          await http.post(Uri.http(baseUrl, '/api/event/create'), body: body, headers: {
-        'Authorization': 'Bearer $jwtToken'
-      });
+      var response = await http.post(Uri.http(baseUrl, '/api/event/create'),
+          body: body, headers: {'Authorization': 'Bearer $jwtToken'});
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
