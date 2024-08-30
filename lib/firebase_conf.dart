@@ -83,3 +83,23 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     message.data['payload'] ?? 'No Payload', // payload
   );
 }
+
+//Subscribe to a Topic - usage: subscribeToTopic('news');
+void subscribeToTopic(String topic) async {
+  try {
+    await FirebaseMessaging.instance.subscribeToTopic(topic);
+    print('Subscribed to $topic');
+  } catch (e) {
+    print('Failed to subscribe to $topic: $e');
+  }
+}
+
+//Unsubscribe from a Topic - usage:  unsubscribeFromTopic('news');
+void unsubscribeFromTopic(String topic) async {
+  try {
+    await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+    print('Unsubscribed from $topic');
+  } catch (e) {
+    print('Failed to unsubscribe from $topic: $e');
+  }
+}
