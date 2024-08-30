@@ -132,10 +132,7 @@ class SQLHelper {
 
   Future<void> logOff() async {
   final db = await instance.database;
-  // Clear all tables
-  await db.execute('DELETE FROM cities');
-  await db.execute('DELETE FROM areas');
-  await db.execute('DELETE FROM subAreas');
+  // Clear all tables;
   await db.execute('DELETE FROM preferences');
   await db.execute('DELETE FROM user');
 

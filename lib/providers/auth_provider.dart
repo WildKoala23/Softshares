@@ -57,10 +57,8 @@ class AuthProvider with ChangeNotifier {
       String? aux_email = user!.email;
 
       // If checkbox is selected
-      if (keepSign) {
         await bd.insertUser(
             user!.firstname, user!.id, user!.lastName, aux_email!);
-      }
 
       // Load areas and cities data
       await loadAreasAndCities();

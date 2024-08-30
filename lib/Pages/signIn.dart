@@ -195,7 +195,7 @@ class _SignInState extends State<SignIn> {
       height: 45,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          foregroundColor: colorScheme.onPrimary,
+          foregroundColor: Colors.white,
           backgroundColor: colorScheme.primary,
         ),
         onPressed: onContinue,
