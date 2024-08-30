@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/customCheckbox.dart';
 import 'package:softshares/Components/customRadioBtn.dart';
 import 'package:softshares/Components/customTextField.dart';
+import 'package:softshares/Pages/pubsPages/eventsPage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/event.dart';
 import 'package:softshares/classes/fieldClass.dart';
 
 class Register extends StatefulWidget {
-  const Register({super.key, required this.id});
-  final int id;
+  Register({super.key, required this.event, required this.areas});
+  final Event event;
+  List<AreaClass> areas;
 
   @override
   State<Register> createState() => _RegisterState();
@@ -72,7 +76,7 @@ class _RegisterState extends State<Register> {
   }
 
   Future<void> getForm() async {
-    fields = await api.getForm(widget.id);
+    fields = await api.getForm(widget.event.id!);
     buildForm();
     setState(() {
       loaded = true;
@@ -136,55 +140,34 @@ class _RegisterState extends State<Register> {
                 ),
                 onPressed: () async {
                   setState(() {
-                    // Ensure setState is used if there are state changes
                     answers.forEach((k, v) => addInfo(k, v));
-                    print('RESPONSES');
-                    print(jsonEncode(responses));
                   });
 
-                  print(responses);
                   var data = jsonEncode(jsonForm);
 
                   try {
-                    await api.sendFormAnswer(widget.id, data);
-                    // Show confirmation dialog after successful registration
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Registration Successful'),
-                          content: const Text(
-                              'Your form has been successfully submitted.'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pushNamed('/home');
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                    await api.sendFormAnswer(widget.event.id!, data);
+
+                    // Show success snackbar after successful registration
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Your form has been successfully submitted.'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 5),
+                      ),
                     );
                   } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Registration Failed'),
-                          content: Text('An error occurred: $e'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                    // Show error snackbar if registration fails
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Registration failed: $e'),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 5),
+                      ),
                     );
                   }
+                  Navigator.pop(context);
                 },
                 child: const Text('Register'),
               )

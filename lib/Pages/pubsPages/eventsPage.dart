@@ -61,16 +61,25 @@ class _EventPageState extends State<EventPage> {
   Future isCreator() async {
     User user = await api.getUser(box.read('id'));
     if (user.id == widget.event.user.id) {
-      isEventCreator = true;
+      setState(() {
+        isEventCreator = true;
+      });
     }
   }
 
   Future isRegistered() async {
-    if (isEventCreator) return;
+    bool aux = false;
+    if (isEventCreator) {
+      aux = true;
+    }
     User user = await api.getUser(box.read('id'));
-    print(user.id);
-    userRegistered = await api.isRegistered(user.id, widget.event.id!);
-    print('IS USER REGISTERED????? $userRegistered');
+    var data = await api.isRegistered(user.id, widget.event.id!);
+    if (data == true) {
+      aux = true;
+    }
+    setState(() {
+      userRegistered = aux;
+    });
   }
 
   @override
@@ -301,14 +310,19 @@ class _EventPageState extends State<EventPage> {
             const SizedBox(height: 50),
             Align(
               alignment: Alignment.center,
+              //Checks if current user is event creator
               child: isEventCreator == false
-                  ? ElevatedButton(
+                    // Checks if currente user is already registered
+                    // If so, remove 'register' button
+                  ? userRegistered == false ? ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  Register(id: widget.event.id!)),
+                              builder: (context) => Register(
+                                    event: widget.event,
+                                    areas: widget.areas,
+                                  )),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -318,7 +332,7 @@ class _EventPageState extends State<EventPage> {
                         'Register for Event',
                         style: TextStyle(color: colorScheme.onPrimary),
                       ),
-                    )
+                    ) : Container()
                   : ElevatedButton(
                       onPressed: () {
                         Navigator.push(

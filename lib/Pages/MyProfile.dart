@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyProfile> {
                     tabs: [
                       Tab(
                         child: Text(
-                          'My Posts',
+                          'My Publications',
                           style: TextStyle(color: colorScheme.onSecondary),
                         ),
                       ),

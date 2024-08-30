@@ -52,7 +52,7 @@ class _EventCreationState extends State<EventCreation> {
   //Variables to help checking if the event is recurrent or not
   List<String> recurrentOpt = ["Weekly", "Monthly", "Yearly"];
   bool recurrent = false;
-  late String recurrentValue;
+  late String? recurrentValue;
   TimeOfDay start_time = TimeOfDay.now();
   TimeOfDay end_time = TimeOfDay.now();
 
@@ -394,7 +394,8 @@ class _EventCreationState extends State<EventCreation> {
                       _selectedImage != null &&
                       location != null &&
                       start_time != end_time) {
-                    User user = await api.getUser(box.read('id'));;
+                    if (recurrent == false) recurrentValue = null;
+                    User user = await api.getUser(box.read('id'));
                     Event post = Event(
                         null,
                         user,

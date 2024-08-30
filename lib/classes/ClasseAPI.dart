@@ -1149,8 +1149,8 @@ class API {
       path = await uploadPhoto(event.img!);
     }
     try {
-      var response =
-          await http.post(Uri.http(baseUrl, '/api/event/create'), body: {
+
+      Map<String, String> body = {
         'subAreaId': event.subCategory.toString(),
         'officeId': office.toString(),
         'publisher_id': event.user.id.toString(),
@@ -1161,10 +1161,16 @@ class API {
             event.eventDate.toIso8601String(), //Convert DateTime to string
         'location': event.location.toString(),
         'recurring': event.recurring.toString(),
-        'recurring_pattern': recurring_aux,
         'startTime': eventStart,
         'endTime': eventEnd
-      }, headers: {
+      };
+
+      // Add recurring pattern to the body only if it's a recurring event
+      if (event.recurring == true) {
+        body['recurring_pattern'] =  jsonEncode(event.recurring_path); 
+      }
+      var response =
+          await http.post(Uri.http(baseUrl, '/api/event/create'), body: body, headers: {
         'Authorization': 'Bearer $jwtToken'
       });
       if (response.statusCode == 401) {
