@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/fieldClass.dart';
 import 'package:softshares/classes/user.dart';
 
 class CheckAnswers extends StatefulWidget {
@@ -22,8 +23,16 @@ class _CheckAnswersState extends State<CheckAnswers> {
     participants = data;
   }
 
-  Future checkUserAnswer() async {
-    await api.getUserAnswer(widget.id);
+  Future checkUserAnswer(int userID) async {
+    List<Field> data_fields = await api.getForm(widget.id);
+    Map<int, String> data_answers = await api.getUserAnswer(widget.id, userID);
+    // print(data_answers);
+    // for (var field in data_fields) {
+    //   if (data_answers.containsKey(field.id)) {
+    //     print('${field.name}: ${data_answers[field.id]}');
+    //   }
+    // }
+    showUserAnswersBottomSheet(context, data_fields, data_answers);
   }
 
   @override
@@ -63,7 +72,10 @@ class _CheckAnswersState extends State<CheckAnswers> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        checkUserAnswer();
+                        if (index == 0) {
+                          return;
+                        }
+                        checkUserAnswer(participants[index].id);
                       },
                       child: Card(
                         margin: const EdgeInsets.symmetric(
@@ -116,5 +128,50 @@ class _CheckAnswersState extends State<CheckAnswers> {
             }
           },
         ));
+  }
+
+  // Define the ListView function to display the answers.
+  ListView answerList(BuildContext context, List<Field> data_fields,
+      Map<int, String> data_answers) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: data_fields.length,
+      itemBuilder: (context, index) {
+        final field = data_fields[index];
+        final answer = data_answers[field.id] ?? 'No answer provided';
+
+        return ListTile(
+          title: Text(
+            '${field.name}: ',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          subtitle: Text(
+            '- $answer',
+          ),
+        );
+      },
+    );
+  }
+
+// Function to show the BottomSheet with the answers.
+  void showUserAnswersBottomSheet(BuildContext context, List<Field> dataFields,
+      Map<int, String> dataAnswers) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                'Answers: ',
+                style: TextStyle(fontSize: 24),
+              ),
+              answerList(context, dataFields, dataAnswers)
+            ],
+          ),
+        );
+      },
+    );
   }
 }

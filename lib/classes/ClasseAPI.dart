@@ -967,7 +967,7 @@ class API {
       List<String> options = [];
       if (item['field_type'] == 'Radio' || item['field_type'] == 'Checkbox') {
         for (var option in jsonDecode(item['field_value'])) {
-          print(option);
+          //print(option);
           options.add(option.toString());
         }
       }
@@ -1111,22 +1111,25 @@ class API {
     }
   }
 
-  Future getUserAnswer(
-    int eventID,
-  ) async {
+  Future getUserAnswer(int eventID, int userID) async {
     String? jwtToken = await getToken();
-    User user = await getUser(box.read('id'));
+    Map<int, String> answers = {};
 
     try {
       var response = await http.get(
-          Uri.http(baseUrl,
-              '/api/form/get-event-answers-for-user/$eventID/${user.id}'),
+          Uri.http(
+              baseUrl, '/api/form/get-event-answers-for-user/$eventID/$userID'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken',
           });
       var jsonData = jsonDecode(response.body);
       print(jsonData);
+
+      for (var answer in jsonData['data']) {
+        answers[answer['field_id']] = answer['answer'];
+      }
+      return answers;
     } catch (e) {
       print(e);
       rethrow;

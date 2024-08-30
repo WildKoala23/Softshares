@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyProfile> {
                   child: const Text('Cancel')),
               TextButton(
                   onPressed: () async {
-                    await bd.removeUser(widget.user);
+                    await bd.logOff();
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

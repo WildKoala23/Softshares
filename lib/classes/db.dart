@@ -130,11 +130,17 @@ class SQLHelper {
     await db.insert('user', value);
   }
 
-  Future removeUser(User u) async {
-    final db = await instance.database;
+  Future<void> logOff() async {
+  final db = await instance.database;
+  // Clear all tables
+  await db.execute('DELETE FROM cities');
+  await db.execute('DELETE FROM areas');
+  await db.execute('DELETE FROM subAreas');
+  await db.execute('DELETE FROM preferences');
+  await db.execute('DELETE FROM user');
 
-    await db.delete('user', where: 'id = ?', whereArgs: [u.id]);
-  }
+  print("All tables have been cleared.");
+}
 
   // Insert Areas
   Future<void> _insertAreas(sql.Database db) async {
