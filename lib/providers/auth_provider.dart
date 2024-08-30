@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/unauthoraziedExceptionClass.dart';
 import 'package:softshares/classes/user.dart' as u;
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -41,31 +42,41 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future login(String email, String password, bool keepSign) async {
-    var accessToken = await api.logInDb(email, password);
-    _isLoggedIn = true;
+    try {
+      var accessToken = await api.logInDb(email, password);
+      _isLoggedIn = true;
 
-    user = await api.getUserLogged();
-    // If getUserLogged() returns -1, it means the user is admin
-    if (user == -1) {
-      return -1;
+      user = await api.getUserLogged();
+      // If getUserLogged() returns -1, it means the user is admin
+      if (user == -1) {
+        return -1;
+      }
+
+      box.write('id', user!.id);
+
+      String? aux_email = user!.email;
+
+      // If checkbox is selected
+      if (keepSign) {
+        await bd.insertUser(
+            user!.firstname, user!.id, user!.lastName, aux_email!);
+      }
+
+      // Load areas and cities data
+      await loadAreasAndCities();
+      notifyListeners();
+      // Handle the successful login
+      handleLoginSuccess();
+      return accessToken;
+    } catch (e) {
+      if (e is UnauthoraziedExceptionClass) {
+        print(e.message);
+        throw (e);
+      } else {
+        // Handle other exceptions
+        print('An error occurred: $e');
+      }
     }
-
-    box.write('id', user!.id);
-
-    String? aux_email = user!.email;
-
-    // If checkbox is selected
-    if (keepSign) {
-      await bd.insertUser(
-          user!.firstname, user!.id, user!.lastName, aux_email!);
-    }
-
-    // Load areas and cities data
-    await loadAreasAndCities();
-    notifyListeners();
-    // Handle the successful login
-    handleLoginSuccess();
-    return accessToken;
   }
 
   Future<void> logout() async {

@@ -32,9 +32,10 @@ final storage = FlutterSecureStorage();
 // Initialize GetIt
 final getIt = GetIt.instance;
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
 
   // Initialize Firebase and FCM
   await initializeFirebase();
@@ -110,6 +111,7 @@ class _MyAppState extends State<MyApp> {
           theme: themeNotifier.themeData,
           debugShowCheckedModeBanner: false,
           initialRoute: widget.logged ? '/Login' : '/SignIn',
+          navigatorKey: navigatorKey,
           routes: {
             '/home': (context) => MyHomePage(areas: authProvider.areas),
             '/PointOfInterest': (context) =>

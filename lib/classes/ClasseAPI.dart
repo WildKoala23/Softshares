@@ -17,11 +17,13 @@ import 'package:softshares/classes/fieldClass.dart';
 import 'package:softshares/providers/auth_provider.dart';
 
 //import files
+import '../main.dart';
 import 'utils.dart';
 import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
 import '../classes/InvalidTokenExceptionClass.dart';
+import '../classes/unauthoraziedExceptionClass.dart';
 
 class API {
   // Filipe
@@ -1882,7 +1884,7 @@ class API {
     }
   }
 
-  Future logInDb(String email, String password) async {
+  Future<void> logInDb(String email, String password) async {
     var response =
         await http.post(Uri.http(baseUrl, '/api/auth/login_mobile'), body: {
       'email': email,
@@ -1890,34 +1892,37 @@ class API {
     });
 
     if (response.statusCode == 200) {
-      // Handle successful response
-      print('User login successfull');
-
       var jsonData = jsonDecode(response.body);
-      var accessToken = jsonData['token'];
-      var refreshToken = jsonData['refreshToken'];
-      print('accessToken: $accessToken ');
-      print('refreshToken: $refreshToken ');
-      //decrypt the recieved token
-      // var decryptedToken = await decryptToken(token);
 
-      // //print('Decrypted TOKEN: $decryptedToken');
-      // //decod decrypted token so the user_id can be accessed
-      // final jwt = JWT.decode(decryptedToken);
-      // final payload = jwt.payload;
-      // print('Decoded TOKEN: ${payload}');
-      // //get the user id from the payload
-      // final _id = payload['id'];
-      // //Get city
-      //await getUserLogged(_id);
-      //print('USER ID: $_id');
-      // Store the JWT token
-      await storage.write(key: 'jwt_token', value: jsonEncode(accessToken));
-      await storage.write(
-          key: 'jwt_refresh_token', value: jsonEncode(refreshToken));
-      return accessToken;
+      if (jsonData['redirect'] != null) {
+        print(jsonData['redirect']);
+        // Redirect to the specified route
+        if (jsonData['redirect'] == '/api/auth/change-password') {
+          navigatorKey.currentState
+              ?.pushNamed('/change-password'); //create this route
+        }
+      } else {
+        print(jsonData);
+        // Handle successful login
+        print('User login successful');
+
+        var accessToken = jsonData['token'];
+        var refreshToken = jsonData['refreshToken'];
+        print('accessToken: $accessToken ');
+        print('refreshToken: $refreshToken ');
+
+        // Store the JWT token
+        await storage.write(key: 'jwt_token', value: jsonEncode(accessToken));
+        await storage.write(
+            key: 'jwt_refresh_token', value: jsonEncode(refreshToken));
+
+        return accessToken; // Returning early without returning a value (void)
+      }
+    } else if (response.statusCode == 401) {
+      // Handle unauthorized access by throwing an exception
+      throw UnauthoraziedExceptionClass('Unauthorized: ${response.body}');
     } else {
-      // Handle error response
+      // Handle other error responses
       print('Failed to log in: ${response.body}');
     }
   }

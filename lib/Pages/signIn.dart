@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:dev_icons/dev_icons.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/unauthoraziedExceptionClass.dart';
 import 'package:softshares/classes/user.dart';
 import 'package:softshares/providers/auth_provider.dart';
 import '../providers/sign_in_result.dart';
@@ -131,12 +132,19 @@ class _SignInState extends State<SignIn> {
                               Navigator.pushNamed(context, '/home');
                             } else {
                               // Handle null response here
+                              print('inside jwt check error');
+                              print(jwtToken);
                               _showErrorDialog(
                                   'Login failed. Please try again.');
                             }
                           } catch (e) {
-                            // Handle any exceptions
-                            _showErrorDialog('An error occurred: $e');
+                            if (e is UnauthoraziedExceptionClass) {
+                              print(e.message);
+                              _showErrorDialog(
+                                  'Wrong Credentials. Please try again.');
+                            } else
+                              // Handle any exceptions
+                              _showErrorDialog('An error occurred: $e');
                           } finally {
                             setState(() {
                               _isLoading = false; // Hide loading indicator
