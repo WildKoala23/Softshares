@@ -312,27 +312,30 @@ class _EventPageState extends State<EventPage> {
               alignment: Alignment.center,
               //Checks if current user is event creator
               child: isEventCreator == false
-                    // Checks if currente user is already registered
-                    // If so, remove 'register' button
-                  ? userRegistered == false ? ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Register(
-                                    event: widget.event,
-                                    areas: widget.areas,
-                                  )),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                      ),
-                      child: Text(
-                        'Register for Event',
-                        style: TextStyle(color: colorScheme.onPrimary),
-                      ),
-                    ) : Container()
+                  // Checks if currente user is already registered
+                  // If so, remove 'register' button
+                  ? userRegistered == false
+                      ? ElevatedButton(
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Register(
+                                        event: widget.event,
+                                        areas: widget.areas,
+                                      )),
+                            );
+                            setState(() {});
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                          ),
+                          child: Text(
+                            'Register for Event',
+                            style: TextStyle(color: colorScheme.onPrimary),
+                          ),
+                        )
+                      : Container()
                   : ElevatedButton(
                       onPressed: () {
                         Navigator.push(
