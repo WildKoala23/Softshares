@@ -108,7 +108,7 @@ class _MyAreaState extends State<Area> {
     });
   }
 
-  void leftCallback(context) async {
+  void rigthCallBack(context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -134,20 +134,14 @@ class _MyAreaState extends State<Area> {
     }
   }
 
-  void rigthCallBack(context) {
-    print('search');
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: MyAppBar(
-        iconR: const Icon(Icons.search),
-        leftCallback: leftCallback,
+        iconR: const Icon(Icons.filter_alt),
         rightCallback: rigthCallBack,
         title: widget.title,
-        iconL: const Icon(Icons.filter_alt),
       ),
       body: DefaultTabController(
         length: 3,
@@ -207,7 +201,10 @@ class _MyAreaState extends State<Area> {
             return ListView.builder(
               itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return ForumCard(forum: allPubs[index] as Forum, areas: widget.areas,);
+                return ForumCard(
+                  forum: allPubs[index] as Forum,
+                  areas: widget.areas,
+                );
               },
             );
           }
@@ -234,7 +231,8 @@ class _MyAreaState extends State<Area> {
             return ListView.builder(
               itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return EventCard(event: allPubs[index] as Event, areas: widget.areas);
+                return EventCard(
+                    event: allPubs[index] as Event, areas: widget.areas);
               },
             );
           }
@@ -261,7 +259,8 @@ class _MyAreaState extends State<Area> {
             return ListView.builder(
               itemCount: allPubs.length,
               itemBuilder: (context, index) {
-                return PublicationCard(pub: allPubs[index], areas: widget.areas);
+                return PublicationCard(
+                    pub: allPubs[index], areas: widget.areas);
               },
             );
           }

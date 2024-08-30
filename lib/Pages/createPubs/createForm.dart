@@ -69,7 +69,11 @@ class _MyWidgetState extends State<createForm> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Form'),
-        leading: const Icon(Icons.close),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.close)),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         actions: [

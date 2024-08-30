@@ -44,8 +44,7 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
         // Use a temporary set to filter by rating
         Set<Publication> tempPubs = {};
         for (var pub in listPoi) {
-          if (pub.aval != null){
-          }
+          if (pub.aval != null) {}
           if (pub.aval != null &&
               filterRatings.contains(pub.aval!.toInt().toString())) {
             tempPubs.add(pub);
@@ -59,14 +58,10 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
       // Convert the set to a list for final output
 
       listPoi = seenPubs.toList();
-    } 
+    }
   }
 
-  void rightCallback(context) {
-    print('search');
-  }
-
-  void leftCallback(context) async {
+  void rightCallback(context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -101,10 +96,8 @@ class _PointsOfInterestState extends State<PointsOfInterest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        iconL: const Icon(Icons.filter_alt),
-        leftCallback: leftCallback,
+        iconR: const Icon(Icons.filter_alt),
         title: 'Points of Interest',
-        iconR: const Icon(Icons.search),
         rightCallback: rightCallback,
       ),
       drawer: myDrawer(

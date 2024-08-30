@@ -54,7 +54,7 @@ class _EventCardState extends State<EventCard> {
             //If image == null, put color instead
             widget.event.img == null
                 ? Container(
-                    color: Color.fromARGB(255, 150, 255, 190),
+                    color: const Color.fromARGB(255, 255, 204, 150),
                     height: 120,
                   )
                 : Container(

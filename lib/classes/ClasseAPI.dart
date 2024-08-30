@@ -563,6 +563,27 @@ class API {
     }
   }
 
+  Future getAlbumEvent(int id) async {
+    try {
+      List<Event> publications = [];
+      int officeId = box.read('selectedCity');
+
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/media/events-by-city/$officeId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<List<Publication>> getAllPubsByArea(int areaId, String type) async {
     try {
       List<Publication> publications = [];

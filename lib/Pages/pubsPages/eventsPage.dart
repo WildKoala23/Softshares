@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
@@ -36,6 +40,9 @@ class _EventPageState extends State<EventPage> {
   final box = GetStorage();
   List<int> likedComments = [];
   List<Comment> comments = [];
+  final ImagePicker imagePicker = ImagePicker();
+  List<XFile>? imageFileList = [];
+  List<String> imagesToDisplay = [];
 
   LatLng convertCoord(String location) {
     List<String> coords = location.split(" ");
@@ -108,7 +115,7 @@ class _EventPageState extends State<EventPage> {
         areas: widget.areas,
       ),
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Column(
           children: [
             TabBar(
@@ -122,6 +129,9 @@ class _EventPageState extends State<EventPage> {
                 Tab(
                   child: Text('Forum'),
                 ),
+                Tab(
+                  child: Text('Gallery'),
+                ),
               ],
             ),
             Expanded(
@@ -132,7 +142,48 @@ class _EventPageState extends State<EventPage> {
                       ? forumContent(colorScheme)
                       : const Center(
                           child: Text('Please register to see content'),
+                        ),
+                  userRegistered == true
+                      ? Column(
+                          children: [
+                            Expanded(
+                                child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GridView.builder(
+                                  itemCount: imagesToDisplay.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3),
+                                  itemBuilder: (context, index) {
+                                    return Image.network(
+                                      '${box.read('url')}/uploads/${imagesToDisplay[index]}',
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          color: const Color.fromARGB(
+                                              255, 255, 204, 150),
+                                        );
+                                      },
+                                    );
+                                  }),
+                            )),
+                            ElevatedButton(
+                                onPressed: () {
+                                  selectImages();
+                                  imageFileList?.forEach((photo) async {
+                                    var file = File(photo.path);
+                                    String new_image =
+                                        await api.uploadPhoto(file);
+                                    imagesToDisplay.add(new_image);
+                                  });
+                                },
+                                child: const Text('Select images'))
+                          ],
                         )
+                      : const Center(
+                          child: Text('Please register to see content'),
+                        ),
                 ],
               ),
             ),
@@ -404,5 +455,13 @@ class _EventPageState extends State<EventPage> {
         ),
       ],
     );
+  }
+
+  Future selectImages() async {
+    final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
+    if (selectedImages!.isNotEmpty) {
+      imageFileList!.addAll(selectedImages);
+    }
+    setState(() {});
   }
 }
