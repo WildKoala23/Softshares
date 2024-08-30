@@ -37,7 +37,23 @@ class LocalNotificationService {
         // Handle notification tapped action here
         final String? payload = response.payload;
         if (payload != null) {
-          print('Notification payload: $payload');
+          // Assuming the payload contains JSON or key-value pairs like "content_id"
+          final data = Uri.parse(payload).queryParameters;
+          final String? contentId = data['content_id'];
+
+          if (contentId != null) {
+            print('Notification payload: $payload');
+            print('Content ID: $contentId');
+
+            // Navigate to the screen based on the content ID
+            // Example using Navigator or GetX for navigation
+            /*
+            Navigator.of(context).pushNamed(
+              '/content',                                    Replace with your route name
+              arguments: contentId,                          Pass the content ID as an argument
+            );
+            */
+          }
         }
       },
     );
@@ -48,9 +64,9 @@ class LocalNotificationService {
 
   static Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'default_channel', // id
-      'Default Channel', // name
-      description: 'This is the default notification channel',
+      'TOPIC_CHANNEL', // id
+      'Topic Notifications', // name
+      description: 'This channel is for topic-based notifications',
       importance: Importance.defaultImportance,
     );
 
@@ -64,8 +80,8 @@ class LocalNotificationService {
       int id, String title, String body, String payload) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'default_channel', // id
-      'Default Channel', // name
+      'TOPIC_CHANNEL', // id
+      'Topic Notifications', // name
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
