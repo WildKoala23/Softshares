@@ -14,6 +14,7 @@ import 'package:get_storage/get_storage.dart';
 // jwt libraries
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:softshares/classes/fieldClass.dart';
+import 'package:softshares/classes/officeClass.dart';
 import 'package:softshares/providers/auth_provider.dart';
 
 //import files
@@ -1393,6 +1394,38 @@ class API {
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future getOffices() async {
+    try {
+      String? jwtToken = await getToken();
+      List<Office> offices = [];
+
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/categories/get-offices'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      print('OFFICES');
+      print(jsonData);
+
+      for (var eachOffice in jsonData['data']) {
+        Office office = Office(
+            id: eachOffice['office_id'],
+            city: eachOffice['city'],
+            imgPath: eachOffice['officeImage']);
+        offices.add(office);
+      }
+      return offices;
     } catch (e) {
       print(e);
     }

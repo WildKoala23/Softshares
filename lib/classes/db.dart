@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:softshares/Pages/area.dart';
+import 'package:softshares/Pages/chooseCityPage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/officeClass.dart';
 import 'package:softshares/classes/user.dart';
 import 'package:softshares/classes/utils.dart';
 import 'package:sqflite/sqflite.dart' as sql;
@@ -47,7 +49,8 @@ class SQLHelper {
     const createCities = """
       CREATE TABLE cities(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        city NVARCHAR(100) NOT NULL
+        city NVARCHAR(100) NOT NULL,
+        img NVARCHAR(255)
       )
     """;
 
@@ -91,17 +94,15 @@ class SQLHelper {
   // Insert cities
   Future<void> _insertCities(sql.Database db) async {
     try {
-      List<Map<String, dynamic>> cities = [
-        {'city': 'Tomar'},
-        {'city': 'Viseu'},
-        {'city': 'Fundão'},
-        {'city': 'Portoalegre'},
-        {'city': 'Vilareal'},
-      ];
+      List<Office> offices = await api.getOffices();
 
-      for (var city in cities) {
-        await db.insert('cities', city,
-            conflictAlgorithm: sql.ConflictAlgorithm.ignore);
+      for (var city in offices) {
+        if (city.id != 0) {
+          await db.rawInsert(
+            'INSERT INTO cities (id, city, img) VALUES (?, ?, ?)',
+            [city.id, city.city, city.imgPath],
+          );
+        }
       }
     } catch (e) {
       print('Error inserting cities: $e');
@@ -131,13 +132,13 @@ class SQLHelper {
   }
 
   Future<void> logOff() async {
-  final db = await instance.database;
-  // Clear all tables;
-  await db.execute('DELETE FROM preferences');
-  await db.execute('DELETE FROM user');
+    final db = await instance.database;
+    // Clear all tables;
+    await db.execute('DELETE FROM preferences');
+    await db.execute('DELETE FROM user');
 
-  print("All tables have been cleared.");
-}
+    print("All tables have been cleared.");
+  }
 
   // Insert Areas
   Future<void> _insertAreas(sql.Database db) async {
@@ -197,14 +198,16 @@ class SQLHelper {
   Future getCities() async {
     print('im here getCities');
     final db = await instance.database;
-    Map<String, int> cities = {};
+    List<Office> offices = [];
     final List<Map<String, dynamic>> cityMaps = await db.query('cities');
 
     for (var city in cityMaps) {
-      cities[city['city']] = city['id'];
+      Office office =
+          Office(id: city['id'], city: city['city'], imgPath: city['img']);
+      offices.add(office);
     }
 
-    return cities;
+    return offices;
   }
 
   Future<String?> getCityName(int id) async {

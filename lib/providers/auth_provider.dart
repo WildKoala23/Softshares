@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import 'package:softshares/classes/officeClass.dart';
 import 'package:softshares/classes/unauthoraziedExceptionClass.dart';
 import 'package:softshares/classes/user.dart' as u;
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -29,12 +30,12 @@ class AuthProvider with ChangeNotifier {
   u.User? user;
   bool _isLoggedIn = false;
   List<AreaClass> _areas = [];
-  Map<String, int> _cities = {};
+  List<Office> _cities = [];
   SQLHelper bd = SQLHelper.instance;
   API api = API();
   bool get isLoggedIn => _isLoggedIn;
   List<AreaClass> get areas => _areas;
-  Map<String, int> get cities => _cities;
+  List<Office> get cities => _cities;
 
   //Sets the value to the opposite
   void setIsLogged() {

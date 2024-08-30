@@ -2,11 +2,12 @@ import 'package:dev_icons/dev_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/db.dart';
+import 'package:softshares/classes/officeClass.dart';
 
 class SignUp extends StatefulWidget {
   SignUp({super.key, required this.cities});
 
-  Map<String, int> cities;
+  List<Office> cities;
 
   @override
   State<SignUp> createState() => _SignUpState();
