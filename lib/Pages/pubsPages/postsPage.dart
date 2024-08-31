@@ -46,7 +46,7 @@ class _PostPageState extends State<PostPage> {
     super.initState();
     getComments();
     commentCx.addListener(_updateCharCount);
-    print('Price: ${widget.publication.price}');
+    widget.publication.aval = 3;
     getLikes();
   }
 
@@ -115,10 +115,57 @@ class _PostPageState extends State<PostPage> {
                             ),
                           )
                         : Container(),
+                    const SizedBox(height: 10),
+                    widget.publication.img != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Container(
+                              width: double.infinity,
+                              height: 170,
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                child: Image.network(
+                                  '${box.read('url')}/uploads/${widget.publication.img!.path}',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: const Color.fromARGB(
+                                          255, 150, 216, 255),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 170,
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 150, 216, 255),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                    const SizedBox(height: 10),
                     Text(
                       widget.publication.desc,
                       style: TextStyle(fontSize: 18),
                     ),
+                    const SizedBox(height: 10),
+                    Row(children: [
+                      const Text(
+                        'User review: ',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      ...List.generate(
+                        widget.publication.aval!.round(),
+                        (index) => Icon(
+                          Icons.star,
+                          color: Theme.of(context).colorScheme.secondary,
+                          size: 25,
+                        ),
+                      ),
+                    ]),
                     const Divider(
                       color: Colors.black,
                       height: 30,
@@ -154,46 +201,6 @@ class _PostPageState extends State<PostPage> {
                                 comment: comments[index],
                               );
                             },
-
-                            // shrinkWrap: true,
-                            // physics: NeverScrollableScrollPhysics(),
-                            // itemCount: comments.length,
-                            // itemBuilder: (context, index) {
-                            //   User user = comments.keys.elementAt(index);
-                            //   String comment = comments[user]!;
-                            //   return ListTile(
-
-                            //     leading: commentCircle(colorScheme),
-                            //     title: Text(
-                            //       "${user.firstname} ${user.lastName}",
-                            //       style: const TextStyle(fontSize: 22),
-                            //     ),
-                            //     subtitle: Row(
-                            //       children: [
-                            //         IconButton(
-                            //           icon: const Icon(Icons.thumb_up_alt),
-                            //           onPressed: () {},
-                            //         ),
-                            //         Expanded(child: Text(comment)),
-                            //       ],
-                            //     ),
-                            //     trailing: Row(
-                            //       //join to the title
-                            //       mainAxisSize: MainAxisSize.min,
-                            //       children: [
-                            //         IconButton(
-                            //           icon: const Icon(
-                            //               Icons.report_problem_rounded),
-                            //           onPressed: () {},
-                            //         ),
-                            //         IconButton(
-                            //           icon: const Icon(Icons.chat_bubble),
-                            //           onPressed: () {},
-                            //         )
-                            //       ],
-                            //     ),
-                            //   );
-                            // },
                           ),
                   ],
                 ),
@@ -286,15 +293,10 @@ class _PostPageState extends State<PostPage> {
                         )
                       : const Text('I')),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${widget.publication.user.firstname} ${widget.publication.user.lastName}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ],
-            ),
+            Text(
+              "${widget.publication.user.firstname} ${widget.publication.user.lastName}",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            )
           ],
         ),
       ],

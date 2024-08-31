@@ -122,16 +122,30 @@ class _PubState extends State<PublicationCard> {
             )
           ],
         ),
-        widget.pub.price != null
-            ? Row(
-                children: List.generate(
-                    widget.pub.price!.toInt(),
-                    (start) => Icon(
-                          Icons.euro,
-                          color: colorScheme.secondary,
-                          size: 25,
-                        )))
-            : const SizedBox()
+        Column(
+          children: [
+            widget.pub.price != null
+                ? Row(
+                    children: List.generate(
+                        widget.pub.price!.toInt(),
+                        (start) => Icon(
+                              Icons.euro,
+                              color: colorScheme.secondary,
+                              size: 25,
+                            )))
+                : const SizedBox(),
+            widget.pub.aval != null
+                ? Row(
+                    children: List.generate(
+                        widget.pub.aval!.toInt(),
+                        (start) => Icon(
+                              Icons.star,
+                              color: colorScheme.secondary,
+                              size: 25,
+                            )))
+                : const SizedBox()
+          ],
+        )
       ],
     );
   }

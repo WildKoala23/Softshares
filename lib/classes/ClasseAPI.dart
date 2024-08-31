@@ -146,6 +146,76 @@ class API {
     }
   }
 
+  Future getPrefs(int userID) async {
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/user/get-user-preferences/$userID'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getPrefs(userID);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside getPrefs $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
+  Future ratePub(Publication pub, int aval) async {
+    late String type;
+    switch (pub) {
+      case Forum _:
+        type = 'forum';
+        break;
+      case Event _:
+        type = 'forum';
+        break;
+      default:
+        type = 'post';
+    }
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http.post(
+          Uri.http(baseUrl, '/api/rating/eval/$type/${pub.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          },
+          body: {
+            'evaluation': aval
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return ratePub(pub, aval);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside getPrefs $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   Future<List<Publication>> getPosts() async {
     List<Publication> publications = [];
     int officeId = box.read('selectedCity');
@@ -188,12 +258,8 @@ class API {
           var file;
           if (eachPub['filepath'] != null) {
             file = File(eachPub['filepath']);
-            print('I have an image');
-            print(eachPub['filepath']);
-            print(file.toString());
           } else {
             file = null;
-            print('I have not');
           }
           final publication = Publication(
               eachPub['post_id'],
@@ -831,11 +897,6 @@ class API {
     String? path;
     String? jwtToken = await getToken();
 
-    if (pub.img != null) {
-      path = await uploadPhoto(pub.img!);
-      print('Path: $path');
-    }
-
     int? price = pub.price?.toInt();
     int? rating = pub.aval?.toInt();
 
@@ -847,14 +908,25 @@ class API {
         'publisher_id': pub.user.id.toString(),
         'title': pub.title,
         'content': pub.desc,
-        'filePath': path.toString(),
-        'pLocation': pub.location.toString(),
         'rating': rating.toString(),
       };
 
-      // Add price to the body only if it's not null
+      if (pub.img != null) {
+        path = await uploadPhoto(pub.img!);
+        body['filePath'] = path.toString();
+      }
+
+      if (pub.location != null) {
+        path = await uploadPhoto(pub.img!);
+        body['pLocation'] = pub.location.toString();
+      }
+
       if (price != null) {
         body['price'] = price.toString();
+      }
+
+      if (rating != null) {
+        body['rating'] = rating.toString();
       }
 
       var response = await http.post(

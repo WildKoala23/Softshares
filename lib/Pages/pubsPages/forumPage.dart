@@ -94,7 +94,7 @@ class _ForumPageState extends State<ForumPage> {
                           fontSize: 16,
                         ),
                       ),
-                    ),
+                    ),              
                     const Divider(
                       color: Colors.black,
                       height: 30,
@@ -123,7 +123,8 @@ class _ForumPageState extends State<ForumPage> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
-                              bool liked = likedComments.contains(comments[index].id);
+                              bool liked =
+                                  likedComments.contains(comments[index].id);
                               return CommentWidget(
                                 liked: liked,
                                 comment: comments[index],

@@ -17,25 +17,23 @@ class Publication {
   double? aval, price;
 
   Publication(
-    this.id,
-    this._user,
-    this._desc,
-    this._title,
-    this.validated,
-    this.subCategory,
-    this._postDate,
-    this.img,
-    this.location,
-    this.aval,
-    this.price
-  );
+      this.id,
+      this._user,
+      this._desc,
+      this._title,
+      this.validated,
+      this.subCategory,
+      this._postDate,
+      this.img,
+      this.location,
+      this.aval,
+      this.price);
 
   User get user => _user;
   String get desc => _desc;
   String get title => _title;
 
   DateTime get datePost => _postDate;
-
   set user(User value) {
     _user = value;
   }

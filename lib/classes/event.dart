@@ -26,6 +26,8 @@ class Event extends Publication {
     this.recurring_path,
     this.event_start,
     this.event_end,
-  ) : super(id, user, desc, title, validated, subCategory, postDate,
-            imgPath, location, null, null);
+  ) : super(id, user, desc, title, validated, subCategory, postDate, imgPath,
+            location, null, null);
+
+  
 }

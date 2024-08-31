@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
 import '../classes/user.dart';
 
 class EditProfile extends StatefulWidget {
-  EditProfile({super.key, required this.areas});
+  EditProfile({super.key, required this.areas, required this.user});
 
   List<AreaClass> areas;
+  User user;
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -20,32 +22,14 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   Map<AreaClass, bool> checkBoxSelected = {};
+  Map<AreaClass, List<AreaClass>> current_prefs = {};
+  Map<AreaClass, List<AreaClass>> new_prefs = {};
+  API api = API();
   bool isLoading = true;
-  User user = User(
-      1,
-      'John',
-      'Doe',
-      'Software Engineer'
-          'john.doe@example.com');
 
   //Get user prefences from database
   Future getPrefs() async {
-    List<AreaClass> prefs = await bd.getPrefs();
-
-    for (var area in widget.areas) {
-      for (var subarea in area.subareas!) {
-        if (prefs.any((pref) => pref.id == subarea.id)) {
-          setState(() {
-            checkBoxSelected[subarea] = true;
-          });
-        } else {
-          setState(() {
-            checkBoxSelected[subarea] = false;
-          });
-        }
-      }
-    }
-    isLoading = false;
+    current_prefs = await api.getPrefs(widget.user.id);
   }
 
   @override
@@ -225,7 +209,7 @@ class _EditProfileState extends State<EditProfile> {
                       color: colorScheme.secondary),
                   child: Center(
                     child: Text(
-                      user.lastName[0],
+                      widget.user.lastName[0],
                       style:
                           TextStyle(fontSize: 54, color: colorScheme.onPrimary),
                     ),

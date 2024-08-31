@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
                   areas: authProvider.areas,
                   user: authProvider.user!,
                 ),
-            '/Editprofile': (context) => EditProfile(areas: authProvider.areas),
+            '/Editprofile': (context) => EditProfile(areas: authProvider.areas, user: authProvider.user!,),
             '/Login': (context) => MyLoginIn(user: widget.user!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(cities: authProvider.cities),

@@ -298,7 +298,7 @@ class _EventPageState extends State<EventPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             cardHeader(colorScheme),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Align(
               alignment: Alignment.bottomLeft,
               child: Text(
@@ -309,12 +309,12 @@ class _EventPageState extends State<EventPage> {
             const SizedBox(height: 10),
             widget.event.img == null
                 ? Container(
-                    height: 120,
+                    height: 170,
                     color: const Color.fromARGB(255, 255, 204, 150),
                   )
                 : Center(
                     child: Container(
-                      height: 120,
+                      height: 170,
                       width: double.infinity,
                       child: Image.network(
                         '${box.read('url')}/uploads/${widget.event.img!.path}',
@@ -333,9 +333,38 @@ class _EventPageState extends State<EventPage> {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Date: ${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
-              style: const TextStyle(fontSize: 20),
+            Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Start date: ',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  TextSpan(
+                    text:
+                        '${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w300),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Duration: ',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  TextSpan(
+                    text:
+                        '${widget.event.event_start!.hour}:${widget.event.event_start!.minute}h - ${widget.event.event_end!.hour}:${widget.event.event_end!.minute}h',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w300),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             Container(
@@ -427,7 +456,6 @@ class _EventPageState extends State<EventPage> {
                 borderRadius: BorderRadius.circular(95),
               ),
               child: Center(
-                // If user does not have Profile Pic, print first letter of first name
                 child: widget.event.user.profileImg == null
                     ? Text(
                         widget.event.user.firstname[0],
@@ -436,21 +464,31 @@ class _EventPageState extends State<EventPage> {
                           color: colorScheme.onPrimary,
                         ),
                       )
-                    : const Text('I'),
+                    : Container(),
               ),
             ),
-            Column(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // User's Name
                 Text(
                   "${widget.event.user.firstname} ${widget.event.user.lastName}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
+                // Spacer to add some gap between the name and the stars
+                SizedBox(width: 8),
+                // Conditional Star Rating
+                if (widget.event.aval != null)
+                  ...List.generate(
+                    widget.event.aval!.round(),
+                    (index) => Icon(
+                      Icons.star,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 25,
+                    ),
+                  ),
               ],
-            ),
+            )
           ],
         ),
       ],
