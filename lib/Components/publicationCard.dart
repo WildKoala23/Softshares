@@ -93,7 +93,7 @@ class _PubState extends State<PublicationCard> {
                   textAlign: TextAlign.start,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

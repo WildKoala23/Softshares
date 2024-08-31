@@ -46,8 +46,8 @@ class _PostPageState extends State<PostPage> {
     super.initState();
     getComments();
     commentCx.addListener(_updateCharCount);
-    widget.publication.aval = 3;
     getLikes();
+    print('RATING: ${widget.publication.aval}');
   }
 
   void _updateCharCount() {

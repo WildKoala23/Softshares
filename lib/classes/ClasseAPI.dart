@@ -216,6 +216,36 @@ class API {
     }
   }
 
+  Future getPostScore(int id) async {
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+        Uri.http(baseUrl, '/api/post/get-post-score/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        },
+      );
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+
+      print(jsonData);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getPostScore(id);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside get post rate $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   Future<List<Publication>> getPosts() async {
     List<Publication> publications = [];
     int officeId = box.read('selectedCity');
@@ -631,20 +661,20 @@ class API {
 
   Future getAlbumEvent(int id) async {
     try {
-      List<Event> publications = [];
-      int officeId = box.read('selectedCity');
-
       String? jwtToken = await getToken();
 
-      var response = await http.get(
-          Uri.http(baseUrl, '/api/media/events-by-city/$officeId'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/media/get-album/$id'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
+
+      var jsonData = jsonDecode(response.body);
+      print('ALBUM: ');
+      print(jsonData);
     } catch (e) {
       print(e);
     }
@@ -710,9 +740,26 @@ class API {
             await publication.getSubAreaName();
             publications.add(publication);
           } else if (type == 'events') {
+            var file;
+            if (eachPub['filepath'] != null) {
+              file = File(eachPub['filepath']);
+            } else {
+              file = null;
+            }
+            User publisherUser = await getUser(eachPub['publisher_id']);
+
             DateTime creationDate = DateTime.parse(eachPub['creation_date']);
             DateTime eventDate = DateTime.parse(eachPub['event_date']);
 
+            TimeOfDay eventStart = TimeOfDay(
+              hour: int.parse(eachPub['start_time'].split(":")[0]),
+              minute: int.parse(eachPub['start_time'].split(":")[1]),
+            );
+
+            TimeOfDay eventEnd = TimeOfDay(
+              hour: int.parse(eachPub['end_time'].split(":")[0]),
+              minute: int.parse(eachPub['end_time'].split(":")[1]),
+            );
             // Create Event object
             final publication = Event(
                 eachPub['event_id'],
@@ -723,12 +770,13 @@ class API {
                 eachPub['sub_area_id'],
                 creationDate,
                 file,
-                eachPub['eventLocation'],
+                eachPub['event_location'],
                 eventDate,
                 eachPub['recurring'],
-                eachPub['recurring_pattern'],
-                null,
-                null);
+                eachPub['recurring_pattern']?.toString(),
+                eventStart,
+                eventEnd);
+            print('Object created -> ${publication.id}');
             await publication.getSubAreaName();
             publications.add(publication);
           }
@@ -891,6 +939,32 @@ class API {
       print('No valid image path provided.');
     }
   }
+
+ Future addToAlbum(int id, File img) async {
+  String? jwtToken = await getToken();
+  try {
+    String path = await uploadPhoto(img);
+    
+    var response = await http.post(
+      Uri.http(baseUrl, '/api/media/add-photo-event/$id/${box.read('id')}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken',
+      },
+      body: jsonEncode({
+        'filePath': path.toString(),
+      }),
+    );
+
+    print(response.statusCode);
+    if (response.statusCode == 401) {
+      throw InvalidTokenExceptionClass('token access expired');
+    }
+  } catch (e) {
+    print(e);
+    rethrow;
+  }
+}
 
   Future createPost(Publication pub) async {
     var office = box.read('selectedCity');

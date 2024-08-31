@@ -118,8 +118,16 @@ class _contentAppBarState extends State<contentAppBar> {
                                   if (score != null &&
                                       score >= 1 &&
                                       score <= 5) {
-                                    await api.ratePub(widget.pub, score);
-                                    setState(() {});
+                                    //await api.ratePub(widget.pub, score);
+
+                                    await api.getPostScore(widget.pub.id!);
+
+                                    // int new_score =
+                                    //     await api.getNewScore(widget.pub);
+                                    setState(() {
+                                      // widget.pub.aval = new_score * 1.0;
+                                      widget.pub.aval = score * 1.0;
+                                    });
                                     Navigator.pop(context);
                                   } else {
                                     // Show an error message or handle invalid input

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -74,19 +75,24 @@ class _EventPageState extends State<EventPage> {
     }
   }
 
+  Future getAlbum() async {
+    await api.getAlbumEvent(widget.event.id!);
+  }
+
   Future isRegistered() async {
-    bool aux = false;
     if (isEventCreator) {
-      aux = true;
+      setState(() {
+        userRegistered = true;
+      });
+      return;
     }
     User user = await api.getUser(box.read('id'));
     var data = await api.isRegistered(user.id, widget.event.id!);
     if (data == true) {
-      aux = true;
+      setState(() {
+        userRegistered = true;
+      });
     }
-    setState(() {
-      userRegistered = aux;
-    });
   }
 
   @override
@@ -103,6 +109,7 @@ class _EventPageState extends State<EventPage> {
     isCreator();
     isRegistered();
     getLikes();
+    getAlbum();
   }
 
   @override
@@ -144,43 +151,7 @@ class _EventPageState extends State<EventPage> {
                           child: Text('Please register to see content'),
                         ),
                   userRegistered == true
-                      ? Column(
-                          children: [
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GridView.builder(
-                                  itemCount: imagesToDisplay.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3),
-                                  itemBuilder: (context, index) {
-                                    return Image.network(
-                                      '${box.read('url')}/uploads/${imagesToDisplay[index]}',
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Container(
-                                          color: const Color.fromARGB(
-                                              255, 255, 204, 150),
-                                        );
-                                      },
-                                    );
-                                  }),
-                            )),
-                            ElevatedButton(
-                                onPressed: () {
-                                  selectImages();
-                                  imageFileList?.forEach((photo) async {
-                                    var file = File(photo.path);
-                                    String new_image =
-                                        await api.uploadPhoto(file);
-                                    imagesToDisplay.add(new_image);
-                                  });
-                                },
-                                child: const Text('Select images'))
-                          ],
-                        )
+                      ? galleryContent()
                       : const Center(
                           child: Text('Please register to see content'),
                         ),
@@ -190,6 +161,46 @@ class _EventPageState extends State<EventPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Column galleryContent() {
+    return Column(
+      children: [
+        Expanded(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+              itemCount: imagesToDisplay.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3),
+              itemBuilder: (context, index) {
+                return Image.network(
+                  '${box.read('url')}/uploads/${imagesToDisplay[index]}',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: const Color.fromARGB(255, 255, 204, 150),
+                    );
+                  },
+                );
+              }),
+        )),
+        ElevatedButton(
+            onPressed: () async {
+              await selectImages();
+              imageFileList?.forEach((photo) async {
+                var file = File(photo.path);
+                await api.addToAlbum(widget.event.id!, file);
+                // print(photo);
+                // String new_image = await api.uploadPhoto(file);
+                // print(new_image);
+                // imagesToDisplay.add(new_image);
+              });
+              setState(() {});
+            },
+            child: const Text('Select images'))
+      ],
     );
   }
 
