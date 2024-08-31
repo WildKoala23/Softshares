@@ -30,10 +30,12 @@ class _RecoveryState extends State<ChangePassword> {
                   const Padding(
                     padding: EdgeInsets.only(bottom: 18.0),
                     child: Text(
-                      'Recover password',
+                      'Alter password',
                       style: TextStyle(fontSize: 32),
                     ),
                   ),
+                  newPassTextfield(colorScheme),
+                  newPassConfirmTextfield(colorScheme),
                   continueBtn(
                       colorScheme: colorScheme,
                       onContinue: () {
@@ -42,6 +44,64 @@ class _RecoveryState extends State<ChangePassword> {
                 ],
               ),
             )),
+      ),
+    );
+  }
+
+  Container newPassTextfield(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter new password';
+          }
+          return null;
+        },
+        controller: newPassCx,
+        decoration: InputDecoration(
+          label: Text(
+            'New password',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.account_circle,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container newPassConfirmTextfield(ColorScheme colorScheme) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter again';
+          }
+          return null;
+        },
+        controller: confirmPasslCx,
+        decoration: InputDecoration(
+          label: Text(
+            'New password',
+            style: TextStyle(color: colorScheme.onTertiary),
+          ),
+          prefixIcon: Icon(
+            Icons.account_circle,
+            color: colorScheme.onTertiary,
+            size: 32,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: colorScheme.onTertiary),
+          ),
+        ),
       ),
     );
   }
