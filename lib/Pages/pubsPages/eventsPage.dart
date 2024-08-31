@@ -76,7 +76,8 @@ class _EventPageState extends State<EventPage> {
   }
 
   Future getAlbum() async {
-    await api.getAlbumEvent(widget.event.id!);
+    var data = await api.getAlbumEvent(widget.event.id!);
+    imagesToDisplay = data;
   }
 
   Future isRegistered() async {
@@ -192,12 +193,10 @@ class _EventPageState extends State<EventPage> {
               imageFileList?.forEach((photo) async {
                 var file = File(photo.path);
                 await api.addToAlbum(widget.event.id!, file);
-                // print(photo);
-                // String new_image = await api.uploadPhoto(file);
-                // print(new_image);
-                // imagesToDisplay.add(new_image);
+                setState(() {
+                  getAlbum();
+                });
               });
-              setState(() {});
             },
             child: const Text('Select images'))
       ],

@@ -662,6 +662,7 @@ class API {
   Future getAlbumEvent(int id) async {
     try {
       String? jwtToken = await getToken();
+      List<String> imgPaths = [];
 
       var response = await http
           .get(Uri.http(baseUrl, '/api/media/get-album/$id'), headers: {
@@ -673,8 +674,13 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
-      print('ALBUM: ');
-      print(jsonData);
+      // print('ALBUM: ');
+      // print(jsonData);
+
+      for (var photo in jsonData['data']) {
+        imgPaths.add(photo['filepath']);
+      }
+      return imgPaths;
     } catch (e) {
       print(e);
     }
@@ -940,31 +946,31 @@ class API {
     }
   }
 
- Future addToAlbum(int id, File img) async {
-  String? jwtToken = await getToken();
-  try {
-    String path = await uploadPhoto(img);
-    
-    var response = await http.post(
-      Uri.http(baseUrl, '/api/media/add-photo-event/$id/${box.read('id')}'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $jwtToken',
-      },
-      body: jsonEncode({
-        'filePath': path.toString(),
-      }),
-    );
+  Future addToAlbum(int id, File img) async {
+    String? jwtToken = await getToken();
+    try {
+      String path = await uploadPhoto(img);
 
-    print(response.statusCode);
-    if (response.statusCode == 401) {
-      throw InvalidTokenExceptionClass('token access expired');
+      var response = await http.post(
+        Uri.http(baseUrl, '/api/media/add-photo-event/$id/${box.read('id')}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+        body: jsonEncode({
+          'filePath': path.toString(),
+        }),
+      );
+
+      print(response.statusCode);
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+    } catch (e) {
+      print(e);
+      rethrow;
     }
-  } catch (e) {
-    print(e);
-    rethrow;
   }
-}
 
   Future createPost(Publication pub) async {
     var office = box.read('selectedCity');
