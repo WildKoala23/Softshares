@@ -280,6 +280,38 @@ class API {
     }
   }
 
+  Future getEventScore(int id) async {
+    try {
+      String? jwtToken = await getToken();
+
+      var response = await http.get(
+        Uri.http(baseUrl, '/api/post/get-event-score/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken'
+        },
+      );
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+
+      print(jsonData);
+
+      return double.parse(jsonData['data']);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getEventScore(id);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside get post rate $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   Future<List<Publication>> getPosts() async {
     List<Publication> publications = [];
     int officeId = box.read('selectedCity');
