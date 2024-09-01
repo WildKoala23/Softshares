@@ -174,6 +174,39 @@ class API {
     }
   }
 
+
+  Future updatePrefs(var prefs) async {
+    try {
+      String? jwtToken = await getToken();
+      User? user = await getUser(box.read('id'));
+      var response = await http.patch(
+          Uri.http(baseUrl, '/api/user/update-user-preferences/${user.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          },
+          body: {
+            'preferences ': prefs
+          }
+          );
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getPrefs(prefs);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside getPrefs $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
   Future ratePub(Publication pub, int aval) async {
     late String type;
     switch (pub) {
@@ -1642,6 +1675,7 @@ class API {
               id: subarea['sub_area_id'],
               areaName: subarea['title'],
             );
+            dummyArea.areaBelongs = area['title'];
             subareas.add(dummyArea);
           }
         }

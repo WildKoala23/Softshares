@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
@@ -22,8 +24,8 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   Map<AreaClass, bool> checkBoxSelected = {};
-  Map<AreaClass, List<AreaClass>> current_prefs = {};
-  Map<AreaClass, List<AreaClass>> new_prefs = {};
+  Map<String, List<String>> current_prefs = {};
+  Map<String, List<String>> new_prefs = {};
   API api = API();
   bool isLoading = true;
 
@@ -32,20 +34,59 @@ class _EditProfileState extends State<EditProfile> {
     current_prefs = await api.getPrefs(widget.user.id);
   }
 
+  Future initPrefs() async {
+    List<AreaClass> aux = await api.getAreas();
+
+    for (var area in aux) {
+      new_prefs[area.areaName] = [];
+    }
+  }
+
+  void jsonfyPrefs() {
+    var aux = [];
+    Map<String, List<String>> filteredPrefs = Map.fromEntries(
+      new_prefs.entries.where((entry) => entry.value.isNotEmpty),
+    );
+
+    filteredPrefs.forEach((key, value) {
+      var object = {'area': key, 'subareas': value};
+      aux.add(object);
+    });
+
+    var data = jsonEncode(aux);
+
+    print(data);
+  }
+
+  Future getAreas() async {
+    List<AreaClass> aux = await api.getAreas();
+    Map<AreaClass, bool> aux_map = {};
+    for (var area in aux) {
+      aux_map[area] = false;
+      for (var subArea in area.subareas!) {
+        aux_map[subArea] = false;
+      }
+    }
+    setState(() {
+      checkBoxSelected = aux_map;
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    getPrefs();
+    //getPrefs();
+    initPrefs();
+    getAreas();
   }
 
   Future savePrefs() async {
-    List<AreaClass> newPrefs = [];
-    checkBoxSelected.forEach((area, checked) {
-      if (checked == true) {
-        newPrefs.add(area);
-      }
-    });
-    await bd.insertPreference(newPrefs);
+    
+  }
+
+  void addInfo(AreaClass subArea) {
+    new_prefs[subArea.areaBelongs]!.add(subArea.areaName);
   }
 
   @override
@@ -110,8 +151,12 @@ class _EditProfileState extends State<EditProfile> {
             backgroundColor: colorScheme.primary,
           ),
           onPressed: () async {
-            await savePrefs();
-            Navigator.pushNamed(context, '/home');
+            //await savePrefs();
+            // new_prefs.forEach((key, value) {
+            //   print('Key: $key\n\tValue: $value');
+            // });
+            jsonfyPrefs();
+            //Navigator.pushNamed(context, '/home');
           },
           child: const Text('Save changes')),
     );
@@ -142,6 +187,17 @@ class _EditProfileState extends State<EditProfile> {
                           print(key.id);
                           setState(() {
                             checkBoxSelected[key] = newValue!;
+                            //Check if it's area or subArea
+                            if (key.areaBelongs != null) {
+                              //It's subArea
+                              if (!(new_prefs[key.areaBelongs]!
+                                  .contains(key.areaName))) {
+                                new_prefs[key.areaBelongs]!.add(key.areaName);
+                              } else {
+                                new_prefs[key.areaBelongs]!
+                                    .remove(key.areaName);
+                              }
+                            }
                           });
                         },
                       );
