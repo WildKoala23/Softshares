@@ -77,7 +77,7 @@ class _EventPageState extends State<EventPage> {
 
   Future getAlbum() async {
     var data = await api.getAlbumEvent(widget.event.id!);
-    imagesToDisplay = data;
+    //imagesToDisplay = data;
   }
 
   Future isRegistered() async {
