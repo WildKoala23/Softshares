@@ -12,8 +12,10 @@ import 'package:softshares/classes/publication.dart';
 import 'package:share_plus/share_plus.dart';
 
 class contentAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const contentAppBar({super.key, required this.pub, required this.areas});
+  const contentAppBar(
+      {super.key, required this.pub, required this.areas, this.rightCallback});
   final Publication pub;
+  final void Function(BuildContext)? rightCallback;
   final List<AreaClass> areas;
   @override
   State<contentAppBar> createState() => _contentAppBarState();
@@ -77,83 +79,12 @@ class _contentAppBarState extends State<contentAppBar> {
                   }
                 },
                 icon: const Icon(Icons.edit))
-            : IconButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled:
-                        true, // Allow the bottom sheet to be responsive to the keyboard
-                    builder: (BuildContext context) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context)
-                              .viewInsets
-                              .bottom, // Adjust padding for keyboard
-                          left: 16,
-                          right: 16,
-                          top: 16,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Submit your review',
-                                style: TextStyle(color: colorScheme.onPrimary),
-                              ),
-                              const SizedBox(height: 16),
-                              TextField(
-                                controller: _scoreController,
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  labelText: 'Enter your score (1-5)',
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final score =
-                                      int.tryParse(_scoreController.text);
-                                  if (score != null &&
-                                      score >= 1 &&
-                                      score <= 5) {
-                                    await api.ratePub(widget.pub, score);
-
-                                    double aux_score =
-                                        await api.getPostScore(widget.pub.id!);
-                                    setState(() {
-                                      widget.pub.aval = aux_score;
-                                    });
-                                    Navigator.pop(context);
-                                  } else {
-                                    // Show an error message or handle invalid input
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'Please enter a valid score between 1 and 5.'),
-                                      ),
-                                    );
-                                  }
-                                },
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(
-                                        colorScheme.primary)),
-                                child: Text(
-                                  'Submit',
-                                  style:
-                                      TextStyle(color: colorScheme.onPrimary),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.rate_review),
-              ),
+            : widget.rightCallback != null
+                ? IconButton(
+                    onPressed: () => widget.rightCallback!(context),
+                    icon: const Icon(Icons.rate_review),
+                  )
+                : const SizedBox.shrink()
       ],
     );
   }

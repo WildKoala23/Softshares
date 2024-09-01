@@ -30,6 +30,7 @@ class _PostPageState extends State<PostPage> {
   final int _charLimit = 500;
   List<int> likedComments = [];
   var box = GetStorage();
+  final TextEditingController _scoreController = TextEditingController();
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.publication);
@@ -47,7 +48,7 @@ class _PostPageState extends State<PostPage> {
     getComments();
     commentCx.addListener(_updateCharCount);
     getLikes();
-    print('RATING: ${widget.publication.aval}');
+    print('RATING: ${widget.publication.aval?.round()}');
   }
 
   void _updateCharCount() {
@@ -56,13 +57,80 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    commentCx.dispose();
+  void rightCallBack(BuildContext context, ColorScheme colorScheme) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled:
+          true, // Allow the bottom sheet to be responsive to the keyboard
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context)
+                .viewInsets
+                .bottom, // Adjust padding for keyboard
+            left: 16,
+            right: 16,
+            top: 16,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Submit your review',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _scoreController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter your score (1-5)',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    final score = int.tryParse(_scoreController.text);
+                    if (score != null && score >= 1 && score <= 5) {
+                      await api.ratePub(widget.publication, score);
+
+                      double aux_score =
+                          await api.getPostScore(widget.publication.id!);
+
+                      setState(() {
+                        widget.publication.aval = aux_score;
+                      });
+
+                      Navigator.pop(context);
+                    } else {
+                      // Show an error message or handle invalid input
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Please enter a valid score between 1 and 5.'),
+                        ),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(colorScheme.primary),
+                  ),
+                  child: Text(
+                    'Submit',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -70,6 +138,7 @@ class _PostPageState extends State<PostPage> {
       appBar: contentAppBar(
         pub: widget.publication,
         areas: widget.areas,
+        rightCallback: (context) => rightCallBack(context, colorScheme),
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),

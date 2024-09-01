@@ -127,7 +127,7 @@ class _PubState extends State<PublicationCard> {
             widget.pub.price != null
                 ? Row(
                     children: List.generate(
-                        widget.pub.price!.toInt(),
+                        widget.pub.price!.round(),
                         (start) => Icon(
                               Icons.euro,
                               color: colorScheme.secondary,
@@ -137,7 +137,7 @@ class _PubState extends State<PublicationCard> {
             widget.pub.aval != null
                 ? Row(
                     children: List.generate(
-                        widget.pub.aval!.toInt(),
+                        widget.pub.aval!.round(),
                         (start) => Icon(
                               Icons.star,
                               color: colorScheme.secondary,

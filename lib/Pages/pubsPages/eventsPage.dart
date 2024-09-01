@@ -44,6 +44,7 @@ class _EventPageState extends State<EventPage> {
   final ImagePicker imagePicker = ImagePicker();
   List<XFile>? imageFileList = [];
   List<String> imagesToDisplay = [];
+  final TextEditingController _scoreController = TextEditingController();
 
   LatLng convertCoord(String location) {
     List<String> coords = location.split(" ");
@@ -97,12 +98,6 @@ class _EventPageState extends State<EventPage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    commentCx.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     local = convertCoord(widget.event.location!);
@@ -113,6 +108,80 @@ class _EventPageState extends State<EventPage> {
     getAlbum();
   }
 
+  void rightCallBack(BuildContext context, ColorScheme colorScheme) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled:
+          true, // Allow the bottom sheet to be responsive to the keyboard
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context)
+                .viewInsets
+                .bottom, // Adjust padding for keyboard
+            left: 16,
+            right: 16,
+            top: 16,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Submit your review',
+                  style: TextStyle(color: colorScheme.onPrimary),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _scoreController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter your score (1-5)',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    final score = int.tryParse(_scoreController.text);
+                    if (score != null && score >= 1 && score <= 5) {
+                      await api.ratePub(widget.event, score);
+
+                      double aux_score =
+                          await api.getEventScore(widget.event.id!);
+
+                      setState(() {
+                        widget.event.aval = aux_score;
+                      });
+
+                      Navigator.pop(context);
+                    } else {
+                      // Show an error message or handle invalid input
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Please enter a valid score between 1 and 5.'),
+                        ),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(colorScheme.primary),
+                  ),
+                  child: Text(
+                    'Submit',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -121,6 +190,7 @@ class _EventPageState extends State<EventPage> {
       appBar: contentAppBar(
         pub: widget.event,
         areas: widget.areas,
+        rightCallback: (context) => rightCallBack(context, colorScheme),
       ),
       body: DefaultTabController(
         length: 3,
@@ -152,7 +222,7 @@ class _EventPageState extends State<EventPage> {
                           child: Text('Please register to see content'),
                         ),
                   userRegistered == true
-                      ? galleryContent()
+                      ? galleryContent(colorScheme)
                       : const Center(
                           child: Text('Please register to see content'),
                         ),
@@ -165,7 +235,7 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  Column galleryContent() {
+  Column galleryContent(ColorScheme colorScheme) {
     return Column(
       children: [
         Expanded(
@@ -198,7 +268,10 @@ class _EventPageState extends State<EventPage> {
                 });
               });
             },
-            child: const Text('Select images'))
+            child: const Text(
+              'Select images',
+              style: TextStyle(color: Colors.white),
+            ))
       ],
     );
   }
