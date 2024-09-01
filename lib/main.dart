@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:softshares/Pages/albumContent/album.dart';
 import 'package:softshares/Pages/alterPassword.dart';
 import 'firebase_conf.dart';
 import 'classes/ThemeNotifier.dart';
@@ -136,7 +137,8 @@ class _MyAppState extends State<MyApp> {
             '/chooseCity': (context) => ChooseCityPage(),
             '/recovery': (context) => Recovery(),
             '/test': (context) => test(),
-            '/changePassword': (context) => ChangePassword()
+            '/changePassword': (context) => ChangePassword(),
+            '/albums': (context) => Album(areas: authProvider.areas)
           },
         );
       },

@@ -72,6 +72,13 @@ class _myDrawerState extends State<myDrawer> {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Albums'),
+            onTap: () {
+              Navigator.pushNamed(context, '/albums');
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
             onTap: () {
