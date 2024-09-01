@@ -24,4 +24,10 @@ class User {
   set profileImg(String? value) {
     _profileImg = value;
   }
+
+  // Override toString() method
+  @override
+  String toString() {
+    return 'User { ID: $_id, First Name: $_firstname, Last Name: $_lastName, Email: $_email, Profile Image: $_profileImg }';
+  }
 }
