@@ -116,9 +116,23 @@ class _EventCardState extends State<EventCard> {
             )
           ],
         ),
-        Text(
-          '${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
-          style: TextStyle(color: colorScheme.primary, fontSize: 20),
+        Column(
+          children: [
+            Text(
+              '${widget.event.eventDate.day}/${widget.event.eventDate.month}/${widget.event.eventDate.year}',
+              style: TextStyle(color: colorScheme.primary, fontSize: 20),
+            ),
+            widget.event.aval != null
+                ? Row(
+                    children: List.generate(
+                        widget.event.aval!.round(),
+                        (start) => Icon(
+                              Icons.star,
+                              color: colorScheme.secondary,
+                              size: 25,
+                            )))
+                : const SizedBox()
+          ],
         )
       ],
     );
