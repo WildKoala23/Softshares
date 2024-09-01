@@ -285,7 +285,7 @@ class API {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-        Uri.http(baseUrl, '/api/post/get-event-score/$id'),
+        Uri.http(baseUrl, '/api/event/get-event-score/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken'

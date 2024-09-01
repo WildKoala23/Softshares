@@ -111,14 +111,11 @@ class _EventPageState extends State<EventPage> {
   void rightCallBack(BuildContext context, ColorScheme colorScheme) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled:
-          true, // Allow the bottom sheet to be responsive to the keyboard
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context)
-                .viewInsets
-                .bottom, // Adjust padding for keyboard
+            bottom: MediaQuery.of(context).viewInsets.bottom,
             left: 16,
             right: 16,
             top: 16,
@@ -415,6 +412,21 @@ class _EventPageState extends State<EventPage> {
               widget.event.desc,
               style: const TextStyle(fontSize: 18),
             ),
+            const SizedBox(height: 10),
+            Row(children: [
+              const Text(
+                'User review: ',
+                style: TextStyle(fontSize: 20),
+              ),
+              ...List.generate(
+                widget.event.aval!.round(),
+                (index) => Icon(
+                  Icons.star,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 25,
+                ),
+              ),
+            ]),
             const SizedBox(height: 20),
             Text.rich(
               TextSpan(
@@ -553,23 +565,10 @@ class _EventPageState extends State<EventPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // User's Name
                 Text(
                   "${widget.event.user.firstname} ${widget.event.user.lastName}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                // Spacer to add some gap between the name and the stars
-                SizedBox(width: 8),
-                // Conditional Star Rating
-                if (widget.event.aval != null)
-                  ...List.generate(
-                    widget.event.aval!.round(),
-                    (index) => Icon(
-                      Icons.star,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 25,
-                    ),
-                  ),
               ],
             )
           ],
