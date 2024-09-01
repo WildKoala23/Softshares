@@ -92,29 +92,6 @@ class _PostPageState extends State<PostPage> {
                         ),
                       ),
                     ),
-                    widget.publication.img != null
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 120,
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                child: Image.network(
-                                    fit: BoxFit.cover,
-                                    '${box.read('url')}/uploads/${widget.publication.img!.path}',
-                                    //Handles images not existing
-                                    errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: const Color.fromARGB(
-                                        255, 150, 216, 255),
-                                  );
-                                }),
-                              ),
-                            ),
-                          )
-                        : Container(),
                     const SizedBox(height: 10),
                     widget.publication.img != null
                         ? Padding(

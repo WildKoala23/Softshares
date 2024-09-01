@@ -174,7 +174,6 @@ class API {
     }
   }
 
-
   Future updatePrefs(var prefs) async {
     try {
       String? jwtToken = await getToken();
@@ -187,8 +186,7 @@ class API {
           },
           body: {
             'preferences ': prefs
-          }
-          );
+          });
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -214,36 +212,37 @@ class API {
         type = 'forum';
         break;
       case Event _:
-        type = 'forum';
+        type = 'event';
         break;
       default:
         type = 'post';
     }
+
     try {
       String? jwtToken = await getToken();
 
       var response = await http.post(
-          Uri.http(baseUrl, '/api/rating/eval/$type/${pub.id}'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          },
-          body: {
-            'evaluation': aval
-          });
+        Uri.http(baseUrl, '/api/rating/eval/$type/${pub.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+        body: jsonEncode({
+          'evaluation': aval,
+        }),
+      );
+
       if (response.statusCode == 401) {
-        throw InvalidTokenExceptionClass('token access expired');
+        throw InvalidTokenExceptionClass('Token access expired');
       }
 
-      var jsonData = jsonDecode(response.body);
-      print(jsonData);
+      print(response.statusCode);
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
       return ratePub(pub, aval);
-      // Re-throwing the exception after handling it
     } catch (e, s) {
-      print('inside getPrefs $e');
+      print('Error in ratePub: $e');
       print('Stack trace:\n $s');
       rethrow;
     }
@@ -267,6 +266,8 @@ class API {
       var jsonData = jsonDecode(response.body);
 
       print(jsonData);
+
+      return double.parse(jsonData['data']);
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
