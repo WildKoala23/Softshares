@@ -58,8 +58,8 @@ class AuthProvider with ChangeNotifier {
       String? aux_email = user!.email;
 
       // If checkbox is selected
-        await bd.insertUser(
-            user!.firstname, user!.id, user!.lastName, aux_email!);
+      await bd.insertUser(
+          user!.firstname, user!.id, user!.lastName, aux_email!);
 
       // Load areas and cities data
       await loadAreasAndCities();
@@ -67,13 +67,14 @@ class AuthProvider with ChangeNotifier {
       // Handle the successful login
       handleLoginSuccess();
       return accessToken;
-    } catch (e) {
+    } catch (e, s) {
       if (e is UnauthoraziedExceptionClass) {
         print(e.message);
         throw (e);
       } else {
         // Handle other exceptions
         print('An error occurred: $e');
+        print('STACK TRACE: $s');
       }
     }
   }

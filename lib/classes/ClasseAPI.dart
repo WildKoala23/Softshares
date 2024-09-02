@@ -2275,34 +2275,40 @@ class API {
       'email': email,
       'password': password,
     });
+    print('lets start here');
+    print(response);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 302) {
       var jsonData = jsonDecode(response.body);
+      print('here we are to test the redirect');
       print(jsonData);
       if (jsonData['redirect'] != null) {
+        print('redirect is inside jsondata, next what is inside redirect');
         print(jsonData['redirect']);
         // Redirect to the specified route
         if (jsonData['redirect'] == '/api/auth/change-password') {
           navigatorKey.currentState
               ?.pushNamed('/change-password'); //create this route
         }
-      } else {
-        print(jsonData);
-        // Handle successful login
-        print('User login successful');
-
-        var accessToken = jsonData['token'];
-        var refreshToken = jsonData['refreshToken'];
-        print('accessToken: $accessToken ');
-        print('refreshToken: $refreshToken ');
-
-        // Store the JWT token
-        await storage.write(key: 'jwt_token', value: jsonEncode(accessToken));
-        await storage.write(
-            key: 'jwt_refresh_token', value: jsonEncode(refreshToken));
-
-        return accessToken; // Returning early without returning a value (void)
       }
+    } else if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+      print(jsonData);
+      // Handle successful login
+      print('User login successful');
+
+      var accessToken = jsonData['token'];
+      var refreshToken = jsonData['refreshToken'];
+      print('accessToken: $accessToken ');
+      print('refreshToken: $refreshToken ');
+
+      // Store the JWT token
+      await storage.write(key: 'jwt_token', value: jsonEncode(accessToken));
+      await storage.write(
+          key: 'jwt_refresh_token', value: jsonEncode(refreshToken));
+
+      return accessToken; // Returning early without returning a value (void)
     } else if (response.statusCode == 401) {
       // Handle unauthorized access by throwing an exception
       throw UnauthoraziedExceptionClass('Unauthorized: ${response.body}');
