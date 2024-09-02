@@ -78,7 +78,7 @@ class _EventPageState extends State<EventPage> {
 
   Future getAlbum() async {
     var data = await api.getAlbumEvent(widget.event.id!);
-    //imagesToDisplay = data;
+    imagesToDisplay = data;
   }
 
   Future isRegistered() async {
@@ -238,32 +238,77 @@ class _EventPageState extends State<EventPage> {
       children: [
         Expanded(
             child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.builder(
-              itemCount: imagesToDisplay.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3),
-              itemBuilder: (context, index) {
-                return Image.network(
-                  '${box.read('url')}/uploads/${imagesToDisplay[index]}',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: const Color.fromARGB(255, 255, 204, 150),
-                    );
-                  },
-                );
-              }),
-        )),
+                padding: const EdgeInsets.all(8.0),
+                child: FutureBuilder(
+                    future: getAlbum(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (imagesToDisplay.isNotEmpty) {
+                          return GridView.builder(
+                              itemCount: imagesToDisplay.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3),
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: InteractiveViewer(
+                                            child: Image.network(
+                                              '${box.read('url')}/uploads/${imagesToDisplay[index]}',
+                                              fit: BoxFit.contain,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Container(
+                                                  color: const Color.fromARGB(
+                                                      255, 255, 204, 150),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.network(
+                                    '${box.read('url')}/uploads/${imagesToDisplay[index]}',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: const Color.fromARGB(
+                                            255, 255, 204, 150),
+                                      );
+                                    },
+                                  ),
+                                );
+                              });
+                        } else {
+                          return const Center(
+                            child: Text('No images found'),
+                          );
+                        }
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }))),
         ElevatedButton(
             onPressed: () async {
               await selectImages();
-              imageFileList?.forEach((photo) async {
+              List<String> aux_list = [];
+              for (var photo in imageFileList!) {
                 var file = File(photo.path);
-                await api.addToAlbum(widget.event.id!, file);
-                setState(() {
-                  getAlbum();
-                });
+                String aux = await api.addToAlbum(widget.event.id!, file);
+                aux_list.add(aux);
+              }
+
+              await getAlbum();
+              setState(() {
+                imagesToDisplay.addAll(aux_list);
               });
             },
             child: const Text(

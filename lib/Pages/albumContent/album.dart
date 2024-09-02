@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
+import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Pages/albumContent/eachAreaAlbum.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
@@ -31,12 +32,13 @@ class _AlbumState extends State<Album> {
             return GestureDetector(
               onTap: () {
                 Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                AreaAlbum(area: widget.areas[index],),
-          ),
-        );
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AreaAlbum(
+                      area: widget.areas[index],
+                    ),
+                  ),
+                );
               },
               child: Card(
                 margin: const EdgeInsets.symmetric(
@@ -50,6 +52,7 @@ class _AlbumState extends State<Album> {
               ),
             );
           }),
+      bottomNavigationBar: MyBottomBar(),
     );
   }
 }

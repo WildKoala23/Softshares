@@ -730,7 +730,37 @@ class API {
     }
   }
 
-  Future getAlbumArea() async {}
+  Future getAlbumArea(int areaId) async {
+    try {
+      String? jwtToken = await getToken();
+      List<String> imgPaths = [];
+
+      var response = await http.get(
+          Uri.http(baseUrl, '/api/media/get-album/area/$areaId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      if (response.statusCode == 500) {
+        return imgPaths;
+      }
+
+      var jsonData = jsonDecode(response.body);
+      print('ALBUM: ');
+      print(jsonData);
+
+      for (var photo in jsonData['data']) {
+        imgPaths.add(photo['filepath']);
+      }
+      return imgPaths;
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future getAlbumEvent(int id) async {
     try {
@@ -738,12 +768,15 @@ class API {
       List<String> imgPaths = [];
 
       var response = await http
-          .get(Uri.http(baseUrl, '/api/media/get-album/$id'), headers: {
+          .get(Uri.http(baseUrl, '/api/media/get-album/event/$id'), headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $jwtToken'
       });
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
+      }
+      if (response.statusCode == 500) {
+        return imgPaths;
       }
 
       var jsonData = jsonDecode(response.body);
@@ -1042,6 +1075,35 @@ class API {
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
+      return path;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future addToAlbumArea(int id, File img) async {
+    String? jwtToken = await getToken();
+    try {
+      String path = await uploadPhoto(img);
+
+      var response = await http.post(
+        Uri.http(baseUrl, '/api/media/add-photo/area/$id/${box.read('id')}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+        body: jsonEncode({
+          'filePath': path.toString(),
+        }),
+      );
+      print('THIS');
+      print(response.statusCode);
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      return path;
     } catch (e) {
       print(e);
       rethrow;
