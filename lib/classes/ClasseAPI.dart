@@ -218,7 +218,7 @@ class API {
       print(prefs);
 
       var response = await http.post(
-        Uri.http(baseUrl, '/api/user/create-user-preferences/${user.id}'),
+        Uri.http(baseUrl, '/api/user/create-user-preferences'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
@@ -2283,6 +2283,19 @@ class API {
     }
   }
 
+  String extractRedirectLink(String response) {
+    // Find the index where the redirect URL starts
+    int index = response.indexOf('/api/auth/change-password?token=');
+
+    if (index != -1) {
+      // Extract the redirect link from the response
+      return response.substring(index);
+    }
+
+    // Return an empty string or handle the case where the URL is not found
+    return '';
+  }
+
   Future<void> logInDb(String email, String password) async {
     var response =
         await http.post(Uri.http(baseUrl, '/api/auth/login_mobile'), body: {
@@ -2293,14 +2306,23 @@ class API {
     print(response);
 
     if (response.statusCode == 302) {
-      var jsonData = jsonDecode(response.body);
+      print('UwU');
+      print(response
+          .body); //Found. Redirecting to /api/auth/change-password?token=[object%20Object]
+      print('UwU');
+
+      String substringToCheck = '/api/auth/change-password?token';
+      String redirectLink = extractRedirectLink(response.body);
       print('here we are to test the redirect');
-      print(jsonData);
-      if (jsonData['redirect'] != null) {
-        print('redirect is inside jsondata, next what is inside redirect');
-        print(jsonData['redirect']);
+      if (redirectLink.contains(substringToCheck)) {
+        print('redirect is redirect links contains');
+        print(redirectLink);
+
+        Uri uri = Uri.parse(redirectLink);
+        String? encodedToken = uri.queryParameters['token'];
+        print('JWT encryptToken: $encodedToken');
         // Redirect to the specified route
-        if (jsonData['redirect'] == '/api/auth/change-password') {
+        if (false) {
           navigatorKey.currentState
               ?.pushNamed('/change-password'); //create this route
         }
