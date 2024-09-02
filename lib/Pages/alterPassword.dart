@@ -44,7 +44,7 @@ class _RecoveryState extends State<ChangePassword> {
                           final passwd = newPassCx.text;
                           bool ret = await api.changePsswd(passwd);
                           if (ret) {
-                            Navigator.pushNamed(context, '/home');
+                            Navigator.pushNamed(context, '/SignIn');
                           }
                         } else {
                           _showErrorDialog('Passwords are not the same.');
