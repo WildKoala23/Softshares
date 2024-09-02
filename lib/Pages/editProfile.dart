@@ -26,11 +26,12 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   Map<AreaClass, bool> checkBoxSelected = {};
-  Map<String, List<String>>? current_prefs = {};
+  Map<String, List<String>> current_prefs = {};
   Map<String, List<String>> new_prefs = {};
   API api = API();
   bool isLoading = true;
   var box = GetStorage();
+  var jsonPrefs;
 
   //Get user prefences from database
   Future getPrefs() async {
@@ -56,9 +57,7 @@ class _EditProfileState extends State<EditProfile> {
       aux.add(object);
     });
 
-    var data = jsonEncode(aux);
-
-    print(data);
+    jsonPrefs = jsonEncode(aux);
   }
 
   Future getAreas() async {
@@ -85,10 +84,10 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future savePrefs() async {
-    if (current_prefs == null) {
-      await api.createPrefs(new_prefs);
+    if (current_prefs.isEmpty) {
+      await api.createPrefs(jsonPrefs);
     } else {
-      await api.updatePrefs(new_prefs);
+      await api.updatePrefs(jsonPrefs);
     }
   }
 
@@ -158,6 +157,7 @@ class _EditProfileState extends State<EditProfile> {
             backgroundColor: colorScheme.primary,
           ),
           onPressed: () async {
+            jsonfyPrefs();
             await savePrefs();
             Navigator.pushNamed(context, '/home');
           },
