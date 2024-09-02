@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -11,7 +12,7 @@ class ChangePassword extends StatefulWidget {
 class _RecoveryState extends State<ChangePassword> {
   TextEditingController newPassCx = TextEditingController();
   TextEditingController confirmPasslCx = TextEditingController();
-
+  API api = API();
   bool hidePassword = true;
   bool hideConfirm = true;
 
@@ -38,12 +39,38 @@ class _RecoveryState extends State<ChangePassword> {
                   newPassConfirmTextfield(colorScheme),
                   continueBtn(
                       colorScheme: colorScheme,
-                      onContinue: () {
-                        //Add logic
+                      onContinue: () async {
+                        if (newPassCx.text == confirmPasslCx.text) {
+                          final passwd = newPassCx.text;
+                          bool ret = await api.changePsswd(passwd);
+                          if (ret) {
+                            Navigator.pushNamed(context, '/home');
+                          }
+                        } else {
+                          _showErrorDialog('Passwords are not the same.');
+                        }
                       })
                 ],
               ),
             )),
+      ),
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
