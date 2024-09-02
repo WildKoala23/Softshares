@@ -115,24 +115,24 @@ class _AreaAlbumState extends State<AreaAlbum> {
                       }
                     }))),
         ElevatedButton(
-            onPressed: () async {
-              await selectImages();
-              List<String> aux_list = [];
-              for (var photo in imageFileList!) {
-                var file = File(photo.path);
-                String aux = await api.addToAlbumArea(widget.area.id, file);
-                aux_list.add(aux);
-              }
-
-              await getAlbum();
-              setState(() {
-                imagesToDisplay.addAll(aux_list);
-              });
-            },
-            child: const Text(
-              'Select images',
-              style: TextStyle(color: Colors.white),
-            ))
+          onPressed: () async {
+            await selectImages();
+            List<String> aux_list = [];
+            for (var photo in imageFileList!) {
+              var file = File(photo.path);
+              String aux = await api.addToAlbumArea(widget.area.id, file);
+              aux_list.add(aux);
+            }
+            setState(() {
+              imagesToDisplay.addAll(aux_list);
+              imageFileList!.clear();
+            });
+          },
+          child: const Text(
+            'Add images',
+            style: TextStyle(color: Colors.white),
+          ),
+        )
       ],
     );
   }

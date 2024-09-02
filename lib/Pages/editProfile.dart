@@ -26,7 +26,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   Map<AreaClass, bool> checkBoxSelected = {};
-  Map<String, List<String>> current_prefs = {};
+  Map<String, List<String>>? current_prefs = {};
   Map<String, List<String>> new_prefs = {};
   API api = API();
   bool isLoading = true;
@@ -84,7 +84,13 @@ class _EditProfileState extends State<EditProfile> {
     getAreas();
   }
 
-  Future savePrefs() async {}
+  Future savePrefs() async {
+    if (current_prefs == null) {
+      await api.createPrefs(new_prefs);
+    } else {
+      await api.updatePrefs(new_prefs);
+    }
+  }
 
   void addInfo(AreaClass subArea) {
     new_prefs[subArea.areaBelongs]!.add(subArea.areaName);
@@ -152,12 +158,8 @@ class _EditProfileState extends State<EditProfile> {
             backgroundColor: colorScheme.primary,
           ),
           onPressed: () async {
-            //await savePrefs();
-            // new_prefs.forEach((key, value) {
-            //   print('Key: $key\n\tValue: $value');
-            // });
-            jsonfyPrefs();
-            //Navigator.pushNamed(context, '/home');
+            await savePrefs();
+            Navigator.pushNamed(context, '/home');
           },
           child: const Text('Save changes')),
     );

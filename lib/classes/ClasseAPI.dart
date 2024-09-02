@@ -150,14 +150,18 @@ class API {
     try {
       String? jwtToken = await getToken();
 
-      var response = await http.get(
-          Uri.http(baseUrl, '/api/user/get-user-preferences'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          });
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/user/get-user-preferences'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      if (response.statusCode == 404) {
+        print('No prefs');
+        return;
       }
 
       var jsonData = jsonDecode(response.body);
@@ -184,9 +188,36 @@ class API {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
           },
-          body: {
-            'preferences ': prefs
-          });
+          body: jsonEncode({'preferences ': prefs}));
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      var jsonData = jsonDecode(response.body);
+      print(jsonData);
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return updatePrefs(prefs);
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside getPrefs $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
+  Future createPrefs(var prefs) async {
+    try {
+      String? jwtToken = await getToken();
+      User? user = await getUser(box.read('id'));
+      var response = await http.post(
+          Uri.http(baseUrl, '/api/user/create-user-preferences/${user.id}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $jwtToken'
+          },
+          body: jsonEncode({'preferences': prefs}));
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -2247,7 +2278,7 @@ class API {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
-
+      print(jsonData);
       if (jsonData['redirect'] != null) {
         print(jsonData['redirect']);
         // Redirect to the specified route

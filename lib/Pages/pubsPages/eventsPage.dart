@@ -309,6 +309,7 @@ class _EventPageState extends State<EventPage> {
               await getAlbum();
               setState(() {
                 imagesToDisplay.addAll(aux_list);
+                imageFileList!.clear();
               });
             },
             child: const Text(
