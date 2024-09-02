@@ -481,6 +481,7 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
+      print(jsonData['events']);
       var type = jsonData['data'];
 
       // Extract posts, forums, and events
@@ -559,7 +560,8 @@ class API {
 
         DateTime creationDate = DateTime.parse(event['creation_date']);
         DateTime eventDate = DateTime.parse(event['event_date']);
-        double? rating = double.tryParse(event['score']);
+        double? rating =
+            event['score'] != null ? int.tryParse(event['score'])! * 1.0 : null;
         // Create Event object
         final publication = Event(
             event['event_id'],
