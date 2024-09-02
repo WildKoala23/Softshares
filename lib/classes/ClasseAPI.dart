@@ -149,6 +149,7 @@ class API {
   Future getPrefs() async {
     try {
       String? jwtToken = await getToken();
+      Map<String, List<String>> prefs = {};
 
       var response = await http
           .get(Uri.http(baseUrl, '/api/user/get-user-preferences'), headers: {
@@ -161,11 +162,13 @@ class API {
 
       if (response.statusCode == 404) {
         print('No prefs');
-        return;
+        return prefs;
       }
 
       var jsonData = jsonDecode(response.body);
       print(jsonData);
+
+      return prefs;
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
@@ -188,7 +191,7 @@ class API {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
           },
-          body: jsonEncode({'preferences ': prefs}));
+          body: jsonEncode({'notificationsTopic': prefs}));
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
@@ -211,27 +214,38 @@ class API {
     try {
       String? jwtToken = await getToken();
       User? user = await getUser(box.read('id'));
+
+      print(prefs);
+
       var response = await http.post(
-          Uri.http(baseUrl, '/api/user/create-user-preferences/${user.id}'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $jwtToken'
-          },
-          body: jsonEncode({'preferences': prefs}));
+        Uri.http(baseUrl, '/api/user/create-user-preferences/${user.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+        body: jsonEncode({'notificationsTopic': prefs}),
+      );
+
       if (response.statusCode == 401) {
-        throw InvalidTokenExceptionClass('token access expired');
+        throw InvalidTokenExceptionClass('Token access expired');
       }
 
-      var jsonData = jsonDecode(response.body);
-      print(jsonData);
+      // Check if the response is JSON or plain text
+      if (response.headers['Content-Type']?.contains('application/json') ==
+          true) {
+        var jsonData = jsonDecode(response.body);
+        print(jsonData);
+      } else {
+        // Handle the response as plain text
+        print(response.body);
+      }
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
       return getPrefs();
-      // Re-throwing the exception after handling it
     } catch (e, s) {
-      print('inside getPrefs $e');
-      print('Stack trace:\n $s');
+      print('Inside createPrefs: $e');
+      print('Stack trace:\n$s');
       rethrow;
     }
   }
