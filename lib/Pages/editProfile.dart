@@ -33,17 +33,19 @@ class _EditProfileState extends State<EditProfile> {
   var box = GetStorage();
   var jsonPrefs;
 
-  //Get user prefences from database
-  Future getPrefs() async {
-    current_prefs = await api.getPrefs();
-  }
-
   Future initPrefs() async {
     List<AreaClass> aux = await api.getAreas();
 
     for (var area in aux) {
       new_prefs[area.areaName] = [];
     }
+  }
+
+  AreaClass? getSubArea(String name) {
+    for (var area in checkBoxSelected.keys) {
+      if (area.areaName == name) return area;
+    }
+    return null;
   }
 
   void jsonfyPrefs() {
@@ -58,10 +60,13 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     jsonPrefs = jsonEncode(aux);
+    print('JSON PREFS');
+    print(jsonPrefs);
   }
 
-  Future getAreas() async {
+  Future getAreasAndPrefs() async {
     List<AreaClass> aux = await api.getAreas();
+    current_prefs = await api.getPrefs();
     Map<AreaClass, bool> aux_map = {};
     for (var area in aux) {
       aux_map[area] = false;
@@ -73,20 +78,40 @@ class _EditProfileState extends State<EditProfile> {
       checkBoxSelected = aux_map;
       isLoading = false;
     });
+
+    if (current_prefs.isNotEmpty) {
+      for (var area in checkBoxSelected.keys) {
+        if (current_prefs[area.areaName] != null) {
+          for (var subArea in current_prefs[area.areaName]!) {
+            AreaClass? aux = getSubArea(subArea);
+            if (aux != null) {
+              checkBoxSelected[aux] = true;
+            }
+          }
+        }
+      }
+      current_prefs.forEach((key, value) {
+        print(key);
+        new_prefs[key]?.addAll(value);
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    getPrefs();
     initPrefs();
-    getAreas();
+    getAreasAndPrefs();
+    print('NEW PREFS');
+    print(new_prefs);
   }
 
   Future savePrefs() async {
     if (current_prefs.isEmpty) {
       await api.createPrefs(jsonPrefs);
     } else {
+      print('JSON:');
+      print(jsonPrefs);
       await api.updatePrefs(jsonPrefs);
     }
   }
@@ -187,7 +212,6 @@ class _EditProfileState extends State<EditProfile> {
                         title: Text(key.areaName),
                         value: value,
                         onChanged: (newValue) {
-                          print(key.id);
                           setState(() {
                             checkBoxSelected[key] = newValue!;
                             //Check if it's area or subArea
@@ -202,6 +226,10 @@ class _EditProfileState extends State<EditProfile> {
                               }
                             }
                           });
+                          print('NEW PREFS');
+                          print(new_prefs);
+                          print('OLD PREFS');
+                          print(current_prefs);
                         },
                       );
                     },

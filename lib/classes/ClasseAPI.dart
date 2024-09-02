@@ -166,7 +166,16 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
-      print(jsonData);
+      print(jsonData['data']['notifications_topic']);
+
+      for (var pref in jsonData['data']['notifications_topic']) {
+        print(pref['area']);
+        prefs[pref['area']] = [];
+        print(pref['subareas']);
+        for (var subPref in pref['subareas']) {
+          prefs[pref['area']]?.add(subPref);
+        }
+      }
 
       return prefs;
     } on InvalidTokenExceptionClass catch (e) {
@@ -182,6 +191,7 @@ class API {
   }
 
   Future updatePrefs(var prefs) async {
+    print(prefs);
     try {
       String? jwtToken = await getToken();
       User? user = await getUser(box.read('id'));
@@ -191,13 +201,10 @@ class API {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
           },
-          body: jsonEncode({'notificationsTopic': prefs}));
+          body: jsonEncode({'preferences': prefs}));
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
       }
-
-      var jsonData = jsonDecode(response.body);
-      print(jsonData);
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
@@ -213,9 +220,6 @@ class API {
   Future createPrefs(var prefs) async {
     try {
       String? jwtToken = await getToken();
-      User? user = await getUser(box.read('id'));
-
-      print(prefs);
 
       var response = await http.post(
         Uri.http(baseUrl, '/api/user/create-user-preferences'),
@@ -1055,9 +1059,9 @@ class API {
   Future uploadPhoto(File img) async {
     String? jwtToken = await getToken();
 
-    //String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
+    //String baseUrl = 'http://backendpint-w3vz.onrender.com/api/upload/upload';
     String baseUrl = 'http://10.0.2.2:8000/api/upload/upload';
-    //String baseUrl = 'http://backendpint-909f.onrender.com/upload/upload';
+    //String baseUrl = 'https://backendpint-909f.onrender.com/api/upload/upload';
 
     // Check if the file exists
     if (await img.exists()) {
