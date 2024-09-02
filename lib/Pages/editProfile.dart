@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
@@ -28,10 +30,11 @@ class _EditProfileState extends State<EditProfile> {
   Map<String, List<String>> new_prefs = {};
   API api = API();
   bool isLoading = true;
+  var box = GetStorage();
 
   //Get user prefences from database
   Future getPrefs() async {
-    current_prefs = await api.getPrefs(widget.user.id);
+    current_prefs = await api.getPrefs();
   }
 
   Future initPrefs() async {
@@ -76,14 +79,12 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    //getPrefs();
+    getPrefs();
     initPrefs();
     getAreas();
   }
 
-  Future savePrefs() async {
-    
-  }
+  Future savePrefs() async {}
 
   void addInfo(AreaClass subArea) {
     new_prefs[subArea.areaBelongs]!.add(subArea.areaName);

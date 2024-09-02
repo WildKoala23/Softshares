@@ -146,12 +146,12 @@ class API {
     }
   }
 
-  Future getPrefs(int userID) async {
+  Future getPrefs() async {
     try {
       String? jwtToken = await getToken();
 
       var response = await http.get(
-          Uri.http(baseUrl, '/api/user/get-user-preferences/$userID'),
+          Uri.http(baseUrl, '/api/user/get-user-preferences'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $jwtToken'
@@ -165,7 +165,7 @@ class API {
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return getPrefs(userID);
+      return getPrefs();
       // Re-throwing the exception after handling it
     } catch (e, s) {
       print('inside getPrefs $e');
@@ -196,7 +196,7 @@ class API {
     } on InvalidTokenExceptionClass catch (e) {
       print('Caught an InvalidTokenExceptionClass: $e');
       await refreshAccessToken();
-      return getPrefs(prefs);
+      return getPrefs();
       // Re-throwing the exception after handling it
     } catch (e, s) {
       print('inside getPrefs $e');
