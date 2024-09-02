@@ -49,7 +49,7 @@ void main() async {
   SQLHelper db = SQLHelper.instance;
   final box = GetStorage();
   //Machado
-  //box.write('url', 'http://backendpint-909f.onrender.com/api');
+  //box.write('url', 'https://backendpint-909f.onrender.com/api');
   //Filipe
   //box.write('url', 'https://backendpint-w3vz.onrender.com/api');
   //Mine
@@ -123,7 +123,10 @@ class _MyAppState extends State<MyApp> {
                   areas: authProvider.areas,
                   user: authProvider.user!,
                 ),
-            '/Editprofile': (context) => EditProfile(areas: authProvider.areas, user: authProvider.user!,),
+            '/Editprofile': (context) => EditProfile(
+                  areas: authProvider.areas,
+                  user: authProvider.user!,
+                ),
             '/Login': (context) => MyLoginIn(user: widget.user!),
             '/SignIn': (context) => const SignIn(),
             '/SignUp': (context) => SignUp(cities: authProvider.cities),

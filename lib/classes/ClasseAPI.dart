@@ -1055,9 +1055,9 @@ class API {
   Future uploadPhoto(File img) async {
     String? jwtToken = await getToken();
 
-    //String baseUrl = 'https://backendpint-w3vz.onrender.com/upload/upload';
+    //String baseUrl = 'https://backendpint-w3vz.onrender.com/api/upload/upload';
     String baseUrl = 'http://10.0.2.2:8000/api/upload/upload';
-    //String baseUrl = 'http://backendpint-909f.onrender.com/upload/upload';
+    //String baseUrl = 'https://backendpint-909f.onrender.com/api/upload/upload';
 
     // Check if the file exists
     if (await img.exists()) {
