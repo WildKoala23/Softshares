@@ -2284,16 +2284,34 @@ class API {
   }
 
   String extractRedirectLink(String response) {
-    // Find the index where the redirect URL starts
     int index = response.indexOf('/api/auth/change-password?token=');
 
     if (index != -1) {
-      // Extract the redirect link from the response
       return response.substring(index);
     }
 
-    // Return an empty string or handle the case where the URL is not found
     return '';
+  }
+
+  Future<bool> changePsswd(String passwd) async {
+    final jwtToken = await storage.read(key: 'passwdChangeToken');
+    print('DEBUG');
+    print(jwtToken);
+    var response = await http
+        .patch(Uri.http(baseUrl, '/api/auth/change-password'), headers: {
+      'Authorization': 'Bearer $jwtToken'
+    }, body: {
+      'password': passwd,
+    });
+
+    if (response.statusCode == 200) {
+      print('User password successfully changed');
+      await storage.delete(key: 'passwdChangeToken');
+      return true;
+    } else {
+      print('Failed to change password: ${response.body}');
+      return false;
+    }
   }
 
   Future<void> logInDb(String email, String password) async {
@@ -2321,11 +2339,12 @@ class API {
         Uri uri = Uri.parse(redirectLink);
         String? encodedToken = uri.queryParameters['token'];
         print('JWT encryptToken: $encodedToken');
+        await storage.write(key: 'passwdChangeToken', value: encodedToken);
         // Redirect to the specified route
-        if (false) {
-          navigatorKey.currentState
-              ?.pushNamed('/change-password'); //create this route
-        }
+        //if (false) {
+        navigatorKey.currentState
+            ?.pushNamed('/change-password'); //create this route
+        //}
       }
     } else if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
