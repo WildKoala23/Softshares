@@ -21,13 +21,14 @@ class Event extends Publication {
     DateTime postDate,
     File? imgPath,
     String? location,
+    double? aval,
     this.eventDate,
     this.recurring,
     this.recurring_path,
     this.event_start,
     this.event_end,
   ) : super(id, user, desc, title, validated, subCategory, postDate, imgPath,
-            location, null, null);
+            location, aval, null);
 
   
 }

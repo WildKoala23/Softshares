@@ -406,6 +406,7 @@ class _EventCreationState extends State<EventCreation> {
                         DateTime.now(),
                         _selectedImage,
                         location,
+                        null,
                         DateTime.parse(dateController.text),
                         recurrent,
                         recurrentValue,

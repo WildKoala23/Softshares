@@ -14,6 +14,10 @@ class AreaAlbum extends StatefulWidget {
 class _AreaAlbumState extends State<AreaAlbum> {
   API api = API();
 
+  Future getAlbums() async {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -208,9 +208,6 @@ class API {
   Future ratePub(Publication pub, int aval) async {
     late String type;
     switch (pub) {
-      case Forum _:
-        type = 'forum';
-        break;
       case Event _:
         type = 'event';
         break;
@@ -425,6 +422,7 @@ class API {
 
         DateTime creationDate = DateTime.parse(event['creation_date']);
         DateTime eventDate = DateTime.parse(event['Date']);
+        double? rating = double.tryParse(event['score']);
         // Create Event object
         final publication = Event(
             event['event_id'],
@@ -436,6 +434,7 @@ class API {
             creationDate,
             file,
             event['Location'],
+            rating,
             eventDate,
             event['recurring'],
             event['recurring_pattern']?.toString(),
@@ -560,6 +559,7 @@ class API {
 
         DateTime creationDate = DateTime.parse(event['creation_date']);
         DateTime eventDate = DateTime.parse(event['event_date']);
+        double? rating = double.tryParse(event['score']);
         // Create Event object
         final publication = Event(
             event['event_id'],
@@ -571,6 +571,7 @@ class API {
             creationDate,
             file,
             event['event_location'],
+            rating,
             eventDate,
             event['recurring'],
             event['recurring_pattern']?.toString(),
@@ -665,6 +666,7 @@ class API {
         throw InvalidTokenExceptionClass('token access expired');
       }
       var jsonData = jsonDecode(response.body);
+      print(jsonData);
       //Get all events
       for (var eachPub in jsonData['data']) {
         var file;
@@ -687,6 +689,8 @@ class API {
           hour: int.parse(eachPub['end_time'].split(":")[0]),
           minute: int.parse(eachPub['end_time'].split(":")[1]),
         );
+
+        double? rating = double.tryParse(eachPub['score']);
         // Create Event object
         final publication = Event(
             eachPub['event_id'],
@@ -698,12 +702,13 @@ class API {
             creationDate,
             file,
             eachPub['event_location'],
+            rating,
             eventDate,
             eachPub['recurring'],
             eachPub['recurring_pattern']?.toString(),
             eventStart,
             eventEnd);
-        print('Object created -> ${publication.id}');
+        print('Object created -> ${publication.aval}');
         await publication.getSubAreaName();
         publications.add(publication);
       }
@@ -724,6 +729,8 @@ class API {
       rethrow;
     }
   }
+
+  Future getAlbumArea() async {}
 
   Future getAlbumEvent(int id) async {
     try {
@@ -785,7 +792,7 @@ class API {
             double? price = eachPub['price'] != null
                 ? (eachPub['price'] as num) * 1.0
                 : null;
-
+            double? rating = double.tryParse(eachPub['score']);
             final publication = Publication(
                 eachPub['post_id'],
                 publisherUser,
@@ -796,7 +803,7 @@ class API {
                 DateTime.parse(eachPub['creation_date']),
                 file,
                 eachPub['p_location'],
-                null,
+                rating,
                 price);
             await publication.getSubAreaName();
             publications.add(publication);
@@ -832,6 +839,8 @@ class API {
               hour: int.parse(eachPub['end_time'].split(":")[0]),
               minute: int.parse(eachPub['end_time'].split(":")[1]),
             );
+
+            double? rating = double.tryParse(eachPub['score']);
             // Create Event object
             final publication = Event(
                 eachPub['event_id'],
@@ -843,6 +852,7 @@ class API {
                 creationDate,
                 file,
                 eachPub['event_location'],
+                rating,
                 eventDate,
                 eachPub['recurring'],
                 eachPub['recurring_pattern']?.toString(),
@@ -1805,6 +1815,7 @@ class API {
           minute: int.parse(eachPub['end_time'].split(":")[1]),
         );
         print('Pattern: ${eachPub['recurring_pattern'].toString()}');
+        double? rating = double.tryParse(eachPub['score']);
 
         // Create Event object
         final publication = Event(
@@ -1817,6 +1828,7 @@ class API {
             creationDate,
             file,
             eachPub['event_location'],
+            rating,
             eventDate,
             eachPub['recurring'],
             eachPub['recurring_pattern'].toString(),

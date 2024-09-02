@@ -41,11 +41,10 @@ class _MyAreaState extends State<Area> {
     // Get type of publications from specific area
     var data = await api.getAllPubsByArea(area.id, type);
 
-    if (type == 'posts' && filters.isNotEmpty) {
+    if ((type == 'posts' || type == 'events') && filters.isNotEmpty) {
       // Initialize a set to track seen publications and avoid duplicates
       Set<Publication> seenPubs = {};
 
-      // Filter by price
       if (filters.containsKey('price') && filters['price'] != null) {
         var filterPrices = filters['price'] as List<dynamic>;
         filterPrices = filterPrices.map((price) => price.toString()).toList();
@@ -53,6 +52,8 @@ class _MyAreaState extends State<Area> {
         data.forEach((pub) {
           if (pub.price != null &&
               filterPrices.contains(pub.price!.toInt().toString())) {
+            seenPubs.add(pub);
+          } else if (filterPrices.contains('None') && pub.price == null) {
             seenPubs.add(pub);
           }
         });
@@ -64,20 +65,19 @@ class _MyAreaState extends State<Area> {
         filterRatings =
             filterRatings.map((rating) => rating.toString()).toList();
 
-        // Use a temporary set to filter by rating
         Set<Publication> tempPubs = {};
+
         seenPubs.forEach((pub) {
           if (pub.aval != null &&
               filterRatings.contains(pub.aval!.toInt().toString())) {
             tempPubs.add(pub);
+          } else if (filterRatings.contains('None') && pub.aval == null) {
+            tempPubs.add(pub);
           }
         });
 
-        // Update seenPubs with filtered results by rating
         seenPubs = tempPubs;
       }
-
-      // Convert the set to a list for final output
 
       allPubs = seenPubs.toList();
     } else {

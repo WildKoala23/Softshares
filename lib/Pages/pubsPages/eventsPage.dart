@@ -106,6 +106,7 @@ class _EventPageState extends State<EventPage> {
     isRegistered();
     getLikes();
     getAlbum();
+    print('RATING: ${widget.event.aval}');
   }
 
   void rightCallBack(BuildContext context, ColorScheme colorScheme) {
@@ -143,7 +144,7 @@ class _EventPageState extends State<EventPage> {
                     final score = int.tryParse(_scoreController.text);
                     if (score != null && score >= 1 && score <= 5) {
                       await api.ratePub(widget.event, score);
-
+                      print('HETE');
                       double aux_score =
                           await api.getEventScore(widget.event.id!);
 
@@ -413,20 +414,26 @@ class _EventPageState extends State<EventPage> {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 10),
-            Row(children: [
-              const Text(
-                'User review: ',
-                style: TextStyle(fontSize: 20),
-              ),
-              ...List.generate(
-                widget.event.aval!.round(),
-                (index) => Icon(
-                  Icons.star,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 25,
+            Row(
+              children: [
+                const Text(
+                  'User review: ',
+                  style: TextStyle(fontSize: 20),
                 ),
-              ),
-            ]),
+                widget.event.aval != null
+                    ? Row(
+                        children: List.generate(
+                          widget.event.aval!.round(),
+                          (index) => Icon(
+                            Icons.star,
+                            color: Theme.of(context).colorScheme.secondary,
+                            size: 25,
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+              ],
+            ),
             const SizedBox(height: 20),
             Text.rich(
               TextSpan(
