@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 
-class Recovery extends StatefulWidget {
-  const Recovery({super.key});
+class EmailRecovery extends StatefulWidget {
+  const EmailRecovery({super.key});
 
   @override
-  State<Recovery> createState() => _RecoveryState();
+  State<EmailRecovery> createState() => _RecoveryState();
 }
 
-class _RecoveryState extends State<Recovery> {
+class _RecoveryState extends State<EmailRecovery> {
   TextEditingController tokenCx = TextEditingController();
   TextEditingController newPassCx = TextEditingController();
   TextEditingController confirmPasslCx = TextEditingController();
@@ -35,13 +35,11 @@ class _RecoveryState extends State<Recovery> {
                       style: TextStyle(fontSize: 32),
                     ),
                   ),
-                  tokenTextfield(colorScheme),
-                  newPassTextfield(colorScheme),
-                  newPassConfirmTextfield(colorScheme),
+                  emailTextfield(colorScheme),
                   continueBtn(
                       colorScheme: colorScheme,
                       onContinue: () {
-                        //Add logic
+                         Navigator.pushNamed(context, '/recovery');
                       })
                 ],
               ),
@@ -94,78 +92,20 @@ class _RecoveryState extends State<Recovery> {
     );
   }
 
-  Container tokenTextfield(ColorScheme colorScheme) {
+  Container emailTextfield(ColorScheme colorScheme) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: TextFormField(
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter token';
+            return 'Please enter email';
           }
           return null;
         },
         controller: tokenCx,
         decoration: InputDecoration(
           label: Text(
-            'Token',
-            style: TextStyle(color: colorScheme.onTertiary),
-          ),
-          prefixIcon: Icon(
-            Icons.account_circle,
-            color: colorScheme.onTertiary,
-            size: 32,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: colorScheme.onTertiary),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container newPassTextfield(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextFormField(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter new password';
-          }
-          return null;
-        },
-        controller: newPassCx,
-        decoration: InputDecoration(
-          label: Text(
-            'New password',
-            style: TextStyle(color: colorScheme.onTertiary),
-          ),
-          prefixIcon: Icon(
-            Icons.account_circle,
-            color: colorScheme.onTertiary,
-            size: 32,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: colorScheme.onTertiary),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container newPassConfirmTextfield(ColorScheme colorScheme) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: TextFormField(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter again';
-          }
-          return null;
-        },
-        controller: confirmPasslCx,
-        decoration: InputDecoration(
-          label: Text(
-            'New password',
+            'Email',
             style: TextStyle(color: colorScheme.onTertiary),
           ),
           prefixIcon: Icon(

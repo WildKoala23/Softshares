@@ -97,7 +97,7 @@ class _SignInState extends State<SignIn> {
                             alignment: Alignment.centerLeft,
                             child: TextButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/recovery');
+                                Navigator.pushNamed(context, '/emailRecover');
                               },
                               child: Text(
                                 'Forgot password?',

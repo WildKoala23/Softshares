@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:softshares/Pages/albumContent/album.dart';
 import 'package:softshares/Pages/alterPassword.dart';
+import 'package:softshares/emailRecover.dart';
 import 'firebase_conf.dart';
 import 'classes/ThemeNotifier.dart';
 import 'Pages/homepage.dart';
@@ -139,6 +140,7 @@ class _MyAppState extends State<MyApp> {
             '/settings': (context) => SettingsPage(),
             '/chooseCity': (context) => const ChooseCityPage(),
             '/recovery': (context) => const Recovery(),
+            '/emailRecover': (context) => EmailRecovery(),
             '/test': (context) => test(),
             '/changePassword': (context) => const ChangePassword(),
             '/albums': (context) => Album(areas: authProvider.areas)
