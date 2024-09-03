@@ -861,6 +861,7 @@ class API {
         throw InvalidTokenExceptionClass('token access expired');
       }
       var jsonData = jsonDecode(response.body);
+      print(jsonData);
 
       //Get all events
       for (var eachPub in jsonData[type]) {

@@ -32,7 +32,9 @@ class _MyAreaState extends State<Area> {
   Future<void> getPubs(String type, Map<String, dynamic> filters) async {
     allPubs = [];
     loaded = false;
-    print('Filters: $filters');
+    print('Filters: ${filters.containsKey('rating')}');
+    print('Price: ${filters.containsKey('price')}');
+    print('Null: ${filters['rating'] != null}');
 
     // Get specific area
     AreaClass area =
@@ -50,6 +52,7 @@ class _MyAreaState extends State<Area> {
         filterPrices = filterPrices.map((price) => price.toString()).toList();
 
         data.forEach((pub) {
+          print(pub.price);
           if (pub.price != null &&
               filterPrices.contains(pub.price!.toInt().toString())) {
             seenPubs.add(pub);
@@ -61,17 +64,19 @@ class _MyAreaState extends State<Area> {
 
       // Filter by rating
       if (filters.containsKey('rating') && filters['rating'] != null) {
+        print('HERE');
         var filterRatings = filters['rating'] as List<dynamic>;
         filterRatings =
             filterRatings.map((rating) => rating.toString()).toList();
 
         Set<Publication> tempPubs = {};
 
-        seenPubs.forEach((pub) {
+        data.forEach((pub) {
+          print(pub.aval);
           if (pub.aval != null &&
               filterRatings.contains(pub.aval!.toInt().toString())) {
             tempPubs.add(pub);
-          } else if (filterRatings.contains('None') && pub.aval == null) {
+          } else if (filterRatings.contains('None') && pub.aval == 0.0) {
             tempPubs.add(pub);
           }
         });
