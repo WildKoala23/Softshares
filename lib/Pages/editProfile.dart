@@ -183,6 +183,7 @@ class _EditProfileState extends State<EditProfile> {
           ),
           onPressed: () async {
             jsonfyPrefs();
+
             await savePrefs();
             Navigator.pushNamed(context, '/home');
           },
@@ -226,10 +227,6 @@ class _EditProfileState extends State<EditProfile> {
                               }
                             }
                           });
-                          print('NEW PREFS');
-                          print(new_prefs);
-                          print('OLD PREFS');
-                          print(current_prefs);
                         },
                       );
                     },

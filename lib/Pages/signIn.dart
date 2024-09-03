@@ -25,7 +25,7 @@ class _SignInState extends State<SignIn> {
   final _formkey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool hidePassword = true;
-
+  bool loginFailed = false;
   bool keepLog = false;
 
   bool validInput() {
@@ -131,17 +131,25 @@ class _SignInState extends State<SignIn> {
                                   passwordController.text, keepLog);
                               Navigator.pushNamed(context, '/home');
                             } else {
+                              _showErrorDialog(
+                                  'First Login detected for generated account. Please change your password.');
                               // Handle null response here
                               print('inside jwt check error');
                               print(jwtToken);
-                              _showErrorDialog(
-                                  'Login failed. Please try again.');
+                              setState(() {
+                                loginFailed = true;
+                              });
+                              // _showErrorDialog(
+                              //     'Login failed. Please try again.');
                             }
                           } catch (e) {
                             if (e is UnauthoraziedExceptionClass) {
                               print(e.message);
-                              _showErrorDialog(
-                                  'Wrong Credentials. Please try again.');
+                              setState(() {
+                                loginFailed = true;
+                              });
+                              // _showErrorDialog(
+                              //     'Wrong Credentials. Please try again.');
                             } else
                               // Handle any exceptions
                               _showErrorDialog('An error occurred: $e');
@@ -217,6 +225,7 @@ class _SignInState extends State<SignIn> {
         obscureText: hidePassword,
         controller: passwordController,
         decoration: InputDecoration(
+          errorText: loginFailed ? 'Invalid Username or Password' : null,
           label: Text(
             'password',
             style: TextStyle(color: colorScheme.onTertiary),
@@ -256,6 +265,7 @@ class _SignInState extends State<SignIn> {
         },
         controller: usernameController,
         decoration: InputDecoration(
+          errorText: loginFailed ? 'Invalid Username or Password' : null,
           label: Text(
             'Email',
             style: TextStyle(color: colorScheme.onTertiary),
