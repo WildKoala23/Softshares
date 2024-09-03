@@ -130,50 +130,56 @@ class _myDrawerState extends State<myDrawer> {
   }
 
   Container header(ColorScheme scheme, BuildContext context) {
-    // ignore: sized_box_for_whitespace
     return Container(
-      //alignment: Alignment.bottomCenter,
       height: 80,
       child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(1)),
-              elevation: 0,
-              backgroundColor: Colors.transparent),
-          onPressed: () async {
-            final selectedCity =
-                await Navigator.pushNamed(context, '/chooseCity');
-            if (selectedCity != null && selectedCity is Map<String, dynamic>) {
-              box.write('selectedCity', selectedCity['index']);
-              _getCity(selectedCity['index']);
-            }
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_history,
-                    color: scheme.onSecondary,
-                    size: 30,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        onPressed: () async {
+          final selectedCity =
+              await Navigator.pushNamed(context, '/chooseCity');
+          if (selectedCity != null && selectedCity is Map<String, dynamic>) {
+            box.write('selectedCity', selectedCity['index']);
+            _getCity(selectedCity['index']);
+            setState(() {
+              cityName = selectedCity[
+                  'name']; // Update cityName if inside a StatefulWidget
+            });
+          }
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.location_history,
+                  color: scheme.onSecondary,
+                  size: 30,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
                     cityName,
+                    overflow: TextOverflow.ellipsis, // Handle text overflow
                     style: TextStyle(fontSize: 24, color: scheme.onSecondary),
                   ),
-                ],
-              ),
-              Icon(
-                Icons.arrow_right,
-                size: 40,
-                color: scheme.onSecondary,
-              ),
-            ],
-          )),
+                ),
+              ],
+            ),
+            Icon(
+              Icons.arrow_right,
+              size: 40,
+              color: scheme.onSecondary,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

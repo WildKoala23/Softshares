@@ -41,8 +41,15 @@ class _contentAppBarState extends State<contentAppBar> {
       actions: [
         IconButton(
             onPressed: () {
-              Share.share(
-                  '_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
+              switch (widget.pub) {
+                case Event _:
+                  Share.share(
+                      'Check out this event:\n${widget.pub.title}\n${widget.pub.desc}\n\nLink: https://ai2-softshares-o0xwvi1lz-fiagapcoos-projects.vercel.app/event/${widget.pub.id}');
+                  break;
+                default:
+                  Share.share(
+                      '_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
+              }
             },
             icon: const Icon(Icons.share)),
         widget.pub.validated == false
