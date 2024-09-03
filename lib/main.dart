@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:softshares/Pages/albumContent/album.dart';
 import 'package:softshares/Pages/alterPassword.dart';
+import 'package:softshares/Pages/notices.dart';
 import 'package:softshares/emailRecover.dart';
 import 'firebase_conf.dart';
 import 'classes/ThemeNotifier.dart';
@@ -143,7 +144,8 @@ class _MyAppState extends State<MyApp> {
             '/emailRecover': (context) => EmailRecovery(),
             '/test': (context) => test(),
             '/changePassword': (context) => const ChangePassword(),
-            '/albums': (context) => Album(areas: authProvider.areas)
+            '/albums': (context) => Album(areas: authProvider.areas),
+            '/notices': (context) => Notices()
           },
           onGenerateRoute: (settings) {
             // Handle routes that are not defined in the `routes` map
