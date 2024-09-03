@@ -9,6 +9,7 @@ import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
+import 'package:softshares/firebase_conf.dart';
 import '../classes/user.dart';
 
 class EditProfile extends StatefulWidget {
@@ -193,12 +194,28 @@ class _EditProfileState extends State<EditProfile> {
             new_prefs.forEach((key, value) {
               new_prefs_list.addAll(value);
             });
-            print('old');
-            print(old_prefs_list);
-            print('new');
-            print(new_prefs_list);
 
             await savePrefs();
+
+            List<String> prefsToUnsubscribe = old_prefs_list
+                .where((oldPref) => !new_prefs_list.contains(oldPref))
+                .toList();
+
+            List<String> prefsToSubscribe = new_prefs_list
+                .where((newPref) => !old_prefs_list.contains(newPref))
+                .toList();
+
+            // Perform unsubscriptions
+            for (var pref in prefsToUnsubscribe) {
+              print('Unsubscribing from: $pref');
+              unsubscribeFromTopic(pref);
+            }
+
+            // Perform subscriptions
+            for (var pref in prefsToSubscribe) {
+              print('Subscribing to: $pref');
+              subscribeToTopic(pref);
+            }
             Navigator.pushNamed(context, '/home');
           },
           child: const Text('Save changes')),
