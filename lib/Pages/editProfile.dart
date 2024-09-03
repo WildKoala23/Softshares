@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
+import 'package:softshares/Pages/area.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/db.dart';
@@ -71,7 +72,9 @@ class _EditProfileState extends State<EditProfile> {
     print('Current prefs');
     print(current_prefs);
     Map<AreaClass, bool> aux_map = {};
+    List<AreaClass> areas = [];
     for (var area in aux) {
+      areas.add(area);
       for (var subArea in area.subareas!) {
         aux_map[subArea] = false;
       }
@@ -82,7 +85,8 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     if (current_prefs.isNotEmpty) {
-      for (var area in checkBoxSelected.keys) {
+      for (var area in areas) {
+        print(current_prefs[area.areaName]);
         if (current_prefs[area.areaName] != null) {
           for (var subArea in current_prefs[area.areaName]!) {
             AreaClass? aux = getSubArea(subArea);
