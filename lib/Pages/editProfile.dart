@@ -70,7 +70,6 @@ class _EditProfileState extends State<EditProfile> {
     current_prefs = await api.getPrefs();
     Map<AreaClass, bool> aux_map = {};
     for (var area in aux) {
-      aux_map[area] = false;
       for (var subArea in area.subareas!) {
         aux_map[subArea] = false;
       }
