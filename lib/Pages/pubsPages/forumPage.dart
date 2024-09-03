@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
+import 'package:softshares/Pages/editPubs/editForum.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/commentClass.dart';
@@ -58,6 +59,15 @@ class _ForumPageState extends State<ForumPage> {
     commentCx.dispose();
   }
 
+  void editPub(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditForum(pub: widget.forum, areas: widget.areas),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -65,6 +75,7 @@ class _ForumPageState extends State<ForumPage> {
       appBar: contentAppBar(
         pub: widget.forum,
         areas: widget.areas,
+        rightCallback: (context) => editPub(context),
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
@@ -94,7 +105,7 @@ class _ForumPageState extends State<ForumPage> {
                           fontSize: 16,
                         ),
                       ),
-                    ),              
+                    ),
                     const Divider(
                       color: Colors.black,
                       height: 30,

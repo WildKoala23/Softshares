@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/Pages/editPubs/editPost.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/commentClass.dart';
@@ -57,7 +58,7 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
-  void rightCallBack(BuildContext context, ColorScheme colorScheme) {
+  void ratePub(BuildContext context, ColorScheme colorScheme) {
     showModalBottomSheet(
       context: context,
       isScrollControlled:
@@ -131,6 +132,16 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+  void editPub(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            EditPost(post: widget.publication, areas: widget.areas),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -138,7 +149,13 @@ class _PostPageState extends State<PostPage> {
       appBar: contentAppBar(
         pub: widget.publication,
         areas: widget.areas,
-        rightCallback: (context) => rightCallBack(context, colorScheme),
+        rightCallback: (context) {
+          if (widget.publication.validated == true) {
+            ratePub(context, colorScheme);
+          } else {
+            editPub(context);
+          }
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),

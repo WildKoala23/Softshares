@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:softshares/Components/POICard.dart';
 import 'package:softshares/Components/bottomNavBar.dart';
 import 'package:softshares/Components/drawer.dart';
 import 'package:softshares/Components/eventCard.dart';
@@ -162,7 +163,11 @@ class _MyHomePageState extends State<MyProfile> {
                 } else if (pub is Forum) {
                   return ForumCard(forum: pub, areas: widget.areas);
                 } else if (pub is Publication) {
-                  return PublicationCard(pub: pub, areas: widget.areas);
+                  if (pub.type! == 'P') {
+                    return POICard(pointOfInterest: pub, areas: widget.areas);
+                  } else {
+                    return PublicationCard(pub: pub, areas: widget.areas);
+                  }
                 } else {
                   return SizedBox.shrink(); // Handle unexpected types
                 }

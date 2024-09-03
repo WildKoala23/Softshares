@@ -10,6 +10,7 @@ import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
 import 'package:softshares/Pages/checkAnswers.dart';
+import 'package:softshares/Pages/editPubs/editEvent.dart';
 import 'package:softshares/Pages/registerEvent.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -109,7 +110,7 @@ class _EventPageState extends State<EventPage> {
     print('RATING: ${widget.event.aval}');
   }
 
-  void rightCallBack(BuildContext context, ColorScheme colorScheme) {
+  void rateEvent(BuildContext context, ColorScheme colorScheme) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -180,6 +181,15 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
+  void editPub(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditEvent(pub: widget.event, areas: widget.areas),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -188,7 +198,13 @@ class _EventPageState extends State<EventPage> {
       appBar: contentAppBar(
         pub: widget.event,
         areas: widget.areas,
-        rightCallback: (context) => rightCallBack(context, colorScheme),
+        rightCallback: (context) {
+          if (widget.event.validated == true) {
+            rateEvent(context, colorScheme);
+          } else {
+            editPub(context);
+          }
+        },
       ),
       body: DefaultTabController(
         length: 3,

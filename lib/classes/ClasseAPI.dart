@@ -531,7 +531,8 @@ class API {
       }
 
       var jsonData = jsonDecode(response.body);
-      print(jsonData['events']);
+      print('USER POSTS');
+      print(jsonData);
       var type = jsonData['data'];
 
       // Extract posts, forums, and events
@@ -546,8 +547,7 @@ class API {
         User publisherUser = await getUser(post['publisher_id']);
         double? price =
             post['price'] != null ? (post['price'] as num) * 1.0 : null;
-        double? rating =
-            post['score'] != null ? int.tryParse(post['score'])! * 1.0 : null;
+        double? rating = double.tryParse(post['score']);
         //print('ID: ${publisherUser.id}\n Price: $price');
         var file;
         if (post['filepath'] != null) {
@@ -568,6 +568,7 @@ class API {
             rating,
             price);
         await publication.getSubAreaName();
+        publication.type = post['type'];
         publications.add(publication);
       }
       //Get user created forums
@@ -610,8 +611,7 @@ class API {
 
         DateTime creationDate = DateTime.parse(event['creation_date']);
         DateTime eventDate = DateTime.parse(event['event_date']);
-        double? rating =
-            event['score'] != null ? int.tryParse(event['score'])! * 1.0 : null;
+        double? rating = double.tryParse(event['score']);
         // Create Event object
         final publication = Event(
             event['event_id'],

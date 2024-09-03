@@ -1,27 +1,26 @@
 import 'dart:io';
-import 'package:get_storage/get_storage.dart';
-import 'package:softshares/classes/publication.dart';
-import 'package:softshares/providers/auth_provider.dart';
 
-import '../../classes/db.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:search_map_location/search_map_location.dart';
+import 'package:search_map_location/widget/search_widget.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
+import 'package:softshares/classes/db.dart';
+import 'package:softshares/classes/publication.dart';
 import 'package:softshares/classes/user.dart';
 
-class POICreation extends StatefulWidget {
-  POICreation({super.key, required this.areas});
+class EditPOI extends StatefulWidget {
+  EditPOI({super.key, required this.post, required this.areas});
 
+  Publication post;
   List<AreaClass> areas;
 
   @override
-  State<POICreation> createState() => _POICreationState();
+  State<EditPOI> createState() => _EditPOIState();
 }
 
-
-class _POICreationState extends State<POICreation> {
+class _EditPOIState extends State<EditPOI> {
   final _poiKey = GlobalKey<FormState>();
   final API api = API();
   SQLHelper bd = SQLHelper.instance;
@@ -37,7 +36,11 @@ class _POICreationState extends State<POICreation> {
   late AreaClass selectedArea;
   late AreaClass selectedSubArea;
   late double currentSlideValue;
+  late double currentPriceValue;
 
+  //Variables to en/disable rating and price sliders when not necessary
+  late bool nonRating;
+  late bool nonPrice;
 
   late User user;
 
@@ -50,11 +53,20 @@ class _POICreationState extends State<POICreation> {
   @override
   void initState() {
     super.initState();
-    selectedArea = widget.areas[0];
-    selectedSubArea = selectedArea.subareas![0];
-    currentSlideValue = 3;
+    currentSlideValue = widget.post.aval!;
+    titleController.text = widget.post.title;
+    descController.text = widget.post.desc;
     getUser();
-    
+    for (var area in widget.areas) {
+      if (area.subareas != null) {
+        for (var subArea in area.subareas!) {
+          if (subArea.id == widget.post.subCategory) {
+            selectedArea = area;
+            selectedSubArea = subArea;
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -75,6 +87,11 @@ class _POICreationState extends State<POICreation> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Expanded(
+                  child: Text(
+                'Only alter what you want to update\nIf you only want to change the form, proceed to next page',
+                style: TextStyle(color: colorScheme.error),
+              )),
               const SizedBox(
                 child: Text(
                   'Title',
@@ -286,8 +303,7 @@ class _POICreationState extends State<POICreation> {
                         _selectedImage,
                         location,
                         currentSlideValue,
-                        null
-                        );
+                        currentPriceValue);
                     try {
                       await api.createPOI(post);
                     } catch (e) {

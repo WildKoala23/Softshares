@@ -80,6 +80,22 @@ class _EditForumState extends State<EditForum> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                   Row(
+                    children: [
+                      Icon(
+                        Icons.report,
+                        color: colorScheme.error,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Expanded(
+                          child: Text(
+                        'Only alter what you want to update\nIf you only want to change the form, proceed to next page',
+                        style: TextStyle(color: colorScheme.error),
+                      ))
+                    ],
+                  ),
                   const Text(
                     'Title',
                     style: TextStyle(fontSize: 22),

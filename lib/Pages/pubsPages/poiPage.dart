@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
+import 'package:softshares/Pages/editPubs/editPOIs.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/classes/areaClass.dart';
@@ -43,6 +44,15 @@ class _POIPageState extends State<POIPage> {
   void dispose() {
     super.dispose();
     commentCx.dispose();
+  }
+
+  void editPub(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPOI(post: widget.poi, areas: widget.areas),
+      ),
+    );
   }
 
   LatLng convertCoord(String location) {
@@ -84,6 +94,7 @@ class _POIPageState extends State<POIPage> {
       appBar: contentAppBar(
         pub: widget.poi,
         areas: widget.areas,
+        rightCallback: (context) => editPub,
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),

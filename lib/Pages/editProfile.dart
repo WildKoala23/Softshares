@@ -68,6 +68,8 @@ class _EditProfileState extends State<EditProfile> {
   Future getAreasAndPrefs() async {
     List<AreaClass> aux = await api.getAreas();
     current_prefs = await api.getPrefs();
+    print('Current prefs');
+    print(current_prefs);
     Map<AreaClass, bool> aux_map = {};
     for (var area in aux) {
       for (var subArea in area.subareas!) {

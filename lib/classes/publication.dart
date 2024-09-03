@@ -12,7 +12,7 @@ class Publication {
   DateTime _postDate;
   int subCategory;
   late String subAreaName;
-  String? location;
+  String? location, type;
   File? img;
   double? aval, price;
 
