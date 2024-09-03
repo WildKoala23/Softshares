@@ -184,6 +184,20 @@ class _EditProfileState extends State<EditProfile> {
           onPressed: () async {
             jsonfyPrefs();
 
+            List<String> old_prefs_list = [];
+            List<String> new_prefs_list = [];
+
+            current_prefs.forEach((key, value) {
+              old_prefs_list.addAll(value);
+            });
+            new_prefs.forEach((key, value) {
+              new_prefs_list.addAll(value);
+            });
+            print('old');
+            print(old_prefs_list);
+            print('new');
+            print(new_prefs_list);
+
             await savePrefs();
             Navigator.pushNamed(context, '/home');
           },
