@@ -2335,6 +2335,22 @@ class API {
     }
   }
 
+  Future<bool> passwordReset(String token, String password) async {
+    String encodedToken = Uri.encodeComponent(token);
+    var response =
+        await http.post(Uri.http(baseUrl, '/api/auth/password-reset'), body: {
+      'token': encodedToken,
+      'password': password,
+    });
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Failed to start password recovery process.');
+      return false;
+    }
+  }
+
   Future<void> logInDb(String email, String password) async {
     var response =
         await http.post(Uri.http(baseUrl, '/api/auth/login_mobile'), body: {

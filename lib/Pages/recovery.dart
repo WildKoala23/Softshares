@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 
 class Recovery extends StatefulWidget {
   const Recovery({super.key});
@@ -12,7 +13,7 @@ class _RecoveryState extends State<Recovery> {
   TextEditingController tokenCx = TextEditingController();
   TextEditingController newPassCx = TextEditingController();
   TextEditingController confirmPasslCx = TextEditingController();
-
+  API api = API();
   bool hidePassword = true;
   bool hideConfirm = true;
 
@@ -40,12 +41,40 @@ class _RecoveryState extends State<Recovery> {
                   newPassConfirmTextfield(colorScheme),
                   continueBtn(
                       colorScheme: colorScheme,
-                      onContinue: () {
-                        //Add logic
+                      onContinue: () async {
+                        if (newPassCx.text == confirmPasslCx.text) {
+                          bool flag = await api.passwordReset(
+                              tokenCx.text, newPassCx.text);
+
+                          if (flag) {
+                            _showErrorDialog('Passwords reset successfull.');
+                            Navigator.pushNamed(context, '/SignIn');
+                          } else {
+                            _showErrorDialog('Passwords are not the same.');
+                          }
+                        }
                       })
                 ],
               ),
             )),
+      ),
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
