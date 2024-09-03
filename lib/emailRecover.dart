@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
+import 'package:softshares/classes/ClasseAPI.dart';
 
 class EmailRecovery extends StatefulWidget {
   const EmailRecovery({super.key});
@@ -12,7 +13,7 @@ class _RecoveryState extends State<EmailRecovery> {
   TextEditingController tokenCx = TextEditingController();
   TextEditingController newPassCx = TextEditingController();
   TextEditingController confirmPasslCx = TextEditingController();
-
+  API api = API();
   bool hidePassword = true;
   bool hideConfirm = true;
 
@@ -38,12 +39,36 @@ class _RecoveryState extends State<EmailRecovery> {
                   emailTextfield(colorScheme),
                   continueBtn(
                       colorScheme: colorScheme,
-                      onContinue: () {
-                         Navigator.pushNamed(context, '/recovery');
+                      onContinue: () async {
+                        bool flag =
+                            await api.requestPasswordReset(tokenCx.text);
+                        if (flag) {
+                          Navigator.pushNamed(context, '/recovery');
+                        } else {
+                          _showErrorDialog('Email not fount.');
+                        }
                       })
                 ],
               ),
             )),
+      ),
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }

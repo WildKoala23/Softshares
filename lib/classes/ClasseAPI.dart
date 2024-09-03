@@ -2300,6 +2300,20 @@ class API {
     return '';
   }
 
+  Future<bool> requestPasswordReset(String email) async {
+    var response = await http
+        .post(Uri.http(baseUrl, '/api/auth/request-password-reset'), body: {
+      'email': email,
+    });
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      print('Failed to start password recovery process.');
+      return false;
+    }
+  }
+
   Future<bool> changePsswd(String passwd) async {
     final jwtToken = await storage.read(key: 'passwdChangeToken');
     print('DEBUG');
