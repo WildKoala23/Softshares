@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:softshares/Components/appBar.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
+import '../classes/PasswordReuseExceptionClass.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -40,14 +41,22 @@ class _RecoveryState extends State<ChangePassword> {
                   continueBtn(
                       colorScheme: colorScheme,
                       onContinue: () async {
-                        if (newPassCx.text == confirmPasslCx.text) {
-                          final passwd = newPassCx.text;
-                          bool ret = await api.changePsswd(passwd);
-                          if (ret) {
-                            Navigator.pushNamed(context, '/SignIn');
+                        try {
+                          if (newPassCx.text == confirmPasslCx.text) {
+                            final passwd = newPassCx.text;
+                            bool ret = await api.changePsswd(passwd);
+                            if (ret) {
+                              Navigator.pushNamed(context, '/SignIn');
+                            }
+                          } else {
+                            _showErrorDialog('Passwords are not the same.');
                           }
-                        } else {
-                          _showErrorDialog('Passwords are not the same.');
+                        } on PasswordReuseExceptionClass catch (e) {
+                          _showErrorDialog(e.message);
+                        } catch (e, s) {
+                          print('inside getUserifo $e');
+                          print('Stack trace:\n $s');
+                          rethrow;
                         }
                       })
                 ],

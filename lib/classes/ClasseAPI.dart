@@ -24,6 +24,7 @@ import '../classes/forums.dart';
 import '../classes/user.dart';
 import '../classes/publication.dart';
 import '../classes/InvalidTokenExceptionClass.dart';
+import '../classes/PasswordReuseExceptionClass.dart';
 import '../classes/unauthoraziedExceptionClass.dart';
 
 class API {
@@ -2329,6 +2330,8 @@ class API {
       print('User password successfully changed');
       await storage.delete(key: 'passwdChangeToken');
       return true;
+    } else if (response.statusCode == 400) {
+      throw PasswordReuseExceptionClass('Password reuse not allowed');
     } else {
       print('Failed to change password: ${response.body}');
       return false;
@@ -2345,6 +2348,9 @@ class API {
 
     if (response.statusCode == 200) {
       return true;
+    } else if (response.statusCode == 400) {
+      throw PasswordReuseExceptionClass(
+          'Password reuse not allowed. Please enter a different password');
     } else {
       print('Failed to start password recovery process.');
       return false;
@@ -2379,6 +2385,13 @@ class API {
         // Redirect to the specified route
         navigatorKey.currentState
             ?.pushNamed('/change-password'); //create this route
+        // Show a custom message using a SnackBar
+        /*
+        ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'Require Password Change for generated accounts of administration')));
+                    */
       }
     } else if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);

@@ -48,35 +48,8 @@ class _contentAppBarState extends State<contentAppBar> {
         widget.pub.validated == false
             ? IconButton(
                 onPressed: () {
-                  switch (widget.pub) {
-                    case Event _:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditEvent(
-                                pub: widget.pub as Event, areas: widget.areas)),
-                      );
-                      break;
-                    case Forum _:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditForum(
-                                  pub: widget.pub as Forum,
-                                  areas: widget.areas,
-                                )),
-                      );
-                      break;
-                    case Publication _:
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditPost(
-                                    post: widget.pub,
-                                    areas: widget.areas,
-                                  )));
-                      break;
-                  }
+                  Share.share(
+                      '_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
                 },
                 icon: const Icon(Icons.edit))
             : widget.rightCallback != null
