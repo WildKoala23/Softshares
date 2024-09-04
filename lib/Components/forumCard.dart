@@ -86,9 +86,9 @@ class _POIState extends State<ForumCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            widget.forum.title.length > 30
+            widget.forum.title.length > 10
                 ? Text(
-                    widget.forum.title.substring(0, 30) + '....',
+                    widget.forum.title.substring(0, 10) + '....',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   )
                 : Text(

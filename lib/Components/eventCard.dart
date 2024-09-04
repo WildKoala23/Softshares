@@ -101,9 +101,9 @@ class _EventCardState extends State<EventCard> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            widget.event.title.length > 30
+            widget.event.title.length > 10
                 ? Text(
-                    widget.event.title.substring(0, 30) + '....',
+                    widget.event.title.substring(0, 10) + '....',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   )
                 : Text(
