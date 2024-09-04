@@ -337,6 +337,7 @@ class _EditPOIState extends State<EditPOI> {
                             selectedSubArea.id == widget.post.subCategory
                                 ? null
                                 : selectedSubArea.id;
+                          
 
                         try {
                           await api.editPost(

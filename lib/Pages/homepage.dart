@@ -46,10 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
     print('Notifications');
   }
 
-  void rightCallback(context) {
-    print('search');
-  }
-
   @override
   void initState() {
     super.initState();
@@ -68,7 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: MyAppBar(
         iconR: const Icon(Icons.notifications),
-        rightCallback: rightCallback,
+        rightCallback: (context) {
+          Navigator.pushNamed(context, '/notices');
+        },
         title: 'Homepage',
       ),
       body: FutureBuilder(

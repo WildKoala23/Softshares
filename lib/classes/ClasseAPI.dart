@@ -14,6 +14,7 @@ import 'package:get_storage/get_storage.dart';
 // jwt libraries
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:softshares/classes/fieldClass.dart';
+import 'package:softshares/classes/noticesClass.dart';
 import 'package:softshares/classes/officeClass.dart';
 import 'package:softshares/providers/auth_provider.dart';
 
@@ -31,7 +32,7 @@ class API {
   // Filipe
   //var baseUrl = 'backendpint-w3vz.onrender.com';
   // Machado
-  //var baseUrl = 'backendpint-909f.onrender.com';
+  // var baseUrl = 'backendpint-909f.onrender.com';
   var baseUrl = '10.0.2.2:8000';
   final box = GetStorage();
   final storage = const FlutterSecureStorage();
@@ -142,6 +143,47 @@ class API {
       // Re-throwing the exception after handling it
     } catch (e, s) {
       print('inside getUserLogged $e');
+      print('Stack trace:\n $s');
+      rethrow;
+    }
+  }
+
+  Future getNotices() async {
+    String? jwtToken = await getToken();
+    int officeId = box.read('selectedCity');
+    List<Notice> notices = [];
+
+    try {
+      var response = await http
+          .get(Uri.http(baseUrl, '/api/warnings/$officeId'), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken'
+      });
+      if (response.statusCode == 401) {
+        throw InvalidTokenExceptionClass('token access expired');
+      }
+      print('NOTICES:');
+      print(response.body);
+
+      var jsonData = jsonDecode(response.body);
+
+      for (var eachNotice in jsonData['data']) {
+        Notice notice = Notice(
+            name: eachNotice['admin_name'],
+            content: eachNotice['description'],
+            level: eachNotice['warning_level'],
+            id: eachNotice['warning_id']);
+        notices.add(notice);
+      }
+
+      return notices;
+    } on InvalidTokenExceptionClass catch (e) {
+      print('Caught an InvalidTokenExceptionClass: $e');
+      await refreshAccessToken();
+      return getPrefs();
+      // Re-throwing the exception after handling it
+    } catch (e, s) {
+      print('inside getPrefs $e');
       print('Stack trace:\n $s');
       rethrow;
     }
@@ -1246,7 +1288,7 @@ class API {
       if (desc != null) 'content': desc,
       if (filePath != null) 'filePath': filePath,
       if (location != null) 'pLocation': location,
-      if(price != null) 'price': price.toString(),
+      if (price != null) 'price': price.toString(),
       if (rating != null) 'rating': rating.toString(),
     };
 
