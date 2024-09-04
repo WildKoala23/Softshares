@@ -1246,6 +1246,7 @@ class API {
       if (desc != null) 'content': desc,
       if (filePath != null) 'filePath': filePath,
       if (location != null) 'pLocation': location,
+      if(price != null) 'price': price.toString(),
       if (rating != null) 'rating': rating.toString(),
     };
 

@@ -178,7 +178,7 @@ class _EditEventState extends State<EditEvent> {
                             height: 220,
                             child: Center(
                               child: Image.network(
-                                '${box.read('url')}/uploads/${widget.pub.img!.path}',
+                                '${box.read('url')}/uploads/${widget.pub.img?.path}',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(

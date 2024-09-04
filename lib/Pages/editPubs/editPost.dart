@@ -150,7 +150,7 @@ class _EditPostState extends State<EditPost> {
                             height: 220,
                             child: Center(
                               child: Image.network(
-                                'https://backendpint-w3vz.onrender.com/uploads/${widget.post.img!.path}',
+                                '${box.read('url')}/uploads/${widget.post.img?.path}',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(

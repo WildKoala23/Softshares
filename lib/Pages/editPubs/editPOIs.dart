@@ -159,7 +159,7 @@ class _EditPOIState extends State<EditPOI> {
                             height: 220,
                             child: Center(
                               child: Image.network(
-                                '${box.read('url')}/uploads/${widget.post.img!.path}',
+                                '${box.read('url')}/uploads/${widget.post.img?.path}',
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
