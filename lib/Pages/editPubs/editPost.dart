@@ -388,7 +388,9 @@ class _EditPostState extends State<EditPost> {
                             subAreaId: subAreaId,
                             publisherId: user.id,
                           );
-                        } catch (e) {
+                        } catch (e, s) {
+                          print('ERROR: $e');
+                          print('Stack trace:\n$s');
                           await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -410,7 +412,7 @@ class _EditPostState extends State<EditPost> {
                         Navigator.pushNamed(context, '/home');
                       }
                     },
-                    child: Text('Edit Event',
+                    child: Text('Edit Post',
                         style: TextStyle(color: colorScheme.onPrimary)),
                   ),
                 ],

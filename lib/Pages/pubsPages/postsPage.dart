@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:softshares/Components/comments.dart';
 import 'package:softshares/Components/contentAppBar.dart';
 import 'package:softshares/Components/formAppBar.dart';
@@ -25,6 +26,7 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   API api = API();
   TextEditingController commentCx = TextEditingController();
+  late GoogleMapController mapController;
   final _commentKey = GlobalKey<FormState>();
   List<Comment> comments = [];
   int _charCount = 0;
@@ -32,10 +34,25 @@ class _PostPageState extends State<PostPage> {
   List<int> likedComments = [];
   var box = GetStorage();
   final TextEditingController _scoreController = TextEditingController();
+  LatLng? local;
 
   Future<void> getComments() async {
     comments = await api.getComents(widget.publication);
     setState(() {});
+  }
+
+  LatLng? convertCoord(String? location) {
+    if (location != null) {
+      List<String> coords = location.split(" ");
+      double lat = double.tryParse(coords[0])!;
+      double lon = double.tryParse(coords[1])!;
+      return LatLng(lat, lon);
+    }
+    return null;
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
   }
 
   Future<void> getLikes() async {
@@ -50,6 +67,7 @@ class _PostPageState extends State<PostPage> {
     commentCx.addListener(_updateCharCount);
     getLikes();
     print('RATING: ${widget.publication.aval?.round()}');
+    local = convertCoord(widget.publication.location);
   }
 
   void _updateCharCount() {
@@ -214,6 +232,29 @@ class _PostPageState extends State<PostPage> {
                       widget.publication.desc,
                       style: TextStyle(fontSize: 18),
                     ),
+                    const SizedBox(height: 10),
+                    widget.publication.location != null
+                        ? Container(
+                            width: double.infinity,
+                            height: 250,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: GoogleMap(
+                                onMapCreated: _onMapCreated,
+                                initialCameraPosition: CameraPosition(
+                                  target: local!,
+                                  zoom: 11.0,
+                                ),
+                                markers: {
+                                  Marker(
+                                    markerId: const MarkerId('Event'),
+                                    position: local!,
+                                  ),
+                                },
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                     const SizedBox(height: 10),
                     Row(children: [
                       const Text(

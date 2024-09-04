@@ -285,7 +285,7 @@ class _MyHomePageState extends State<MyProfile> {
                     color: colorScheme.secondary),
                 child: Center(
                   child: Text(
-                    widget.user.lastName[0],
+                    widget.user.firstname[0],
                     style:
                         TextStyle(fontSize: 54, color: colorScheme.onPrimary),
                   ),

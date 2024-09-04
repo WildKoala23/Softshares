@@ -1626,6 +1626,8 @@ class API {
   }) async {
     String? jwtToken = await getToken();
     var office = box.read('selectedCity');
+    ;
+
     // Prepare the request body
     Map<String, String> body = {
       if (subAreaId != null) 'subAreaId': subAreaId.toString(),
@@ -1634,17 +1636,27 @@ class API {
       if (title != null) 'name': title,
       if (desc != null) 'description': desc,
       if (eventDate != null) 'eventDate': eventDate.toIso8601String(),
-      if (location != null) 'location': location,
+      if (location != null) 'eventLocation': location,
       if (recurring != null) 'recurring': recurring.toString(),
       if (recurringPattern != null) 'recurring_pattern': recurringPattern,
-      if (eventStart != null) 'startTime': eventStart.toString(),
-      if (eventEnd != null) 'endTime': eventEnd.toString(),
     };
 
     if (path != null) {
       String aux = await uploadPhoto(path);
       print('I AM HERE');
       body['filePath'] = aux.toString();
+    }
+
+    if (eventStart != null) {
+      String aux_eventStart =
+          '${eventStart!.hour.toString().padLeft(2, '0')}:${eventStart.minute.toString().padLeft(2, '0')}:00';
+      body['startTime'] = aux_eventStart.toString();
+    }
+
+    if (eventEnd != null) {
+      String aux_eventEnd =
+          '${eventEnd!.hour.toString().padLeft(2, '0')}:${eventEnd.minute.toString().padLeft(2, '0')}:00';
+      body['endTime'] = aux_eventEnd.toString();
     }
 
     try {

@@ -475,7 +475,7 @@ class _EditEventState extends State<EditEvent> {
                         int? subArea = selectedSubArea.id == initialSubArea.id
                             ? null
                             : selectedSubArea.id;
-                        print(imgPath);
+                        print('New location: $loc');
                         try {
                           await api.editEvent(
                             eventId: widget.pub.id!,
