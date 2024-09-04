@@ -561,7 +561,7 @@ class _EventPageState extends State<EventPage> {
                   ? userRegistered == false
                       ? ElevatedButton(
                           onPressed: () async {
-                            await Navigator.push(
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Register(
@@ -569,7 +569,12 @@ class _EventPageState extends State<EventPage> {
                                         areas: widget.areas,
                                       )),
                             );
-                            setState(() {});
+                            if (result != null && result['register'] != null) {
+                              bool registered = result['register'];
+                              setState(() {
+                                userRegistered = registered;
+                              });
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colorScheme.primary,

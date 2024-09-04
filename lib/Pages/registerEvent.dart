@@ -28,7 +28,7 @@ class _RegisterState extends State<Register> {
   Map<String, TextEditingController> answers = {};
   List<TextEditingController> controllers = [];
   var responses = [];
-  bool loaded = false;
+  bool loaded = false, registered = false;
 
   void buildForm() {
     List<Widget> aux = [];
@@ -147,7 +147,7 @@ class _RegisterState extends State<Register> {
 
                   try {
                     await api.sendFormAnswer(widget.event.id!, data);
-
+                    registered = true;
                     // Show success snackbar after successful registration
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -167,7 +167,7 @@ class _RegisterState extends State<Register> {
                       ),
                     );
                   }
-                  Navigator.pop(context);
+                  Navigator.pop(context, {'register': registered});
                 },
                 child: const Text('Register'),
               )
