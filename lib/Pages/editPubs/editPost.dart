@@ -98,7 +98,7 @@ class _EditPostState extends State<EditPost> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                   Row(
+                  Row(
                     children: [
                       Icon(
                         Icons.report,
@@ -364,7 +364,7 @@ class _EditPostState extends State<EditPost> {
                         String? desc = descController.text == widget.post.desc
                             ? null
                             : descController.text;
-                        String? filePath = _selectedImage?.path;
+                        File? filePath = _selectedImage;
                         String? loc =
                             location == widget.post.location ? null : location;
                         int? price =
@@ -375,6 +375,7 @@ class _EditPostState extends State<EditPost> {
                             selectedSubArea.id == widget.post.subCategory
                                 ? null
                                 : selectedSubArea.id;
+                        print(filePath);
                         try {
                           await api.editPost(
                             postId: widget.post.id!,

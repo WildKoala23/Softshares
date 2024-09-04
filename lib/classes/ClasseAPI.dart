@@ -1271,7 +1271,7 @@ class API {
     required int postId,
     String? title,
     String? desc,
-    String? filePath,
+    File? filePath,
     String? location,
     int? price,
     int? rating,
@@ -1280,17 +1280,23 @@ class API {
   }) async {
     String? jwtToken = await getToken();
     var office = box.read('selectedCity');
+    String path;
+
     Map<String, String> body = {
       'officeId': office.toString(),
       'publisher_id': publisherId.toString(),
       if (subAreaId != null) 'subAreaId': subAreaId.toString(),
       if (title != null) 'title': title,
       if (desc != null) 'content': desc,
-      if (filePath != null) 'filePath': filePath,
       if (location != null) 'pLocation': location,
       if (price != null) 'price': price.toString(),
       if (rating != null) 'rating': rating.toString(),
     };
+
+    if (filePath != null) {
+      path = await uploadPhoto(filePath!);
+      body['filePath'] = path.toString();
+    }
 
     try {
       var response = await http.patch(
@@ -1607,7 +1613,7 @@ class API {
     required int eventId,
     String? title,
     String? desc,
-    String? path,
+    File? path,
     DateTime? eventDate,
     String? location,
     bool? recurring,
@@ -1627,7 +1633,6 @@ class API {
       'publisher_id': publisherId.toString(),
       if (title != null) 'name': title,
       if (desc != null) 'description': desc,
-      if (path != null) 'filePath': path,
       if (eventDate != null) 'eventDate': eventDate.toIso8601String(),
       if (location != null) 'location': location,
       if (recurring != null) 'recurring': recurring.toString(),
@@ -1635,6 +1640,12 @@ class API {
       if (eventStart != null) 'startTime': eventStart.toString(),
       if (eventEnd != null) 'endTime': eventEnd.toString(),
     };
+
+    if (path != null) {
+      String aux = await uploadPhoto(path);
+      print('I AM HERE');
+      body['filePath'] = aux.toString();
+    }
 
     try {
       var response = await http.patch(

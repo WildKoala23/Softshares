@@ -456,7 +456,7 @@ class _EditEventState extends State<EditEvent> {
                         String? title = titleController.text == initialTitle
                             ? null
                             : titleController.text;
-                        String? imgPath = _selectedImage?.path;
+                        File? imgPath = _selectedImage;
                         String? loc = location;
                         DateTime? date = DateTime.parse(dateController.text)
                                 .isAtSameMomentAs(initialDate)
@@ -475,7 +475,7 @@ class _EditEventState extends State<EditEvent> {
                         int? subArea = selectedSubArea.id == initialSubArea.id
                             ? null
                             : selectedSubArea.id;
-
+                        print(imgPath);
                         try {
                           await api.editEvent(
                             eventId: widget.pub.id!,
@@ -491,13 +491,15 @@ class _EditEventState extends State<EditEvent> {
                             subAreaId: subArea,
                             publisherId: user.id,
                           );
-                        } catch (e) {
+                        } catch (e, s) {
+                          print('ERROR: $e');
+                          print('Stack trace:\n$s');
                           await showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Error editing post'),
+                              title: const Text('Error editing event'),
                               content: const Text(
-                                  'An error occurred while editing the Post'),
+                                  'An error occurred while editing the Event'),
                               actions: [
                                 TextButton(
                                   onPressed: () {

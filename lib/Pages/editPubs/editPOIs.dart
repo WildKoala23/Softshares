@@ -330,7 +330,7 @@ class _EditPOIState extends State<EditPOI> {
                         String? title = titleController.text == initialTitle
                             ? null
                             : titleController.text;
-                        String? imgPath = _selectedImage?.path;
+                        File? imgPath = _selectedImage;
                         String? loc = location;
                         int? rating = currentSlideValue.toInt();
                         int? subAreaId =
