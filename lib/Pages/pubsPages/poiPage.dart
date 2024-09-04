@@ -47,6 +47,7 @@ class _POIPageState extends State<POIPage> {
   }
 
   void editPub(BuildContext context) {
+    print('YO');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -94,7 +95,7 @@ class _POIPageState extends State<POIPage> {
       appBar: contentAppBar(
         pub: widget.poi,
         areas: widget.areas,
-        rightCallback: (context) => editPub,
+        rightCallback: (context) => editPub(context),
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),

@@ -109,7 +109,7 @@ class _EditPostState extends State<EditPost> {
                       ),
                       Expanded(
                           child: Text(
-                        'Only alter what you want to update\nIf you only want to change the form, proceed to next page',
+                        'Only alter what you want to update',
                         style: TextStyle(color: colorScheme.error),
                       ))
                     ],

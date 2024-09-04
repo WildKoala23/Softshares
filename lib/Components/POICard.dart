@@ -67,7 +67,7 @@ class _POIState extends State<POICard> {
                       // Handles images not existing
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: Color.fromARGB(255, 150, 216, 255),
+                          color: Color.fromARGB(255, 153, 255, 150),
                           height: 120,
                         );
                       },

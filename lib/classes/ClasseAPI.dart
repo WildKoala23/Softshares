@@ -1246,7 +1246,6 @@ class API {
       if (desc != null) 'content': desc,
       if (filePath != null) 'filePath': filePath,
       if (location != null) 'pLocation': location,
-      if (price != null) 'price': price.toString(),
       if (rating != null) 'rating': rating.toString(),
     };
 
@@ -1259,6 +1258,10 @@ class API {
 
       if (response.statusCode == 401) {
         throw InvalidTokenExceptionClass('token access expired');
+      }
+
+      if (response.statusCode == 500) {
+        print(response.body);
       }
       print(response.statusCode);
     } on InvalidTokenExceptionClass catch (e) {
