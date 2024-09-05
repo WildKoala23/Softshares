@@ -131,8 +131,6 @@ class _SignInState extends State<SignIn> {
                                   passwordController.text, keepLog);
                               Navigator.pushNamed(context, '/home');
                             } else {
-                              _showErrorDialog(
-                                  'First Login detected for generated account. Please change your password.');
                               // Handle null response here
                               print('inside jwt check error');
                               print(jwtToken);

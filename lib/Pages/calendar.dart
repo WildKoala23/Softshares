@@ -76,7 +76,9 @@ class _CalendarState extends State<Calendar> {
       appBar: MyAppBar(
         iconR: const Icon(Icons.notifications),
         title: 'Calendar',
-        rightCallback: callBack,
+        rightCallback: (context) {
+          Navigator.pushNamed(context, '/notices');
+        },
       ),
       body: Column(
         children: [
