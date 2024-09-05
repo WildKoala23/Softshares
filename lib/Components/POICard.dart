@@ -102,9 +102,9 @@ class _POIState extends State<POICard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // If title is bigger than 30 chars, cut it
-            widget.pointOfInterest.title.length > 10
+            widget.pointOfInterest.title.length > 20
                 ? Text(
-                    widget.pointOfInterest.title.substring(0, 10) + '....',
+                    widget.pointOfInterest.title.substring(0, 20) + '....',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   )
                 : Text(

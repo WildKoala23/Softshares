@@ -42,8 +42,8 @@ class _EditPostState extends State<EditPost> {
   String? location;
 
   //Variables to en/disable rating and price sliders when not necessary
-  late bool nonRating;
-  late bool nonPrice;
+  bool nonRating = false;
+  bool nonPrice = false;
 
   List<AreaClass> subAreas = [];
 
