@@ -20,6 +20,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'sign_in_result.dart';
 
@@ -113,18 +114,19 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> loadAreasAndCities() async {
     SQLHelper db = SQLHelper.instance;
+    Database bd = await SQLHelper.instance.database;
     _areas = await db.getAreas();
     List<AreaClass> aux_areas = await api.getAreas();
     int aux_areas_lenght = aux_areas.length;
     if (_areas.length != aux_areas_lenght) {
-      await db.insertAreas();
+      await db.insertAreas(bd);
       _areas = await db.getAreas();
     }
     _cities = await db.getCities();
     List<Office> aux_offices = await api.getOffices();
     int aux_cities_lenght = aux_offices.length;
     if (_cities.length != aux_cities_lenght) {
-      await db.insertCities();
+      await db.insertCities(bd);
       _cities = await db.getCities();
     }
   }

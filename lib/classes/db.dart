@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:softshares/Pages/area.dart';
-import 'package:softshares/Pages/chooseCityPage.dart';
 import 'package:softshares/classes/ClasseAPI.dart';
 import 'package:softshares/classes/areaClass.dart';
 import 'package:softshares/classes/officeClass.dart';
@@ -24,7 +22,7 @@ class SQLHelper {
   // Getter for database instance
   Future<sql.Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('softshares.db');
+    _database = await _initDB('test.db');
     return _database!;
   }
 
@@ -87,13 +85,13 @@ class SQLHelper {
     await db.execute(createSubAreas);
     await db.execute(createPreferences);
     await db.execute(checkUser);
-    await insertCities();
-    await insertAreas();
+    await insertCities(db);
+    await insertAreas(db);
   }
 
   // Insert cities
-  Future<void> insertCities() async {
-    final db = await instance.database;
+  Future<void> insertCities(sql.Database db) async {
+    
     try {
       await db.rawDelete('DELETE FROM cities');
       List<Office> offices = await api.getOffices();
@@ -143,8 +141,7 @@ class SQLHelper {
   }
 
   // Insert Areas
-  Future<void> insertAreas() async {
-    final db = await instance.database;
+  Future<void> insertAreas(sql.Database db) async {
     List<AreaClass> areas = await api.getAreas();
     await db.rawDelete('DELETE FROM areas');
     await db.rawDelete('DELETE FROM subAreas');
