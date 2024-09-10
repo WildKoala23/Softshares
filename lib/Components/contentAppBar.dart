@@ -45,11 +45,13 @@ class _contentAppBarState extends State<contentAppBar> {
                   '_Check out this publication:_\n*${widget.pub.title}*\n ${widget.pub.desc}');
             },
             icon: const Icon(Icons.share)),
-        IconButton(
-            onPressed: () => widget.rightCallback!(context),
-            icon: widget.pub.validated == false
-                ? const Icon(Icons.edit)
-                : const Icon(Icons.rate_review))
+        widget.rightCallback != null
+            ? IconButton(
+                onPressed: () => widget.rightCallback!(context),
+                icon: widget.pub.validated == false
+                    ? const Icon(Icons.edit)
+                    : const Icon(Icons.rate_review))
+            : const SizedBox.shrink()
       ],
     );
   }

@@ -59,14 +59,6 @@ class _ForumPageState extends State<ForumPage> {
     commentCx.dispose();
   }
 
-  void editPub(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditForum(pub: widget.forum, areas: widget.areas),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +67,6 @@ class _ForumPageState extends State<ForumPage> {
       appBar: contentAppBar(
         pub: widget.forum,
         areas: widget.areas,
-        rightCallback: (context) => editPub(context),
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
