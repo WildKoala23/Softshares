@@ -37,9 +37,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //Fetch posts from server
   Future<void> getPosts() async {
-    //print('aaaaaaaaaa');
-    var data = await api.getAllPosts();
-    posts = data;
+    try {
+      var data = await api.getAllPosts();
+      setState(() {
+        posts = data;
+        futurePosts =
+            Future.value(posts); // Update futurePosts with the latest data
+      });
+    } catch (e) {
+      setState(() {
+        futurePosts = Future.error(
+            e); // Handle errors and update the future with an error
+      });
+    }
   }
 
   void leftCallback(context) {
@@ -53,9 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _scrollController.addListener(() {
       //If user tries to scroll up when on top of lastest post
       //try to refresh posts
-      if (_scrollController.position.pixels == 0) {
-        getPosts();
-      }
+      setState(() {
+        futurePosts = getPosts(); // Trigger refresh when scrolled to the top
+      });
     });
   }
 
