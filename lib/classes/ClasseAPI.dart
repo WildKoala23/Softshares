@@ -1814,24 +1814,6 @@ class API {
     }
   }
 
-  Future getCities() async {
-    String? jwtToken = await getToken();
-
-    try {
-      var response = await http
-          .get(Uri.http(baseUrl, '/api/categories/get-areas'), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $jwtToken'
-      });
-
-      if (response.statusCode == 401) {
-        throw InvalidTokenExceptionClass('token access expired');
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   Future getOffices() async {
     try {
       String? jwtToken = await getToken();
@@ -1894,6 +1876,7 @@ class API {
       var jsonDataSub = jsonDecode(responseSub.body);
 
       for (var area in jsonData['data']) {
+        print(area);
         List<AreaClass> subareas = [];
         //Get subareas reletated to each area
         for (var subarea in jsonDataSub['data']) {

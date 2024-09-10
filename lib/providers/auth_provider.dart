@@ -118,12 +118,14 @@ class AuthProvider with ChangeNotifier {
     int aux_areas_lenght = aux_areas.length;
     if (_areas.length != aux_areas_lenght) {
       await db.insertAreas();
+      _areas = await db.getAreas();
     }
     _cities = await db.getCities();
-    List<Office> aux_offices = await api.getCities();
+    List<Office> aux_offices = await api.getOffices();
     int aux_cities_lenght = aux_offices.length;
     if (_cities.length != aux_cities_lenght) {
       await db.insertCities();
+      _cities = await db.getCities();
     }
   }
 

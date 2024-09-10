@@ -103,6 +103,7 @@ class _myDrawerState extends State<myDrawer> {
           ListView.builder(
             shrinkWrap: true,
             itemCount: widget.areas.length,
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return ListTile(
                 onTap: () {
