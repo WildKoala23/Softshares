@@ -114,7 +114,17 @@ class AuthProvider with ChangeNotifier {
   Future<void> loadAreasAndCities() async {
     SQLHelper db = SQLHelper.instance;
     _areas = await db.getAreas();
+    List<AreaClass> aux_areas = await api.getAreas();
+    int aux_areas_lenght = aux_areas.length;
+    if (_areas.length != aux_areas_lenght) {
+      await db.insertAreas();
+    }
     _cities = await db.getCities();
+    List<Office> aux_offices = await api.getCities();
+    int aux_cities_lenght = aux_offices.length;
+    if (_cities.length != aux_cities_lenght) {
+      await db.insertCities();
+    }
   }
 
   Future<SignInResult?> signInWithGoogle() async {

@@ -87,13 +87,15 @@ class SQLHelper {
     await db.execute(createSubAreas);
     await db.execute(createPreferences);
     await db.execute(checkUser);
-    await _insertCities(db);
-    await _insertAreas(db);
+    await insertCities();
+    await insertAreas();
   }
 
   // Insert cities
-  Future<void> _insertCities(sql.Database db) async {
+  Future<void> insertCities() async {
+    final db = await instance.database;
     try {
+      await db.rawDelete('DELETE FROM cities');
       List<Office> offices = await api.getOffices();
 
       for (var city in offices) {
@@ -141,8 +143,11 @@ class SQLHelper {
   }
 
   // Insert Areas
-  Future<void> _insertAreas(sql.Database db) async {
+  Future<void> insertAreas() async {
+    final db = await instance.database;
     List<AreaClass> areas = await api.getAreas();
+    await db.rawDelete('DELETE FROM areas');
+    await db.rawDelete('DELETE FROM subAreas');
 
     for (var area in areas) {
       await db.rawInsert(
