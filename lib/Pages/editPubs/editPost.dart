@@ -215,7 +215,7 @@ class _EditPostState extends State<EditPost> {
                     style: TextStyle(fontSize: 22),
                   ),
                   SearchLocation(
-                    apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
+                    apiKey: 'AIzaSyCuVdw-opYJnp5vriI-BzE5vAQZsg8Bi5E',
                     country: 'PT',
                     onSelected: (place) async {
                       final geolocation = await place.geolocation;

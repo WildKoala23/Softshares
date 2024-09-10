@@ -20,7 +20,6 @@ class POICreation extends StatefulWidget {
   State<POICreation> createState() => _POICreationState();
 }
 
-
 class _POICreationState extends State<POICreation> {
   final _poiKey = GlobalKey<FormState>();
   final API api = API();
@@ -38,7 +37,6 @@ class _POICreationState extends State<POICreation> {
   late AreaClass selectedSubArea;
   late double currentSlideValue;
 
-
   late User user;
 
   List<AreaClass> subAreas = [];
@@ -54,7 +52,6 @@ class _POICreationState extends State<POICreation> {
     selectedSubArea = selectedArea.subareas![0];
     currentSlideValue = 3;
     getUser();
-    
   }
 
   @override
@@ -175,7 +172,7 @@ class _POICreationState extends State<POICreation> {
                 style: TextStyle(fontSize: 22),
               ),
               SearchLocation(
-                apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
+                apiKey: 'AIzaSyCuVdw-opYJnp5vriI-BzE5vAQZsg8Bi5E',
                 country: 'PT',
                 onSelected: (place) async {
                   final geolocation = await place.geolocation;
@@ -286,8 +283,7 @@ class _POICreationState extends State<POICreation> {
                         _selectedImage,
                         location,
                         currentSlideValue,
-                        null
-                        );
+                        null);
                     try {
                       await api.createPOI(post);
                     } catch (e) {

@@ -224,7 +224,7 @@ class _EditPOIState extends State<EditPOI> {
                     style: TextStyle(fontSize: 22),
                   ),
                   SearchLocation(
-                    apiKey: 'AIzaSyA3epbybrdf3ULh-07utpw9CZV4S-hL450',
+                    apiKey: 'AIzaSyCuVdw-opYJnp5vriI-BzE5vAQZsg8Bi5E',
                     country: 'PT',
                     onSelected: (place) async {
                       final geolocation = await place.geolocation;
@@ -322,8 +322,6 @@ class _EditPOIState extends State<EditPOI> {
                       if (_poiKey.currentState!.validate()) {
                         //User user = await api.getUser(box.read('id'));
 
-
-
                         String? desc = descController.text == initialDesc
                             ? null
                             : descController.text;
@@ -337,7 +335,6 @@ class _EditPOIState extends State<EditPOI> {
                             selectedSubArea.id == widget.post.subCategory
                                 ? null
                                 : selectedSubArea.id;
-                          
 
                         try {
                           await api.editPost(
