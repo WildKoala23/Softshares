@@ -53,9 +53,9 @@ void main() async {
   //Machado
   //box.write('url', 'https://backendpint-909f.onrender.com/api');
   //Filipe
-  //box.write('url', 'https://backendpint-w3vz.onrender.com/api');
+  box.write('url', 'https://backendpint-w3vz.onrender.com/api');
   //Mine
-  box.write('url', 'http://10.0.2.2:8000/api');
+  //box.write('url', 'http://10.0.2.2:8000/api');
   User? user;
   bool logged;
 

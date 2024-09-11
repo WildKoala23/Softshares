@@ -80,7 +80,7 @@ class _EditForumState extends State<EditForum> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                   Row(
+                  Row(
                     children: [
                       Icon(
                         Icons.report,
@@ -91,7 +91,7 @@ class _EditForumState extends State<EditForum> {
                       ),
                       Expanded(
                           child: Text(
-                        'Only alter what you want to update\nIf you only want to change the form, proceed to next page',
+                        'Only alter what you want to update',
                         style: TextStyle(color: colorScheme.error),
                       ))
                     ],
